@@ -15,22 +15,39 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Cache Homebrew packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/Homebrew
+            /usr/local/Cellar/create-dmg
+            /usr/local/Cellar/fileicon
+          key: brew-${{ runner.os }}-create-dmg-fileicon
+
       - name: Install build dependencies
         run: |
-          brew install create-dmg fileicon
+          brew install create-dmg fileicon || brew upgrade create-dmg fileicon || true
+
+      - name: Verify source PNG exists
+        run: |
+          if [[ ! -f Resources/AppIcon-Source.png ]]; then
+            echo "❌ Resources/AppIcon-Source.png not found"
+            exit 1
+          fi
+          echo "✅ Source PNG: $(ls -lh Resources/AppIcon-Source.png)"
 
       - name: Generate AppIcon.icns from source PNG
         run: |
           mkdir -p build/AppIcon.iconset
-          sips -z 16 16     Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_16x16.png
-          sips -z 32 32     Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_16x16@2x.png
-          sips -z 32 32     Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_32x32.png
-          sips -z 64 64     Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_32x32@2x.png
-          sips -z 128 128   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_128x128.png
-          sips -z 256 256   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_128x128@2x.png
-          sips -z 256 256   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_256x256.png
-          sips -z 512 512   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_256x256@2x.png
-          sips -z 512 512   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_512x512.png
+          sips -z 16   16   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_16x16.png
+          sips -z 32   32   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_16x16@2x.png
+          sips -z 32   32   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_32x32.png
+          sips -z 64   64   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_32x32@2x.png
+          sips -z 128  128  Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_128x128.png
+          sips -z 256  256  Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_128x128@2x.png
+          sips -z 256  256  Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_256x256.png
+          sips -z 512  512  Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_256x256@2x.png
+          sips -z 512  512  Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_512x512.png
           sips -z 1024 1024 Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_512x512@2x.png
           iconutil -c icns -o Resources/AppIcon.icns build/AppIcon.iconset
           echo "✅ AppIcon.icns generated: $(ls -lh Resources/AppIcon.icns)"
@@ -43,11 +60,25 @@ jobs:
           BUNDLE_ID: com.flowkeys.app
           CODESIGN_IDENTITY: "-"
 
-      - name: Verify DMG was created
+      - name: Verify DMG
         run: |
           ls -lh build/FlowKeys.dmg
           hdiutil verify build/FlowKeys.dmg
-          echo "✅ DMG verified OK"
+          # Mount and check app exists
+          MOUNT=$(hdiutil attach build/FlowKeys.dmg -nobrowse -plist | \
+            grep -A1 'mount-point' | grep '<string>' | \
+            sed 's/.*<string>\(.*\)<\/string>/\1/' | head -1)
+          if [[ -z "$MOUNT" ]]; then
+            echo "❌ Could not mount DMG for verification"
+            exit 1
+          fi
+          if [[ ! -d "$MOUNT/FlowKeys.app" ]]; then
+            echo "❌ FlowKeys.app not found in DMG"
+            hdiutil detach "$MOUNT" -quiet
+            exit 1
+          fi
+          echo "✅ FlowKeys.app found in DMG"
+          hdiutil detach "$MOUNT" -quiet
 
       - name: Get version from tag
         id: version
