@@ -16,7 +16,7 @@ else
     XCODE_FLAGS = -arch $(ARCH)
 endif
 
-.PHONY: all build dmg clean run release help
+.PHONY: all build dmg clean run release help dmg-hdiutil-internal
 
 all: build
 
@@ -65,15 +65,25 @@ dmg: build
 			--icon "Applications" 480 170 \
 			--no-internet-enable \
 			"$(BUILD_DIR)/$(APP_NAME).dmg" \
-			"$(BUILD_DIR)/dmg-staging" || (echo "create-dmg failed, falling back to hdiutil..." && $(MAKE) dmg-hdiutil); \
+			"$(BUILD_DIR)/dmg-staging" || (echo "create-dmg failed, falling back to hdiutil..." && $(MAKE) dmg-hdiutil-internal); \
 	else \
-		$(MAKE) dmg-hdiutil; \
+		$(MAKE) dmg-hdiutil-internal; \
 	fi
 	@rm -rf $(BUILD_DIR)/dmg-staging
 	@echo "Created $(BUILD_DIR)/$(APP_NAME).dmg"
 
-dmg-hdiutil:
+# External target that ensures build is run
+dmg-hdiutil: build
+	@$(MAKE) dmg-hdiutil-internal
+
+# Internal target that assumes staging is ready
+dmg-hdiutil-internal:
 	@echo "Creating basic DMG using hdiutil (HFS+ for compatibility)..."
+	@if [ ! -d "$(BUILD_DIR)/dmg-staging" ]; then \
+		mkdir -p $(BUILD_DIR)/dmg-staging; \
+		cp -R "$(APP_BUNDLE)" $(BUILD_DIR)/dmg-staging/; \
+		ln -s /Applications $(BUILD_DIR)/dmg-staging/Applications; \
+	fi
 	@rm -f "$(BUILD_DIR)/$(APP_NAME).dmg"
 	@hdiutil create -volname "$(APP_NAME)" -srcfolder "$(BUILD_DIR)/dmg-staging" -ov -format UDZO -fs HFS+ "$(BUILD_DIR)/$(APP_NAME).dmg"
 

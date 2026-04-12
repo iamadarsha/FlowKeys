@@ -10,7 +10,7 @@ INSTALL_DIR="/Applications"
 RELEASE_API="https://api.github.com/repos/$REPO/releases/latest"
 
 echo ""
-echo "🎙  FlowKeys Installer (v1.0.4)"
+echo "🎙  FlowKeys Installer (v1.0.5)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "   Aapki awaaz, aapke words. 🇮🇳"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
