@@ -62,11 +62,13 @@ fi
 
 echo ""
 echo "💿 Mounting DMG..."
-MOUNT_OUTPUT=$(hdiutil attach "$TMP_DMG" -nobrowse -quiet)
+# Remove -quiet to see errors and capture stderr
+MOUNT_OUTPUT=$(hdiutil attach "$TMP_DMG" -nobrowse 2>&1)
 MOUNT_POINT=$(echo "$MOUNT_OUTPUT" | grep "Volumes" | awk '{print $NF}')
 
 if [[ -z "$MOUNT_POINT" ]]; then
-  echo "❌ Could not mount DMG. File may be corrupted."
+  echo "❌ Could not mount DMG."
+  echo "   Error details: $MOUNT_OUTPUT"
   rm -f "$TMP_DMG"
   exit 1
 fi
