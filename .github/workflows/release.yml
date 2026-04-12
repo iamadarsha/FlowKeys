@@ -17,13 +17,13 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          brew install create-dmg fileicon
+          brew install fileicon
 
 
 
       - name: Build universal DMG
         run: |
-          ARCH=universal make dmg
+          ARCH=universal make dmg-hdiutil
         env:
           APP_NAME: FlowKeys
           BUNDLE_ID: com.flowkeys.app

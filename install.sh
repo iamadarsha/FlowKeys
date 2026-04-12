@@ -1,13 +1,16 @@
 #!/bin/bash
 set -e
 
+# FLOWKEYS INSTALLER v1.0.4 [DEBUG]
+# Built for iamadarsha
+
 APP_NAME="FlowKeys"
 REPO="iamadarsha/FlowKeys"
 INSTALL_DIR="/Applications"
 RELEASE_API="https://api.github.com/repos/$REPO/releases/latest"
 
 echo ""
-echo "🎙  FlowKeys Installer"
+echo "🎙  FlowKeys Installer (v1.0.4)"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "   Aapki awaaz, aapke words. 🇮🇳"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -51,7 +54,10 @@ echo "📦 Found: $DMG_URL"
 echo ""
 
 # Download to temp file
-TMP_DMG=$(mktemp /tmp/FlowKeys_XXXXXX.dmg)
+# We use /tmp/FlowKeys.dmg instead of mktemp to ensure no weird path issues
+TMP_DMG="/tmp/FlowKeys.dmg"
+rm -f "$TMP_DMG"
+
 echo "⬇️  Downloading FlowKeys..."
 curl -L "$DMG_URL" -o "$TMP_DMG" --progress-bar
 
@@ -60,11 +66,18 @@ if [[ ! -f "$TMP_DMG" ]]; then
   exit 1
 fi
 
+# Verify file size
+FILE_SIZE=$(ls -l "$TMP_DMG" | awk '{print $5}')
+if [[ "$FILE_SIZE" -lt 1000000 ]]; then
+   echo "❌ Downloaded file seems too small ($FILE_SIZE bytes). Likely a failed download."
+   exit 1
+fi
+
 echo ""
 echo "💿 Mounting DMG..."
-# Remove -quiet to see errors and capture stderr
+# REMOVE -quiet to see errors clearly
 MOUNT_OUTPUT=$(hdiutil attach "$TMP_DMG" -nobrowse 2>&1)
-MOUNT_POINT=$(echo "$MOUNT_OUTPUT" | grep "Volumes" | awk '{print $NF}')
+MOUNT_POINT=$(echo "$MOUNT_OUTPUT" | grep "/Volumes/" | sed 's/.*\/Volumes\//\/Volumes\//' | head -n 1)
 
 if [[ -z "$MOUNT_POINT" ]]; then
   echo "❌ Could not mount DMG."
@@ -76,8 +89,13 @@ fi
 echo "📂 Mounted at: $MOUNT_POINT"
 
 # Check app exists in DMG
-if [[ ! -d "$MOUNT_POINT/$APP_NAME.app" ]]; then
+# Sometimes create-dmg adds spaces to the path
+APP_PATH=$(find "$MOUNT_POINT" -name "$APP_NAME.app" -maxdepth 1)
+
+if [[ -z "$APP_PATH" ]]; then
   echo "❌ $APP_NAME.app not found inside DMG."
+  echo "   Contents of DMG:"
+  ls -F "$MOUNT_POINT"
   hdiutil detach "$MOUNT_POINT" -quiet
   rm -f "$TMP_DMG"
   exit 1
@@ -91,10 +109,9 @@ fi
 
 # Copy to Applications
 echo "📦 Installing to $INSTALL_DIR..."
-cp -R "$MOUNT_POINT/$APP_NAME.app" "$INSTALL_DIR/"
+cp -R "$APP_PATH" "$INSTALL_DIR/"
 
-# THE KEY STEP — Remove Apple quarantine flag
-# This is what lets the app open without Gatekeeper warnings
+# Remove Apple quarantine flag
 echo "🔓 Removing quarantine flag (this is safe)..."
 xattr -dr com.apple.quarantine "$INSTALL_DIR/$APP_NAME.app"
 
@@ -109,13 +126,10 @@ echo "✅ FlowKeys installed successfully!"
 echo ""
 echo "NEXT STEPS:"
 echo "  1. Open /Applications/FlowKeys.app"
-echo "  2. Allow Microphone access when prompted"
-echo "  3. Allow Accessibility access in:"
-echo "     System Settings → Privacy & Security → Accessibility"
-echo "  4. Choose your AI provider (Groq is free to start)"
-echo "  5. Hold [Fn] anywhere to start talking!"
+echo "  2. Allow Microphone and Accessibility access"
+echo "  3. Hold [Fn] anywhere to talk!"
 echo ""
-echo "🎙  Aapki awaaz, aapke words. Built for Bharat."
+echo "🎙  Aapki awaaz, aapke words. Build for Bharat."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
