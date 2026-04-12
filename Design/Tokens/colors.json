@@ -1,0 +1,17 @@
+{
+  "colors": {
+    "bg-primary":    "#0F0F11",
+    "bg-secondary":  "#17171A",
+    "bg-tertiary":   "#1E1E22",
+    "bg-sidebar":    "#0C0C0E",
+    "accent":        "#FF6B35",
+    "accent-soft":   "#FF6B3520",
+    "text-primary":  "#F2F2F3",
+    "text-secondary":"#8A8A96",
+    "text-tertiary": "#55555F",
+    "separator":     "#2A2A30",
+    "success":       "#34C759",
+    "error":         "#FF453A",
+    "warning":       "#FFD60A"
+  }
+}

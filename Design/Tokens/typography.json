@@ -1,0 +1,9 @@
+{
+  "typography": {
+    "title": "SF Pro Display, 15pt, semibold",
+    "body": "SF Pro Text, 13pt, regular",
+    "label": "SF Pro Text, 11pt, medium, letter-spacing +0.2",
+    "caption": "SF Pro Text, 10pt, regular",
+    "mono": "SF Mono, 12pt, regular"
+  }
+}
