@@ -45,8 +45,8 @@ Return only two sentences, no labels, no markdown, no extra commentary.
         // Default models for context inference
         switch provider {
         case .gemini:
-            self.fallbackTextModel = "gemini-1.5-flash"
-            self.visionModel = "gemini-1.5-flash"
+            self.fallbackTextModel = "gemini-2.5-flash"
+            self.visionModel = "gemini-2.5-flash"
         case .claude:
             self.fallbackTextModel = "claude-3-5-haiku-latest"
             self.visionModel = "claude-3-5-sonnet-latest" // Sonnet for better vision
