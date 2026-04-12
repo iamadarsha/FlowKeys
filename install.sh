@@ -1,14 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
-# FlowKeys Installer v1.0.7
+# FlowKeys Installer v1.0.8
 # https://github.com/iamadarsha/FlowKeys
 
 APP_NAME="FlowKeys"
 REPO="iamadarsha/FlowKeys"
 INSTALL_DIR="/Applications"
-MIN_MACOS_MAJOR=13
-MIN_MACOS_MINOR=0
 
 echo ""
 echo "🎙  FlowKeys Installer"
@@ -17,27 +15,19 @@ echo "   Aapki awaaz, aapke words. 🇮🇳"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-# ── Checks ────────────────────────────────────────────────
+# ── Platform check ────────────────────────────────────
 
 if [[ "$(uname)" != "Darwin" ]]; then
   echo "❌ FlowKeys is macOS only."
   exit 1
 fi
 
-# macOS version gate (requires 13.0+)
 MACOS_VER=$(sw_vers -productVersion)
-MACOS_MAJOR=$(echo "$MACOS_VER" | cut -d. -f1)
-MACOS_MINOR=$(echo "$MACOS_VER" | cut -d. -f2)
-if [[ "$MACOS_MAJOR" -lt "$MIN_MACOS_MAJOR" ]] || \
-   ([[ "$MACOS_MAJOR" -eq "$MIN_MACOS_MAJOR" ]] && [[ "$MACOS_MINOR" -lt "$MIN_MACOS_MINOR" ]]); then
-  echo "❌ FlowKeys requires macOS ${MIN_MACOS_MAJOR}.${MIN_MACOS_MINOR}+. You have ${MACOS_VER}."
-  exit 1
-fi
-echo "✅ macOS ${MACOS_VER} — compatible"
+echo "✅ macOS ${MACOS_VER} — let's go"
 
-for cmd in curl hdiutil xattr sw_vers; do
+for cmd in curl hdiutil xattr; do
   if ! command -v "$cmd" &>/dev/null; then
-    echo "❌ Required tool not found: $cmd"
+    echo "❌ Required tool not found: $cmd. This shouldn't happen on macOS."
     exit 1
   fi
 done
@@ -53,14 +43,14 @@ RELEASE_JSON=$(curl -fsSL \
   exit 1
 }
 
-# Robust JSON parsing — uses python3 if available, falls back to grep
+# Robust JSON parsing — python3 first, grep fallback
 if command -v python3 &>/dev/null; then
   DMG_URL=$(echo "$RELEASE_JSON" | python3 -c \
     "import sys,json; assets=json.load(sys.stdin).get('assets',[]); \
      dmgs=[a['browser_download_url'] for a in assets if a['name'].endswith('.dmg')]; \
-     print(dmgs[0] if dmgs else '')" 2>/dev/null)
+     print(dmgs[0] if dmgs else '')" 2>/dev/null || echo "")
   RELEASE_TAG=$(echo "$RELEASE_JSON" | python3 -c \
-    "import sys,json; print(json.load(sys.stdin).get('tag_name',''))" 2>/dev/null)
+    "import sys,json; print(json.load(sys.stdin).get('tag_name',''))" 2>/dev/null || echo "")
 else
   DMG_URL=$(echo "$RELEASE_JSON" | grep '"browser_download_url"' | grep '\.dmg"' | head -1 | \
     sed 's/.*"browser_download_url": *"\([^"]*\)".*/\1/')
@@ -77,10 +67,19 @@ fi
 echo "📦 Found ${RELEASE_TAG}: ${DMG_URL}"
 echo ""
 
-# ── Download ──────────────────────────────────────────────
+# ── Safe temp file ──────────────────────────────────────────
 
-TMP_DMG=$(mktemp /tmp/FlowKeys_XXXXXX.dmg)
-trap 'rm -f "$TMP_DMG"' EXIT
+# Clean up any stale temp files from previous failed runs
+rm -f /tmp/FlowKeys_*.dmg 2>/dev/null || true
+
+# macOS mktemp does NOT support suffix — create base temp then rename
+TMP_BASE=$(mktemp -t FlowKeys)
+TMP_DMG="${TMP_BASE}.dmg"
+mv "$TMP_BASE" "$TMP_DMG"
+
+trap 'rm -f "$TMP_DMG" "$TMP_BASE" 2>/dev/null || true' EXIT
+
+# ── Download ──────────────────────────────────────────────
 
 echo "⬇️  Downloading FlowKeys..."
 HTTP_CODE=$(curl -L "$DMG_URL" -o "$TMP_DMG" --progress-bar \
@@ -91,7 +90,7 @@ if [[ "$HTTP_CODE" != "200" ]]; then
   exit 1
 fi
 
-FILE_SIZE=$(stat -f%z "$TMP_DMG" 2>/dev/null || stat -c%s "$TMP_DMG" 2>/dev/null || echo 0)
+FILE_SIZE=$(stat -f%z "$TMP_DMG" 2>/dev/null || echo 0)
 if [[ "$FILE_SIZE" -lt 2000000 ]]; then
   echo "❌ Download looks incomplete (${FILE_SIZE} bytes). Expected > 2MB."
   exit 1
@@ -121,7 +120,7 @@ fi
 
 if [[ -z "$MOUNT_POINT" ]] || [[ ! -d "$MOUNT_POINT" ]]; then
   echo "❌ Failed to mount DMG."
-  echo "   Details: $MOUNT_OUTPUT"
+  echo "   hdiutil output: $MOUNT_OUTPUT"
   exit 1
 fi
 echo "📂 Mounted at: $MOUNT_POINT"
@@ -129,15 +128,15 @@ echo "📂 Mounted at: $MOUNT_POINT"
 unmount_dmg() {
   hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
 }
-trap 'unmount_dmg; rm -f "$TMP_DMG"' EXIT
+trap 'unmount_dmg; rm -f "$TMP_DMG" 2>/dev/null || true' EXIT
 
-# ── Find .app in DMG ──────────────────────────────────────
+# ── Find .app ────────────────────────────────────────────────
 
 APP_PATH=$(find "$MOUNT_POINT" -maxdepth 2 -name "${APP_NAME}.app" -type d 2>/dev/null | head -1)
 
 if [[ -z "$APP_PATH" ]]; then
   echo "❌ ${APP_NAME}.app not found in DMG."
-  echo "   Contents:"
+  echo "   DMG contents:"
   ls -F "$MOUNT_POINT"
   exit 1
 fi
