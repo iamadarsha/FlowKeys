@@ -32,7 +32,33 @@ enum UserLanguageMode: String, CaseIterable, Codable, Identifiable {
         case .pureEnglish: return "en"
         }
     }
+
+    /// Returns the Whisper prompt string to send with every transcription request.
+    /// ALL modes get at minimum the anti-hallucination seed so Whisper's decoder
+    /// never hallucinates "Thank you", "Thanks for watching", etc. on short/silent audio.
+    func whisperPrompt() -> String {
+        switch self {
+        case .pureEnglish:
+            return ANTI_HALLUCINATION_PRIMER
+        case .hinglish, .pureHindi:
+            return ANTI_HALLUCINATION_PRIMER + " " + INDIAN_WHISPER_PRIMER
+        }
+    }
 }
+
+// MARK: - Anti-Hallucination Primer
+
+/// A short neutral real-speech seed that forces Whisper's beam-search decoder
+/// away from its well-known hallucination attractors ("Thank you",
+/// "Thanks for watching", "you", "bye", etc.).
+///
+/// How it works: Whisper's prompt is prepended to the transcript context window.
+/// By seeding it with mid-sentence real speech, Whisper's decoder is biased
+/// toward continuing real speech rather than defaulting to closing phrases.
+///
+/// Keep this SHORT (< 50 tokens) so it doesn't eat into the 224-token
+/// prompt budget that Whisper allocates.
+let ANTI_HALLUCINATION_PRIMER = "Okay so I wanted to say"
 
 // MARK: - Indian Whisper Primer
 
@@ -41,7 +67,7 @@ enum UserLanguageMode: String, CaseIterable, Codable, Identifiable {
 /// For Groq/OpenAI Whisper — passed as the `prompt` field in the multipart body.
 /// For Gemini — passed as part of the audio understanding prompt.
 let INDIAN_WHISPER_PRIMER = """
-नमस्ते। यह एक भारतीय उपयोगकर्ता की आवाज़ है। \
+nमस्ते। यह एक भारतीय उपयोगकर्ता की आवाज़ है। \
 The speaker may switch between Hindi and English mid-sentence. \
 Common Hinglish patterns: "aaj meeting hai", "please send the report", \
 "yaar sun", "bas kar", "kal tak karo", "thoda time do", \
@@ -274,7 +300,7 @@ gtg = got to go | brb = be right back |
 bbl = be back later | afk = away from keyboard |
 omw = on my way | eta = estimated time of arrival |
 np = no problem | nw = no worries | ty/tq = thank you |
-yw = you're welcome | ikr = I know right |
+ym = you're welcome | ikr = I know right |
 smh = shaking my head | tbh = to be honest |
 ngl = not gonna lie | idk = I don't know |
 imo/imho = in my (humble) opinion | fwiw = for what it's worth |
