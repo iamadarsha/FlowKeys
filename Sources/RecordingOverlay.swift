@@ -396,7 +396,7 @@ struct PillOverlayView: View {
             } else {
                 Text("...")
                     .font(.system(size: 13, weight: .medium, design: .monospaced))
-                    .foregroundStyle(.white.opacity(0.6))
+                    .foregroundColor(.white.opacity(0.6))
             }
 
             // Mode tag (if active)
@@ -409,7 +409,7 @@ struct PillOverlayView: View {
                 Button(action: onStopButtonPressed) {
                     Image(systemName: "stop.fill")
                         .font(.system(size: 10, weight: .bold))
-                        .foregroundStyle(.white)
+                        .foregroundColor(.white)
                         .frame(width: 28, height: 28)
                         .background(Circle().fill(Color.red.opacity(0.85)))
                 }
@@ -424,7 +424,7 @@ struct PillOverlayView: View {
     private var languageBadge: some View {
         Text(languageBadgeText)
             .font(.system(size: 11, weight: .semibold, design: .monospaced))
-            .foregroundStyle(.white)
+            .foregroundColor(.white)
             .padding(.horizontal, 6)
             .padding(.vertical, 3)
             .background(
@@ -453,7 +453,7 @@ struct PillOverlayView: View {
                 .font(.system(size: 10, weight: .medium, design: .rounded))
                 .lineLimit(1)
         }
-        .foregroundStyle(.white.opacity(0.6))
+        .foregroundColor(.white.opacity(0.6))
         .padding(.horizontal, 5)
         .padding(.vertical, 2)
         .background(
@@ -468,10 +468,10 @@ struct PillOverlayView: View {
         HStack(spacing: 8) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(.green)
+                .foregroundColor(.green)
             Text("Done")
                 .font(.system(size: 14, weight: .semibold, design: .rounded))
-                .foregroundStyle(.white)
+                .foregroundColor(.white)
         }
     }
 
@@ -480,18 +480,18 @@ struct PillOverlayView: View {
         HStack(spacing: 8) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(.yellow)
+                .foregroundColor(.yellow)
 
             Text(state.errorMessage)
                 .font(.system(size: 11, weight: .medium, design: .rounded))
                 .lineLimit(2)
-                .foregroundStyle(.white)
+                .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Button(action: onRetryButtonPressed) {
                 Text("Retry")
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.white)
+                    .foregroundColor(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
                     .background(Capsule().fill(Color.blue.opacity(0.85)))
@@ -582,7 +582,7 @@ struct RecordingTimerView: View {
     var body: some View {
         Text(formattedTime)
             .font(.system(size: 13, weight: .medium, design: .monospaced))
-            .foregroundStyle(.white.opacity(0.8))
+            .foregroundColor(.white.opacity(0.8))
             .fixedSize()
             .onAppear {
                 timer?.invalidate()

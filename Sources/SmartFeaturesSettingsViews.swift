@@ -15,7 +15,7 @@ struct SmartModesSettingsView: View {
                         .fontWeight(.semibold)
                     Text("FlowKeys automatically adjusts dictation behavior based on context or manual selection.")
                         .font(.body)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
                 .padding(.horizontal)
                 
@@ -29,7 +29,7 @@ struct SmartModesSettingsView: View {
                             .font(.headline)
                         Text("Automatically activate modes based on the app you are typing in (e.g. Code mode in VS Code, Email mode in Mail).")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                     }
                 }
                 .padding()
@@ -71,7 +71,7 @@ private struct ModeRow: View {
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(Color.blue.opacity(0.2))
-                            .foregroundStyle(.blue)
+                            .foregroundColor(.blue)
                             .clipShape(RoundedRectangle(cornerRadius: 4))
                     }
                 }
@@ -79,7 +79,7 @@ private struct ModeRow: View {
                 if !mode.activateForApps.isEmpty {
                     Text("Auto-activates in: \(mode.activateForApps.count) apps")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
             }
             
@@ -118,7 +118,7 @@ struct SnippetsSettingsView: View {
                         .fontWeight(.semibold)
                     Text("Expand short phrases into full text (e.g. say \"my sign\" → types \"Best regards, Adarsha\").")
                         .font(.body)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
                 Spacer()
                 Button {
@@ -162,13 +162,13 @@ struct SnippetsSettingsView: View {
             Spacer()
             Image(systemName: "text.badge.plus")
                 .font(.system(size: 40))
-                .foregroundStyle(.tertiary)
+                .foregroundColor(.secondary)
             Text("No Snippets Found")
                 .font(.headline)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
             Text("Add terms like 'my intro' or 'my upi id' to instantly expand them while dictating.")
                 .font(.subheadline)
-                .foregroundStyle(.tertiary)
+                .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 300)
             Button("Add Suggested") {
@@ -190,7 +190,7 @@ struct SnippetsSettingsView: View {
             VStack(alignment: .leading) {
                 Text("When I say:")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                 TextField("e.g. my address", text: $newTrigger)
                     .textFieldStyle(.roundedBorder)
             }
@@ -198,7 +198,7 @@ struct SnippetsSettingsView: View {
             VStack(alignment: .leading) {
                 Text("Replace it with:")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                 TextEditor(text: $newReplacement)
                     .frame(height: 80)
                     .font(.body)
@@ -236,10 +236,10 @@ private struct SnippetRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(snippet.trigger)
                     .font(.headline)
-                    .foregroundStyle(.primary)
+                    .foregroundColor(.primary)
                 Text(snippet.replacement)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                     .lineLimit(2)
             }
             Spacer()
@@ -257,7 +257,7 @@ private struct SnippetRow: View {
                 
                 Text(snippet.usageCount > 0 ? "Used \(snippet.usageCount) times" : "Never used")
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .foregroundColor(.secondary)
             }
         }
         .padding(.vertical, 4)
@@ -280,7 +280,7 @@ struct DictionarySettingsView: View {
                         .fontWeight(.semibold)
                     Text("FlowKeys automatically learns proper nouns and complex words you use often.")
                         .font(.body)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
                 Spacer()
             }
@@ -335,13 +335,13 @@ struct DictionarySettingsView: View {
             Spacer()
             Image(systemName: "character.book.closed")
                 .font(.system(size: 40))
-                .foregroundStyle(.tertiary)
+                .foregroundColor(.secondary)
             Text("Dictionary is Learning")
                 .font(.headline)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
             Text("Speak naturally! FlowKeys will automatically identify and learn uncommon names and terms you use 3 or more times.")
                 .font(.subheadline)
-                .foregroundStyle(.tertiary)
+                .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 300)
             Spacer()
@@ -365,11 +365,11 @@ private struct DictionaryRow: View {
                         .padding(.horizontal, 4)
                         .padding(.vertical, 2)
                         .background(sourceColor.opacity(0.2))
-                        .foregroundStyle(sourceColor)
+                        .foregroundColor(sourceColor)
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                     Text("Used \(entry.frequency) times")
                         .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                        .foregroundColor(.secondary)
                 }
             }
             Spacer()

@@ -54,7 +54,7 @@ struct PipelineDebugContentView: View {
             if contextSummary.isEmpty && rawTranscript.isEmpty && postProcessedTranscript.isEmpty && postProcessingPrompt.isEmpty {
                 Text("No debug data for this entry.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
         }
         .padding(.vertical, 4)
@@ -91,7 +91,7 @@ struct PipelineDebugContentView: View {
                 .font(.body.bold())
             Text("Status: \(status)")
                 .font(.caption)
-                .foregroundStyle(isScreenshotUnavailable(status) ? .red : .secondary)
+                .foregroundColor(isScreenshotUnavailable(status) ? .red : .secondary)
 
             if let dataURL,
                let image = imageFromDataURL(dataURL) {
@@ -108,7 +108,7 @@ struct PipelineDebugContentView: View {
                 if let payloadBytes = screenshotPayloadBytes(dataURL: dataURL) {
                     Text("Screenshot payload: \(payloadBytes / 1024) KB (Base64)")
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
 
                 HStack(spacing: 8) {
@@ -126,7 +126,7 @@ struct PipelineDebugContentView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("No screenshot image available.")
                         .font(.callout)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                         .padding(10)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

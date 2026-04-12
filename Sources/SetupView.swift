@@ -111,7 +111,7 @@ struct SetupView: View {
                                         }
                                     }
                                     .buttonStyle(.plain)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundColor(.secondary)
 
                                     Button("Continue") {
                                         stopTestHotkeyMonitoring()
@@ -213,7 +213,7 @@ struct SetupView: View {
 
                 Text("FlowKeys lets you pick your preferred provider now,\nand you can switch providers later in Settings.")
                     .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
@@ -227,19 +227,19 @@ struct SetupView: View {
             HStack(spacing: 8) {
                 Image(systemName: "chevron.left.forwardslash.chevron.right")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
 
                 Text("Made by ")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                 +
                 Text("Adarsha")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.primary)
+                    .foregroundColor(.primary)
 
                 Text("·")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
 
                 Button {
                     openURL(flowKeysRepoURL)
@@ -252,7 +252,7 @@ struct SetupView: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
                 if githubCache.isLoading {
                     ProgressView().scaleEffect(0.45)
@@ -260,10 +260,10 @@ struct SetupView: View {
                     HStack(spacing: 3) {
                         Image(systemName: "star.fill")
                             .font(.caption2)
-                            .foregroundStyle(.yellow)
+                            .foregroundColor(.yellow)
                         Text("\(count)")
                             .font(.caption2.weight(.semibold))
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.horizontal, 7)
                     .padding(.vertical, 3)
@@ -303,7 +303,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "key.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Enter Your \(selectedProvider.displayName) API Key")
                 .font(.title)
@@ -311,7 +311,7 @@ struct SetupView: View {
 
             Text(selectedProvider.shortDescription)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 10) {
@@ -328,7 +328,7 @@ struct SetupView: View {
                             }
                         }
                         .buttonStyle(.plain)
-                        .foregroundStyle(.blue)
+                        .foregroundColor(.blue)
                     }
                 }
                 .padding(10)
@@ -351,7 +351,7 @@ struct SetupView: View {
 
                     if let error = keyValidationError {
                         Label(error, systemImage: "xmark.circle.fill")
-                            .foregroundStyle(.red)
+                            .foregroundColor(.red)
                             .font(.caption)
                     }
                 }
@@ -363,7 +363,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "mic.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Microphone Access")
                 .font(.title)
@@ -371,20 +371,20 @@ struct SetupView: View {
 
             Text("FlowKeys needs access to your microphone to record audio for transcription.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             HStack {
                 Image(systemName: "mic.fill")
                     .frame(width: 24)
-                    .foregroundStyle(.blue)
+                    .foregroundColor(.blue)
                 Text("Microphone")
                 Spacer()
                 if micPermissionGranted {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .foregroundColor(.green)
                     Text("Granted")
-                        .foregroundStyle(.green)
+                        .foregroundColor(.green)
                 } else {
                     Button("Grant Access") {
                         requestMicPermission()
@@ -401,7 +401,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "hand.raised.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Accessibility Access")
                 .font(.title)
@@ -409,20 +409,20 @@ struct SetupView: View {
 
             Text("FlowKeys needs Accessibility access to paste transcribed text into your apps.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             HStack {
                 Image(systemName: "hand.raised.fill")
                     .frame(width: 24)
-                    .foregroundStyle(.blue)
+                    .foregroundColor(.blue)
                 Text("Accessibility")
                 Spacer()
                 if accessibilityGranted {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .foregroundColor(.green)
                     Text("Granted")
-                        .foregroundStyle(.green)
+                        .foregroundColor(.green)
                 } else {
                     Button("Open Settings") {
                         requestAccessibility()
@@ -436,7 +436,7 @@ struct SetupView: View {
             if !accessibilityGranted {
                 Text("Note: If you rebuilt the app, you may need to\nremove and re-add it in Accessibility settings.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
             }
         }
@@ -448,7 +448,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "camera.viewfinder")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Screen Recording")
                 .font(.title)
@@ -456,26 +456,26 @@ struct SetupView: View {
 
             Text("FlowKeys intelligently adapts the transcription to the current app you're working in (e.g. spelling names in an email correctly).")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             Text("It needs this permission to see which app you're working in and any in-progress work. Nothing is stored on FlowKeys servers.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .font(.callout)
                 .fixedSize(horizontal: false, vertical: true)
 
             HStack {
                 Image(systemName: "camera.viewfinder")
                     .frame(width: 24)
-                    .foregroundStyle(.blue)
+                    .foregroundColor(.blue)
                 Text("Screen Recording")
                 Spacer()
                 if appState.hasScreenRecordingPermission {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
+                        .foregroundColor(.green)
                     Text("Granted")
-                        .foregroundStyle(.green)
+                        .foregroundColor(.green)
                 } else {
                     Button("Grant Access") {
                         appState.requestScreenCapturePermission()
@@ -494,7 +494,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "keyboard.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Hold to Talk Shortcut")
                 .font(.title)
@@ -502,7 +502,7 @@ struct SetupView: View {
 
             Text("Choose the shortcut you want to hold while speaking.\nRelease it to stop unless you latch into tap mode later, or disable hold-to-talk entirely.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             ShortcutRoleSection(
@@ -519,7 +519,7 @@ struct SetupView: View {
             if appState.holdShortcut.usesFnKey {
                 Text("Tip: If Fn opens Emoji picker, go to System Settings > Keyboard and change \"Press fn key to\" to \"Do Nothing\".")
                     .font(.caption)
-                    .foregroundStyle(.orange)
+                    .foregroundColor(.orange)
                     .multilineTextAlignment(.center)
             }
         }
@@ -529,7 +529,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "switch.2")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Tap to Toggle Shortcut")
                 .font(.title)
@@ -537,7 +537,7 @@ struct SetupView: View {
 
             Text("Choose the shortcut you want to tap once to start dictating and tap again to stop.\nIf this shortcut becomes active while you are holding the hold shortcut, FlowKeys latches into tap mode. You can also disable tap-to-toggle entirely.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             ShortcutRoleSection(
@@ -554,7 +554,7 @@ struct SetupView: View {
             if appState.toggleShortcut.usesFnKey {
                 Text("Tip: If Fn opens Emoji picker, go to System Settings > Keyboard and change \"Press fn key to\" to \"Do Nothing\".")
                     .font(.caption)
-                    .foregroundStyle(.orange)
+                    .foregroundColor(.orange)
                     .multilineTextAlignment(.center)
             }
         }
@@ -564,7 +564,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "text.badge.plus")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Quick Snippets")
                 .font(.title)
@@ -572,7 +572,7 @@ struct SetupView: View {
 
             Text("Define shorthand phrases (like 'my email') that automatically expand to full text during transcription.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 10) {
@@ -580,7 +580,7 @@ struct SetupView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("When I say...")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                         TextField("e.g. my email", text: $newSnippetTrigger)
                             .textFieldStyle(.roundedBorder)
                     }
@@ -588,7 +588,7 @@ struct SetupView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Replace with...")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                         TextField("e.g. adarsha@example.com", text: $newSnippetReplacement)
                             .textFieldStyle(.roundedBorder)
                     }
@@ -613,7 +613,7 @@ struct SetupView: View {
             if !appState.snippetEngine.snippets.isEmpty {
                 Text("\(appState.snippetEngine.snippets.count) snippet(s) configured. Manage them later in Settings.")
                     .font(.caption)
-                    .foregroundStyle(.green)
+                    .foregroundColor(.green)
             }
         }
     }
@@ -622,7 +622,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "text.book.closed.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Custom Vocabulary")
                 .font(.title)
@@ -630,7 +630,7 @@ struct SetupView: View {
 
             Text("Add words and phrases that should be preserved in post-processing.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 8) {
@@ -647,7 +647,7 @@ struct SetupView: View {
 
                 Text("Separate entries with commas, new lines, or semicolons.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
         }
     }
@@ -656,7 +656,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "sunrise.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
 
             Text("Launch at Login")
                 .font(.title)
@@ -664,13 +664,13 @@ struct SetupView: View {
 
             Text("Start FlowKeys automatically when you log in so it's always ready.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             HStack {
                 Image(systemName: "sunrise.fill")
                     .frame(width: 24)
-                    .foregroundStyle(.blue)
+                    .foregroundColor(.blue)
                 Toggle("Launch FlowKeys at login", isOn: $appState.launchAtLogin)
             }
             .padding(12)
@@ -692,7 +692,7 @@ struct SetupView: View {
 
                 Text("You can change this later in the menu bar or settings.")
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .foregroundColor(.secondary)
             }
 
             Spacer()
@@ -703,7 +703,7 @@ struct SetupView: View {
                     VStack(spacing: 20) {
                         Image(systemName: "mic.fill")
                             .font(.system(size: 60))
-                            .foregroundStyle(.blue)
+                            .foregroundColor(.blue)
                             .scaleEffect(testMicPulsing ? 1.15 : 1.0)
                             .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: testMicPulsing)
 
@@ -719,7 +719,7 @@ struct SetupView: View {
                             .cornerRadius(10)
 
                         Text("Say anything — a sentence or two is perfect.")
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
                     }
 
@@ -741,7 +741,7 @@ struct SetupView: View {
                         Text("Listening...")
                             .font(.title2)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.blue)
+                            .foregroundColor(.blue)
                     }
 
                 case .transcribing:
@@ -751,14 +751,14 @@ struct SetupView: View {
                         Text("Transcribing...")
                             .font(.title2)
                             .fontWeight(.semibold)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                     }
 
                 case .done:
                     VStack(spacing: 16) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 60))
-                            .foregroundStyle(.green)
+                            .foregroundColor(.green)
 
                         if let error = testError {
                             Text("Something went wrong")
@@ -767,21 +767,21 @@ struct SetupView: View {
 
                             Text(error)
                                 .font(.callout)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
 
                             Text(retryShortcutPrompt)
                                 .font(.callout)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                         } else if testTranscript.isEmpty {
                             Text("No speech detected")
                                 .font(.title2)
                                 .fontWeight(.semibold)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
 
                             Text(retryShortcutPrompt)
                                 .font(.callout)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                         } else {
                             Text("Perfect — FlowKeys is ready to go.")
                                 .font(.title2)
@@ -797,7 +797,7 @@ struct SetupView: View {
 
                             Text(retryShortcutPrompt)
                                 .font(.callout)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                         }
                     }
                 }
@@ -821,7 +821,7 @@ struct SetupView: View {
         VStack(spacing: 20) {
             Image(systemName: "checkmark.circle.fill")
                 .font(.system(size: 60))
-                .foregroundStyle(.green)
+                .foregroundColor(.green)
 
             Text("You're All Set!")
                 .font(.title)
@@ -829,7 +829,7 @@ struct SetupView: View {
 
             Text("FlowKeys lives in your menu bar.")
                 .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             VStack(alignment: .leading, spacing: 12) {
                 if appState.hasEnabledHoldShortcut {
@@ -866,16 +866,16 @@ struct SetupView: View {
         } label: {
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: selectedProvider == provider ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(selectedProvider == provider ? .blue : .secondary)
+                    .foregroundColor(selectedProvider == provider ? .blue : .secondary)
                     .font(.system(size: 18, weight: .semibold))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text(provider.displayName)
                         .font(.headline)
-                        .foregroundStyle(.primary)
+                        .foregroundColor(.primary)
                     Text(provider.shortDescription)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                         .multilineTextAlignment(.leading)
                 }
 
@@ -935,7 +935,7 @@ struct SetupView: View {
         HStack(alignment: .top, spacing: 6) {
             Text(number + ".")
                 .font(.subheadline.monospacedDigit())
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .frame(width: 16, alignment: .trailing)
             Text(text)
                 .font(.subheadline)
@@ -1243,9 +1243,9 @@ struct HowToRow: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .frame(width: 24)
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
             Text(text)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
         }
     }
 }

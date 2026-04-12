@@ -22,7 +22,7 @@ struct PipelineDebugPanelView: View {
             if appState.lastContextSummary.isEmpty && appState.lastRawTranscript.isEmpty {
                 Text("Run a dictation pass to populate debug output.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
 
             Spacer()
@@ -37,7 +37,7 @@ struct PipelineDebugPanelView: View {
                 .font(.title3)
             Text("Live data for the transcription + post-processing pipeline.")
                 .font(.body)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
         }
     }
 }

@@ -21,7 +21,7 @@ struct DictationShortcutEditor: View {
             if showsIntroText {
                 Text("Hold to record, tap to start and stop, and press the toggle shortcut while holding to latch into tap mode. You can disable either workflow if you only want one.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
 
             ShortcutRoleSection(
@@ -52,12 +52,12 @@ struct DictationShortcutEditor: View {
 
             Text("Custom shortcuts can use regular keys, modifier-only shortcuts, or modifier combinations.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             if appState.usesFnShortcut {
                 Text("Tip: If Fn opens the Emoji picker, go to System Settings > Keyboard and change \"Press fn key to\" to \"Do Nothing\".")
                     .font(.caption)
-                    .foregroundStyle(.orange)
+                    .foregroundColor(.orange)
             }
         }
         .onChange(of: activeCaptureRole) { role in
@@ -109,7 +109,7 @@ struct ShortcutRoleSection: View {
             if let validationMessage, !validationMessage.isEmpty {
                 Label(validationMessage, systemImage: "xmark.circle.fill")
                     .font(.caption)
-                    .foregroundStyle(.red)
+                    .foregroundColor(.red)
             }
         }
     }
@@ -124,9 +124,9 @@ private struct ShortcutPresetRow: View {
         Button(action: action) {
             HStack {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? .blue : .secondary)
+                    .foregroundColor(isSelected ? .blue : .secondary)
                 Text(title)
-                    .foregroundStyle(.primary)
+                    .foregroundColor(.primary)
                 Spacer()
             }
             .padding(12)
@@ -165,15 +165,15 @@ private struct ShortcutCaptureRow: View {
                 } label: {
                     HStack(alignment: .center, spacing: 10) {
                         Image(systemName: isSelected ? "checkmark.circle.fill" : (savedBinding == nil ? "plus.circle" : "circle"))
-                            .foregroundStyle(isSelected ? .blue : .secondary)
+                            .foregroundColor(isSelected ? .blue : .secondary)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(displayedBindingName)
                                 .font(displayedBindingUsesMonospace ? .system(.body, design: .monospaced).weight(.semibold) : .body)
-                                .foregroundStyle(.primary)
+                                .foregroundColor(.primary)
                             Text(displayedBindingSubtitle)
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                         }
 
                         Spacer()
@@ -214,7 +214,7 @@ private struct ShortcutCaptureRow: View {
                     systemImage: "keyboard"
                 )
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.blue)
+                    .foregroundColor(.blue)
             }
         }
         .onDisappear {

@@ -15,13 +15,13 @@ struct FileTranscriptionView: View {
             VStack(spacing: 8) {
                 Image(systemName: "waveform.and.person.filled")
                     .font(.system(size: 40))
-                    .foregroundStyle(Color(nsColor: .controlAccentColor))
+                    .foregroundColor(Color(nsColor: .controlAccentColor))
                 Text("File Transcription")
                     .font(.title)
                     .fontWeight(.semibold)
                 Text("Process existing audio or video files.")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
             .padding(.top, 20)
             
@@ -30,13 +30,13 @@ struct FileTranscriptionView: View {
                 if let url = selectedFileURL {
                     HStack {
                         Image(systemName: "doc.fill")
-                            .foregroundStyle(.blue)
+                            .foregroundColor(.blue)
                         Text(url.lastPathComponent)
                             .font(.headline)
                         Spacer()
                         Button(action: { selectedFileURL = nil }) {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                         }
                         .buttonStyle(.plain)
                     }
@@ -52,7 +52,7 @@ struct FileTranscriptionView: View {
                                 .font(.headline)
                             Text("MP3, M4A, WAV, MP4, MOV")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 30)
@@ -72,7 +72,7 @@ struct FileTranscriptionView: View {
                     Text("Apply Smart Formatting")
                     Text("Expands snippets, learns vocabulary, and applies the active dictation mode.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
             }
             .padding(.horizontal)
@@ -85,7 +85,7 @@ struct FileTranscriptionView: View {
                             .controlSize(.small)
                         Text(progressText)
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                     }
                 } else if !transcriptResult.isEmpty {
                     ScrollView {

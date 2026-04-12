@@ -48,7 +48,7 @@ struct MenuBarView: View {
         HStack {
             Image(systemName: "mic.circle.fill")
                 .font(.system(size: 16))
-                .foregroundStyle(accentColor)
+                .foregroundColor(accentColor)
             Text("FlowKeys")
                 .font(.system(size: 14, weight: .semibold, design: .rounded))
             Spacer()
@@ -57,7 +57,7 @@ struct MenuBarView: View {
             } label: {
                 Image(systemName: "gearshape.fill")
                     .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
             .buttonStyle(.plain)
 
@@ -68,7 +68,7 @@ struct MenuBarView: View {
             } label: {
                 Image(systemName: "questionmark.circle")
                     .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
             .buttonStyle(.plain)
         }
@@ -88,7 +88,7 @@ struct MenuBarView: View {
             }
             Text(shortcutHint)
                 .font(.system(size: 10, weight: .regular, design: .monospaced))
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
@@ -127,7 +127,7 @@ struct MenuBarView: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("MODE")
                 .font(.system(size: 9, weight: .bold))
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .tracking(1.2)
 
             HStack(spacing: 4) {
@@ -174,7 +174,7 @@ struct MenuBarView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("TONE")
                 .font(.system(size: 9, weight: .bold))
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .tracking(1.2)
 
             // Replaced ScrollView with a fixed 2-row grid so all tones are visible without scrolling
@@ -203,7 +203,7 @@ struct MenuBarView: View {
                     Text("Custom modes")
                         .font(.system(size: 11))
                 }
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
             }
             .buttonStyle(.plain)
         }
@@ -226,7 +226,7 @@ struct MenuBarView: View {
                     .font(.system(size: 14))
                 Text(name)
                     .font(.system(size: 11, weight: isActive ? .semibold : .regular))
-                    .foregroundStyle(isActive ? accentColor : .primary)
+                    .foregroundColor(isActive ? accentColor : .primary)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 7)
@@ -258,7 +258,7 @@ struct MenuBarView: View {
                         ? String(appState.lastTranscript.prefix(80)) + "…"
                         : appState.lastTranscript)
                         .font(.system(size: 11))
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                         .lineLimit(3)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -268,7 +268,7 @@ struct MenuBarView: View {
                     }
                     .font(.system(size: 10))
                     .buttonStyle(.plain)
-                    .foregroundStyle(accentColor)
+                    .foregroundColor(accentColor)
                 }
                 .padding(8)
                 .background(
@@ -278,7 +278,7 @@ struct MenuBarView: View {
             } else {
                 Text("No recent transcriptions")
                     .font(.system(size: 10))
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
         }
         .padding(.horizontal, 16)
@@ -317,7 +317,7 @@ struct MenuBarView: View {
 
             if let error = appState.errorMessage {
                 Text(error)
-                    .foregroundStyle(.red)
+                    .foregroundColor(.red)
                     .font(.system(size: 10))
                     .lineLimit(2)
             }
@@ -331,7 +331,7 @@ struct MenuBarView: View {
             Label(label, systemImage: icon)
         }
         .buttonStyle(.plain)
-        .foregroundStyle(.white)
+        .foregroundColor(.white)
         .font(.system(size: 10, weight: .semibold))
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
@@ -345,7 +345,7 @@ struct MenuBarView: View {
         HStack {
             Text("Provider:")
                 .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             Text(appState.activeTranscriptionProvider.displayName)
                 .font(.system(size: 10, weight: .semibold))
@@ -360,7 +360,7 @@ struct MenuBarView: View {
             }
             .font(.system(size: 10))
             .buttonStyle(.plain)
-            .foregroundStyle(accentColor)
+            .foregroundColor(accentColor)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
@@ -375,7 +375,7 @@ struct MenuBarView: View {
                 VStack(spacing: 4) {
                     Text("Downloading update... \(Int((updateManager.downloadProgress ?? 0) * 100))%")
                         .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.white)
+                        .foregroundColor(.white)
                     ProgressView(value: updateManager.downloadProgress ?? 0)
                         .progressViewStyle(.linear)
                         .tint(.white)
@@ -391,7 +391,7 @@ struct MenuBarView: View {
                     Text("Installing...")
                         .font(.system(size: 10, weight: .semibold))
                 }
-                .foregroundStyle(.white)
+                .foregroundColor(.white)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 6)
                 .frame(maxWidth: .infinity)
@@ -404,7 +404,7 @@ struct MenuBarView: View {
                     Label("Update Available", systemImage: "arrow.down.circle.fill")
                 }
                 .buttonStyle(.plain)
-                .foregroundStyle(.white)
+                .foregroundColor(.white)
                 .font(.system(size: 10, weight: .semibold))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 6)
@@ -420,7 +420,7 @@ struct MenuBarView: View {
         HStack {
             Text("v\(appVersion)")
                 .font(.system(size: 9))
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
             Spacer()
             Button("Transcribe File...") {
                 NotificationCenter.default.post(name: .showFileTranscription, object: nil)

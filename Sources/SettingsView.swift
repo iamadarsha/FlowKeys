@@ -127,7 +127,7 @@ struct GeneralSettingsView: View {
 
                     Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
 
                     // GitHub card
                     VStack(spacing: 10) {
@@ -150,20 +150,20 @@ struct GeneralSettingsView: View {
                                     .font(.system(.caption, design: .monospaced).weight(.medium))
                             }
                             .buttonStyle(.plain)
-                            .foregroundStyle(.blue)
+                            .foregroundColor(.blue)
 
                             Spacer()
 
                             HStack(spacing: 4) {
                                 Image(systemName: "star.fill")
-                                    .foregroundStyle(.yellow)
+                                    .foregroundColor(.yellow)
                                     .font(.caption2)
                                 if githubCache.isLoading {
                                     ProgressView().scaleEffect(0.5)
                                 } else if let count = githubCache.starCount {
                                     Text("\(count.formatted()) \(count == 1 ? "star" : "stars")")
                                         .font(.caption2.weight(.semibold))
-                                        .foregroundStyle(.secondary)
+                                        .foregroundColor(.secondary)
                                 }
                             }
                             .padding(.horizontal, 8)
@@ -211,7 +211,7 @@ struct GeneralSettingsView: View {
                                 .clipped()
                                 Text("recently starred")
                                     .font(.caption2)
-                                    .foregroundStyle(.tertiary)
+                                    .foregroundColor(.secondary)
                                     .fixedSize()
                                 Spacer()
                             }
@@ -283,11 +283,11 @@ struct GeneralSettingsView: View {
             if SMAppService.mainApp.status == .requiresApproval {
                 HStack(spacing: 6) {
                     Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundStyle(.orange)
+                        .foregroundColor(.orange)
                         .font(.caption)
                     Text("Login item requires approval in System Settings.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                     Button("Open Login Items Settings") {
                         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.LoginItems-Settings.extension")!)
                     }
@@ -327,7 +327,7 @@ struct GeneralSettingsView: View {
                 if let lastCheck = updateManager.lastCheckDate {
                     Text("Last checked: \(lastCheck.formatted(date: .abbreviated, time: .shortened))")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
             }
 
@@ -337,7 +337,7 @@ struct GeneralSettingsView: View {
                     case .downloading:
                         HStack(spacing: 8) {
                             Image(systemName: "arrow.down.circle.fill")
-                                .foregroundStyle(.blue)
+                                .foregroundColor(.blue)
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Downloading update...")
                                     .font(.caption.weight(.semibold))
@@ -346,7 +346,7 @@ struct GeneralSettingsView: View {
                                 if let progress = updateManager.downloadProgress {
                                     Text("\(Int(progress * 100))%")
                                         .font(.caption2)
-                                        .foregroundStyle(.secondary)
+                                        .foregroundColor(.secondary)
                                 }
                             }
                             Spacer()
@@ -375,10 +375,10 @@ struct GeneralSettingsView: View {
                     case .error(let message):
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundStyle(.red)
+                                .foregroundColor(.red)
                             Text(message)
                                 .font(.caption)
-                                .foregroundStyle(.red)
+                                .foregroundColor(.red)
                             Spacer()
                             Button("Retry") {
                                 updateManager.updateStatus = .idle
@@ -392,7 +392,7 @@ struct GeneralSettingsView: View {
                     case .idle:
                         HStack(spacing: 8) {
                             Image(systemName: "arrow.down.circle.fill")
-                                .foregroundStyle(.blue)
+                                .foregroundColor(.blue)
                             Text("A new version of FlowKeys is available!")
                                 .font(.caption.weight(.semibold))
                             Spacer()
@@ -418,7 +418,7 @@ struct GeneralSettingsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Configure API keys per provider. Keys are stored in the macOS Keychain.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             HStack(alignment: .center, spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
@@ -455,11 +455,11 @@ struct GeneralSettingsView: View {
 
             if let error = keyValidationError {
                 Label(error, systemImage: "xmark.circle.fill")
-                    .foregroundStyle(.red)
+                    .foregroundColor(.red)
                     .font(.caption)
             } else if keyValidationSuccess {
                 Label("API key saved", systemImage: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                    .foregroundColor(.green)
                     .font(.caption)
             }
 
@@ -476,18 +476,18 @@ struct GeneralSettingsView: View {
                                 .font(.subheadline.weight(.semibold))
                             Text(provider.shortDescription)
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                         }
                         Spacer()
                         Text(appState.hasAPIKey(for: provider) ? "✅ Configured" : "⚠️ Not set")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(appState.hasAPIKey(for: provider) ? .green : .orange)
+                            .foregroundColor(appState.hasAPIKey(for: provider) ? .green : .orange)
                     }
 
                     HStack(spacing: 8) {
                         Text(appState.hasAPIKey(for: provider) ? appState.maskedAPIKey(for: provider) : "No key saved")
                             .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
 
                         Spacer()
 
@@ -507,7 +507,7 @@ struct GeneralSettingsView: View {
                                 editingProviderKey = ""
                             }
                             .buttonStyle(.plain)
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                         } else {
                             Button("Edit") {
                                 editingProvider = provider
@@ -527,7 +527,7 @@ struct GeneralSettingsView: View {
                         HStack(spacing: 10) {
                             Text("Get key:")
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                             Button("Open provider console →") {
                                 if let url = URL(string: provider.apiKeyURL) {
                                     openURL(url)
@@ -548,7 +548,7 @@ struct GeneralSettingsView: View {
                         .font(.caption.weight(.semibold))
                     Text("Uses `curl --http2` for audio transcription uploads. Leave this off unless the default transport is failing.")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
 
                 Spacer(minLength: 0)
@@ -610,7 +610,7 @@ struct GeneralSettingsView: View {
                     Spacer()
                     Text("\(appState.shortcutStartDelayMilliseconds) ms")
                         .font(.caption.monospacedDigit())
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
 
                 Slider(
@@ -621,7 +621,7 @@ struct GeneralSettingsView: View {
 
                 Text("Applies before recording starts for both hold and tap shortcuts. Stopping still happens immediately.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
             }
         }
     }
@@ -634,7 +634,7 @@ struct GeneralSettingsView: View {
 
             Text("FlowKeys will temporarily place the transcript on your clipboard to paste it, then restore whatever was there before. If you copy something else before the restore happens, FlowKeys leaves it alone.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
         }
     }
 
@@ -657,7 +657,7 @@ struct GeneralSettingsView: View {
 
             Text("Controls how FlowKeys processes your speech. Hinglish mode enables Hindi-English code-switching support with Indian vocabulary awareness. Hindi mode optimizes for pure Hindi. English mode is the default.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
         }
     }
 
@@ -667,7 +667,7 @@ struct GeneralSettingsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Select which microphone to use for recording.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             VStack(spacing: 6) {
                 MicrophoneOptionRow(
@@ -695,19 +695,19 @@ struct GeneralSettingsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Adjust the volume of feedback sounds.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             HStack(spacing: 12) {
                 Image(systemName: "speaker.fill")
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                     .font(.caption)
                 Slider(value: $appState.soundVolume, in: 0...1, step: 0.1)
                 Image(systemName: "speaker.wave.3.fill")
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                     .font(.caption)
                 Text("\(Int(appState.soundVolume * 100))%")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                     .frame(width: 36, alignment: .trailing)
             }
 
@@ -724,7 +724,7 @@ struct GeneralSettingsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Words and phrases to preserve during post-processing.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             TextEditor(text: $customVocabularyInput)
                 .font(.system(.body, design: .monospaced))
@@ -739,7 +739,7 @@ struct GeneralSettingsView: View {
 
             Text("Separate entries with commas, new lines, or semicolons.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
         }
     }
 
@@ -784,15 +784,15 @@ struct GeneralSettingsView: View {
         HStack {
             Image(systemName: icon)
                 .frame(width: 20)
-                .foregroundStyle(.blue)
+                .foregroundColor(.blue)
             Text(title)
             Spacer()
             if granted {
                 Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(.green)
+                    .foregroundColor(.green)
                 Text("Granted")
                     .font(.caption)
-                    .foregroundStyle(.green)
+                    .foregroundColor(.green)
             } else {
                 Button("Grant Access") {
                     action()
@@ -822,9 +822,9 @@ struct MicrophoneOptionRow: View {
         Button(action: action) {
             HStack {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(isSelected ? .blue : .secondary)
+                    .foregroundColor(isSelected ? .blue : .secondary)
                 Text(name)
-                    .foregroundStyle(.primary)
+                    .foregroundColor(.primary)
                 Spacer()
             }
             .padding(12)
@@ -894,12 +894,12 @@ struct PromptsSettingsView: View {
         return VStack(alignment: .leading, spacing: 10) {
             Text("Controls how raw transcriptions are cleaned up.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             if hasNewerDefault {
                 HStack(spacing: 8) {
                     Image(systemName: "arrow.triangle.2.circlepath")
-                        .foregroundStyle(.blue)
+                        .foregroundColor(.blue)
                     Text("A newer default prompt is available.")
                         .font(.caption.weight(.semibold))
                     Spacer()
@@ -932,7 +932,7 @@ struct PromptsSettingsView: View {
                     }
                     Text(PostProcessingService.defaultSystemPrompt)
                         .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                         .textSelection(.enabled)
                 }
                 .padding(10)
@@ -968,11 +968,11 @@ struct PromptsSettingsView: View {
                 if isCustom {
                     Label("Using custom prompt", systemImage: "pencil")
                         .font(.caption)
-                        .foregroundStyle(.blue)
+                        .foregroundColor(.blue)
                 } else {
                     Label("Using default", systemImage: "checkmark.circle")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
                 Spacer()
                 if isCustom {
@@ -993,7 +993,7 @@ struct PromptsSettingsView: View {
                     .font(.caption.weight(.semibold))
                 Text("Enter sample text to see how the current prompt cleans it up.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
 
                 TextEditor(text: $systemTestInput)
                     .font(.system(.body, design: .monospaced))
@@ -1022,13 +1022,13 @@ struct PromptsSettingsView: View {
                 if appState.currentLLMAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     Label("API key required to test", systemImage: "exclamationmark.triangle")
                         .font(.caption)
-                        .foregroundStyle(.orange)
+                        .foregroundColor(.orange)
                 }
 
                 if let error = systemTestError {
                     Label(error, systemImage: "xmark.circle.fill")
                         .font(.caption)
-                        .foregroundStyle(.red)
+                        .foregroundColor(.red)
                 }
 
                 if let output = systemTestOutput {
@@ -1053,7 +1053,7 @@ struct PromptsSettingsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                 }
             }
         }
@@ -1119,12 +1119,12 @@ struct PromptsSettingsView: View {
         return VStack(alignment: .leading, spacing: 10) {
             Text("Controls how FlowKeys infers your current activity from app metadata and screenshots.")
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
 
             if hasNewerDefault {
                 HStack(spacing: 8) {
                     Image(systemName: "arrow.triangle.2.circlepath")
-                        .foregroundStyle(.blue)
+                        .foregroundColor(.blue)
                     Text("A newer default prompt is available.")
                         .font(.caption.weight(.semibold))
                     Spacer()
@@ -1157,7 +1157,7 @@ struct PromptsSettingsView: View {
                     }
                     Text(AppContextService.defaultContextPrompt)
                         .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                         .textSelection(.enabled)
                 }
                 .padding(10)
@@ -1193,11 +1193,11 @@ struct PromptsSettingsView: View {
                 if isCustom {
                     Label("Using custom prompt", systemImage: "pencil")
                         .font(.caption)
-                        .foregroundStyle(.blue)
+                        .foregroundColor(.blue)
                 } else {
                     Label("Using default", systemImage: "checkmark.circle")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                 }
                 Spacer()
                 if isCustom {
@@ -1218,7 +1218,7 @@ struct PromptsSettingsView: View {
                     .font(.caption.weight(.semibold))
                 Text("Captures a screenshot and metadata from the frontmost app, then runs the context prompt to infer activity.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
 
                 Button {
                     runContextPromptTest()
@@ -1239,13 +1239,13 @@ struct PromptsSettingsView: View {
                 if appState.currentLLMAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     Label("API key required to test", systemImage: "exclamationmark.triangle")
                         .font(.caption)
-                        .foregroundStyle(.orange)
+                        .foregroundColor(.orange)
                 }
 
                 if let error = contextTestError {
                     Label(error, systemImage: "xmark.circle.fill")
                         .font(.caption)
-                        .foregroundStyle(.red)
+                        .foregroundColor(.red)
                 }
 
                 if let output = contextTestOutput {
@@ -1270,7 +1270,7 @@ struct PromptsSettingsView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                 }
             }
         }
@@ -1325,7 +1325,7 @@ struct RunLogView: View {
                         .font(.headline)
                     Text("Stored locally. Only the \(appState.maxPipelineHistoryCount) most recent runs are kept.")
                         .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .foregroundColor(.secondary)
                 }
                 Spacer()
                 Button("Clear History") {
@@ -1343,7 +1343,7 @@ struct RunLogView: View {
                 VStack {
                     Spacer()
                     Text("No runs yet. Use dictation to populate history.")
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                     Spacer()
                 }
                 .frame(maxWidth: .infinity)
@@ -1388,21 +1388,21 @@ struct RunLogEntryView: View {
                         if isError {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .font(.caption)
-                                .foregroundStyle(.red)
+                                .foregroundColor(.red)
                         }
                         VStack(alignment: .leading, spacing: 3) {
                             Text(item.timestamp.formatted(date: .numeric, time: .standard))
                                 .font(.subheadline.weight(.semibold))
                             Text(item.postProcessedTranscript.isEmpty ? "(no transcript)" : item.postProcessedTranscript)
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                                 .lineLimit(1)
                                 .truncationMode(.tail)
                         }
                         Spacer()
                         Image(systemName: "chevron.right")
                             .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
+                            .foregroundColor(.secondary)
                             .rotationEffect(.degrees(isExpanded ? 90 : 0))
                     }
                     .contentShape(Rectangle())
@@ -1420,7 +1420,7 @@ struct RunLogEntryView: View {
                         } else {
                             Image(systemName: "arrow.clockwise")
                                 .font(.caption)
-                                .foregroundStyle(.orange)
+                                .foregroundColor(.orange)
                                 .frame(width: 28, height: 28)
                                 .contentShape(Rectangle())
                         }
@@ -1437,7 +1437,7 @@ struct RunLogEntryView: View {
                 } label: {
                     Image(systemName: "trash")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                         .frame(width: 28, height: 28)
                         .contentShape(Rectangle())
                 }
@@ -1459,10 +1459,10 @@ struct RunLogEntryView: View {
                         HStack(spacing: 6) {
                             Image(systemName: "waveform.slash")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                             Text("No audio recorded")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                         }
                     }
 
@@ -1516,7 +1516,7 @@ struct RunLogEntryView: View {
                                             }
                                         }
                                         .buttonStyle(.plain)
-                                        .foregroundStyle(Color.accentColor)
+                                        .foregroundColor(Color.accentColor)
 
                                         if showContextPrompt {
                                             Text(prompt)
@@ -1532,12 +1532,12 @@ struct RunLogEntryView: View {
                                     if !item.contextSummary.isEmpty {
                                         Text(item.contextSummary)
                                             .font(.caption)
-                                            .foregroundStyle(.secondary)
+                                            .foregroundColor(.secondary)
                                             .textSelection(.enabled)
                                     } else {
                                         Text("No context captured")
                                             .font(.caption)
-                                            .foregroundStyle(.secondary)
+                                            .foregroundColor(.secondary)
                                     }
                                 }
                             }
@@ -1551,7 +1551,7 @@ struct RunLogEntryView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("Sent audio to Groq whisper-large-v3")
                                         .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                        .foregroundColor(.secondary)
                                         .textSelection(.enabled)
                                     if !item.rawTranscript.isEmpty {
                                         Text(item.rawTranscript)
@@ -1564,7 +1564,7 @@ struct RunLogEntryView: View {
                                     } else {
                                         Text("(empty transcript)")
                                             .font(.caption)
-                                            .foregroundStyle(.secondary)
+                                            .foregroundColor(.secondary)
                                     }
                                 }
                             }
@@ -1578,7 +1578,7 @@ struct RunLogEntryView: View {
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text(item.postProcessingStatus)
                                         .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                        .foregroundColor(.secondary)
                                         .textSelection(.enabled)
 
                                     if let prompt = item.postProcessingPrompt, !prompt.isEmpty {
@@ -1593,7 +1593,7 @@ struct RunLogEntryView: View {
                                             }
                                         }
                                         .buttonStyle(.plain)
-                                        .foregroundStyle(Color.accentColor)
+                                        .foregroundColor(Color.accentColor)
 
                                         if showPostProcessingPrompt {
                                             Text(prompt)
@@ -1652,7 +1652,7 @@ struct PipelineStepView<Content: View>: View {
         HStack(alignment: .top, spacing: 10) {
             Text("\(number)")
                 .font(.caption2.weight(.bold))
-                .foregroundStyle(.white)
+                .foregroundColor(.white)
                 .frame(width: 20, height: 20)
                 .background(Circle().fill(Color.accentColor))
 
@@ -1722,7 +1722,7 @@ struct AudioPlayerView: View {
 
             Text("\(formatDuration(elapsed)) / \(formatDuration(duration))")
                 .font(.system(.caption2, design: .monospaced))
-                .foregroundStyle(.secondary)
+                .foregroundColor(.secondary)
                 .fixedSize()
         }
         .onAppear {
@@ -1855,7 +1855,7 @@ struct VoiceMacrosSettingsView: View {
             HStack {
                 Text("Bypass post-processing and immediately paste your predefined text.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundColor(.secondary)
                 Spacer()
                 Button(action: { showingAddMacro = true }) {
                     Text("Add Macro")
@@ -1866,14 +1866,14 @@ struct VoiceMacrosSettingsView: View {
                 VStack {
                     Image(systemName: "music.mic")
                         .font(.system(size: 30))
-                        .foregroundStyle(.tertiary)
+                        .foregroundColor(.secondary)
                         .padding(.bottom, 4)
                     Text("No Voice Macros Yet")
                         .font(.headline)
-                        .foregroundStyle(.secondary)
+                        .foregroundColor(.secondary)
                     Text("Click 'Add Macro' to define your first voice macro.")
                         .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity)
@@ -1898,11 +1898,11 @@ struct VoiceMacrosSettingsView: View {
                                 }
                                 .buttonStyle(.borderless)
                                 .font(.caption)
-                                .foregroundStyle(.red)
+                                .foregroundColor(.red)
                             }
                             Text(macro.payload)
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundColor(.secondary)
                                 .lineLimit(2)
                         }
                         .padding(12)
