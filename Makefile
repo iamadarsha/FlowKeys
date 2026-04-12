@@ -2,19 +2,18 @@
 # Universal macOS Binary (arm64 + x86_64)
 
 APP_NAME = FlowKeys
-PRODUCT_NAME = FlowKeys
+BUNDLE_ID = com.flowkeys.app
+CODESIGN_IDENTITY ?= -
 BUILD_DIR = build
 APP_BUNDLE = $(BUILD_DIR)/$(APP_NAME).app
+CONTENTS = $(APP_BUNDLE)/Contents
+MACOS_DIR = $(CONTENTS)/MacOS
+RESOURCES = $(CONTENTS)/Resources
 ICON_ICNS = Resources/AppIcon.icns
+SOURCES = $(wildcard Sources/*.swift)
 
 # Architecture: 'universal', 'arm64', or 'x86_64'
 ARCH ?= universal
-
-ifeq ($(ARCH),universal)
-    XCODE_FLAGS = -arch arm64 -arch x86_64
-else
-    XCODE_FLAGS = -arch $(ARCH)
-endif
 
 .PHONY: all build dmg clean run release help dmg-hdiutil-internal
 
@@ -29,16 +28,44 @@ help:
 	@echo "  make run        Build and launch the app"
 	@echo "  make release    Prepare for GitHub release"
 
-build:
-	@mkdir -p $(BUILD_DIR)
+build: $(SOURCES) Info.plist $(ICON_ICNS)
+	@mkdir -p "$(MACOS_DIR)" "$(RESOURCES)"
 	@echo "Building FlowKeys ($(ARCH))..."
-	@xcodebuild -project FlowKeys.xcodeproj \
-		-scheme FlowKeys \
-		-configuration Release \
-		-derivedDataPath $(BUILD_DIR)/DerivedData \
-		$(XCODE_FLAGS) \
-		build
-	@cp -R $(BUILD_DIR)/DerivedData/Build/Products/Release/$(APP_NAME).app $(BUILD_DIR)/
+ifeq ($(ARCH),universal)
+	swiftc \
+		-parse-as-library \
+		-o "$(MACOS_DIR)/$(APP_NAME)-arm64" \
+		-sdk $(shell xcrun --show-sdk-path) \
+		-target arm64-apple-macosx13.0 \
+		$(SOURCES)
+	swiftc \
+		-parse-as-library \
+		-o "$(MACOS_DIR)/$(APP_NAME)-x86_64" \
+		-sdk $(shell xcrun --show-sdk-path) \
+		-target x86_64-apple-macosx13.0 \
+		$(SOURCES)
+	lipo -create -output "$(MACOS_DIR)/$(APP_NAME)" \
+		"$(MACOS_DIR)/$(APP_NAME)-arm64" \
+		"$(MACOS_DIR)/$(APP_NAME)-x86_64"
+	@rm "$(MACOS_DIR)/$(APP_NAME)-arm64" "$(MACOS_DIR)/$(APP_NAME)-x86_64"
+else
+	swiftc \
+		-parse-as-library \
+		-o "$(MACOS_DIR)/$(APP_NAME)" \
+		-sdk $(shell xcrun --show-sdk-path) \
+		-target $(ARCH)-apple-macosx13.0 \
+		$(SOURCES)
+endif
+	@cp Info.plist "$(CONTENTS)/"
+	@plutil -replace CFBundleName -string "$(APP_NAME)" "$(CONTENTS)/Info.plist"
+	@plutil -replace CFBundleDisplayName -string "$(APP_NAME)" "$(CONTENTS)/Info.plist"
+	@plutil -replace CFBundleExecutable -string "$(APP_NAME)" "$(CONTENTS)/Info.plist"
+	@plutil -replace CFBundleIdentifier -string "$(BUNDLE_ID)" "$(CONTENTS)/Info.plist"
+	@cp $(ICON_ICNS) "$(RESOURCES)/"
+	@codesign --force --deep --options runtime \
+		--sign "$(CODESIGN_IDENTITY)" \
+		--entitlements FlowKeys.entitlements \
+		"$(APP_BUNDLE)"
 	@echo "Built $(APP_BUNDLE)"
 
 dmg: build
@@ -47,13 +74,11 @@ dmg: build
 	@mkdir -p $(BUILD_DIR)/dmg-staging
 	@cp -R "$(APP_BUNDLE)" $(BUILD_DIR)/dmg-staging/
 	@ln -s /Applications $(BUILD_DIR)/dmg-staging/Applications
-	@# Attempt to set the folder icon if fileicon is available
 	@if [ -x "$$(which fileicon 2>/dev/null)" ]; then \
 		fileicon set "$(BUILD_DIR)/dmg-staging/Applications" /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ApplicationsFolderIcon.icns || true; \
 	fi
 	@rm -f "$(BUILD_DIR)/$(APP_NAME).dmg"
 	@if [ -x "$$(which create-dmg 2>/dev/null)" ]; then \
-		echo "Using create-dmg..."; \
 		create-dmg \
 			--volname "$(APP_NAME)" \
 			--volicon "$(ICON_ICNS)" \
@@ -72,11 +97,9 @@ dmg: build
 	@rm -rf $(BUILD_DIR)/dmg-staging
 	@echo "Created $(BUILD_DIR)/$(APP_NAME).dmg"
 
-# External target that ensures build is run
 dmg-hdiutil: build
 	@$(MAKE) dmg-hdiutil-internal
 
-# Internal target that assumes staging is ready
 dmg-hdiutil-internal:
 	@echo "Creating basic DMG using hdiutil (HFS+ for compatibility)..."
 	@if [ ! -d "$(BUILD_DIR)/dmg-staging" ]; then \
@@ -97,9 +120,5 @@ release: dmg
 	@echo ""
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo "  FlowKeys DMG ready for GitHub Release"
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-	@echo ""
-	@echo "1. Push changes: git commit -am 'Release v1.0.x' && git push"
-	@echo "2. Tag version:  git tag v1.0.x && git push origin v1.0.x"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo ""
