@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
+<script>
+tailwind.config = { theme: { extend: { colors: { surface: '#131313', 'primary-container': '#FF6B35' }, fontFamily: { headline: ['Manrope'] } } } };
+</script>
+<body class="bg-[#0C0C0E] flex items-center justify-center min-h-screen">
+  <div class="w-[480px] bg-surface rounded-2xl shadow-[0_32px_64px_rgba(0,0,0,0.8)] border border-white/5">
+    <div class="px-6 py-5 border-b border-white/5 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-primary-container text-xl" style="filter: drop-shadow(0 0 8px #FF6B35)">waveform</span>
+        <span class="font-headline font-extrabold text-lg text-white">Transcribe File</span>
+      </div>
+      <span class="material-symbols-outlined text-white/40 cursor-pointer">close</span>
+    </div>
+    <div class="py-12 px-8 flex flex-col items-center">
+      <div class="border-2 border-dashed border-white/10 rounded-xl py-10 px-8 flex flex-col items-center gap-4 w-full cursor-pointer hover:border-[#FF6B35]/40 transition-colors">
+        <span class="material-symbols-outlined text-5xl text-white/20">upload_file</span>
+        <span class="font-headline font-bold text-white text-base">Drop audio or video file here</span>
+        <span class="text-xs text-white/30">or</span>
+        <button class="bg-[#FF6B35]/10 border border-[#FF6B35]/30 text-[#FF6B35] text-sm font-bold px-6 py-2 rounded-full hover:bg-[#FF6B35]/20">Browse Files</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
