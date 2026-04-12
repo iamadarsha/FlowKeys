@@ -53,7 +53,7 @@ final class RecordingOverlayManager {
     private var pillWindow: NSPanel?
     private let overlayState = RecordingOverlayState()
     private var pillWidth: CGFloat { overlayState.phase == .error ? 340 : 260 }
-    private let pillHeight: CGFloat = 52
+    private let pillHeight: CGFloat = 80 // Increased for top label
     private let pillCornerRadius: CGFloat = 26
     private let bottomOffset: CGFloat = 40
 
@@ -301,19 +301,45 @@ struct PillOverlayView: View {
     let onRetryButtonPressed: () -> Void
 
     var body: some View {
-        ZStack {
-            // Background: deep frosted glass
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(Color.black.opacity(0.75))
-                .background(
-                    RoundedRectangle(cornerRadius: cornerRadius)
-                        .fill(.ultraThinMaterial)
-                )
-                .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+        VStack(spacing: 4) {
+            Text(headerText)
+                .font(.system(size: 10, weight: .bold, design: .default))
+                .kerning(1.5)
+                .foregroundColor(.white.opacity(0.3))
+            
+            ZStack {
+                // Background: deep frosted glass
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .fill(Color(red: 13/255, green: 13/255, blue: 15/255).opacity(0.9)) // #0D0D0F/90
+                    .background(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .fill(.ultraThinMaterial)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: cornerRadius)
+                            .stroke(Color.white.opacity(0.05), lineWidth: 1)
+                    )
+                    .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
+                    .shadow(color: Color.black.opacity(0.5), radius: 24, x: 0, y: 8)
 
-            // Main Content
-            contentView
-                .padding(.horizontal, 16)
+                // Main Content
+                contentView
+                    .padding(.horizontal, 16)
+            }
+            .frame(height: 52)
+        }
+    }
+
+    private var headerText: String {
+        switch state.phase {
+        case .initializing, .recording:
+            return "RECORDING · \(state.recordingTriggerMode == .hold ? "HOLD" : "TOGGLE")"
+        case .transcribing:
+            return "TRANSCRIBING"
+        case .done:
+            return "DONE"
+        case .error:
+            return "ERROR"
         }
     }
 
@@ -333,9 +359,12 @@ struct PillOverlayView: View {
     // MARK: Recording State Content
     private var recordingContent: some View {
         HStack {
-            // LEFT side: Pulsing Mic Icon
-            MicPulsingView(audioLevel: state.audioLevel)
-                .frame(width: 24, height: 24, alignment: .leading)
+            // LEFT side: Mic Icon
+            Image(systemName: "mic")
+                .font(.system(size: 14))
+                .foregroundColor(.white)
+                .scaleEffect(1.15)
+                .shadow(color: Color(red: 1.0, green: 0.42, blue: 0.21), radius: 4, x: 0, y: 0) // Saffron drop shadow
             
             Spacer()
 
@@ -344,9 +373,24 @@ struct PillOverlayView: View {
             
             Spacer()
 
-            // RIGHT side: Timer
-            RecordingTimerView(startDate: state.recordingStartDate ?? Date())
-                .frame(width: 36, alignment: .trailing)
+            // RIGHT side: Timer & Optional Stop Button
+            HStack(spacing: 8) {
+                RecordingTimerView(startDate: state.recordingStartDate ?? Date())
+                
+                if state.recordingTriggerMode == .toggle {
+                    Button(action: onStopButtonPressed) {
+                        ZStack {
+                            Circle()
+                                .fill(Color(red: 1.0, green: 0.71, blue: 0.67)) // #FFB4AB (error color variant)
+                                .frame(width: 28, height: 28)
+                            Image(systemName: "stop.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(Color(red: 1.0, green: 0.42, blue: 0.21))
+                        }
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
         }
     }
     
