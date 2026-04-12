@@ -13,91 +13,93 @@ struct MenuBarView: View {
     var body: some View {
         VStack(spacing: 0) {
             headerSection
-            divider
-            statusSection
-            divider
-            languageModeSection
-            divider
-            toneModeSection
-            divider
-            recentSection
-            divider
-            quickActionsSection
-            divider
-            providerStatusSection
-
+            Divider()
+            
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 16) {
+                    languageModeSection
+                    toneModeSection
+                    recentSection
+                }
+                .padding(.vertical, 16)
+                .padding(.horizontal, 16)
+            }
+            .frame(maxHeight: 400)
+            
+            Divider()
+            
+            actionsSection
+            
             if updateManager.updateAvailable {
-                divider
+                Divider()
                 updateSection
             }
-
-            divider
-            footerSection
         }
-        .frame(width: 340)
-        .padding(.vertical, 4)
-    }
-
-    private var divider: some View {
-        Divider().padding(.horizontal, 12)
+        .frame(width: 320)
+        .background(Color(NSColor.windowBackgroundColor))
     }
 
     // ─── HEADER ──────────────────────────────────────────────
 
     private var headerSection: some View {
-        HStack {
-            Image(systemName: "mic.circle.fill")
-                .font(.system(size: 16))
-                .foregroundColor(accentColor)
-            Text("FlowKeys")
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
-            Spacer()
-            Button {
-                NotificationCenter.default.post(name: .showSettings, object: nil)
-            } label: {
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-            }
-            .buttonStyle(.plain)
-
-            Button {
-                if let url = URL(string: "https://github.com/iamadarsha/FlowKeys") {
-                    NSWorkspace.shared.open(url)
+        VStack(spacing: 12) {
+            HStack {
+                HStack(spacing: 8) {
+                    Image(systemName: "waveform.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(accentColor)
+                    Text("FlowKeys")
+                        .font(.system(size: 15, weight: .semibold, design: .rounded))
                 }
-            } label: {
-                Image(systemName: "questionmark.circle")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
+                
+                Spacer()
+                
+                HStack(spacing: 12) {
+                    Button(action: {
+                        if let url = URL(string: "https://github.com/iamadarsha/FlowKeys") {
+                            NSWorkspace.shared.open(url)
+                        }
+                    }) {
+                        Image(systemName: "questionmark.circle")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }.buttonStyle(.plain)
+                    
+                    Button(action: {
+                        NotificationCenter.default.post(name: .showSettings, object: nil)
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }.buttonStyle(.plain)
+                }
             }
-            .buttonStyle(.plain)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-
-    // ─── STATUS ──────────────────────────────────────────────
-
-    private var statusSection: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 6) {
-                statusDot
+            
+            HStack {
+                Circle()
+                    .fill(statusColor)
+                    .frame(width: 8, height: 8)
                 Text(statusText)
                     .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(appState.isRecording ? .red : .primary)
+                
                 Spacer()
+                
+                if !shortcutHint.isEmpty {
+                    Text(shortcutHint)
+                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 3)
+                        .background(Color(NSColor.controlBackgroundColor))
+                        .cornerRadius(4)
+                }
             }
-            Text(shortcutHint)
-                .font(.system(size: 10, weight: .regular, design: .monospaced))
-                .foregroundColor(.secondary)
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-
-    private var statusDot: some View {
-        Circle()
-            .fill(statusColor)
-            .frame(width: 8, height: 8)
+        .padding(.top, 16)
+        .padding(.bottom, 12)
+        .background(Color(NSColor.controlBackgroundColor))
     }
 
     private var statusColor: Color {
@@ -113,71 +115,51 @@ struct MenuBarView: View {
     }
 
     private var shortcutHint: String {
-        let hold = appState.holdShortcut.isDisabled ? "" : "Hold [\(appState.holdShortcut.displayName)]"
-        let toggle = appState.toggleShortcut.isDisabled ? "" : "Tap [\(appState.toggleShortcut.displayName)]"
+        let hold = appState.holdShortcut.isDisabled ? "" : "[\(appState.holdShortcut.displayName)]"
+        let toggle = appState.toggleShortcut.isDisabled ? "" : "[\(appState.toggleShortcut.displayName)]"
+        
         if !hold.isEmpty && !toggle.isEmpty {
             return "\(hold) or \(toggle)"
         }
         return hold + toggle
     }
 
-    // ─── LANGUAGE MODE ───────────────────────────────────────
+    // ─── SETTINGS & MODES ────────────────────────────────────
 
     private var languageModeSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("MODE")
-                .font(.system(size: 9, weight: .bold))
+        VStack(alignment: .leading, spacing: 8) {
+            Text("LANGUAGE")
+                .font(.system(size: 10, weight: .bold))
                 .foregroundColor(.secondary)
-                .tracking(1.2)
-
-            HStack(spacing: 4) {
-                ForEach(UserLanguageMode.allCases) { mode in
-                    languagePill(mode)
-                }
+            
+            Picker("Language Mode", selection: $appState.languageMode) {
+                Text("MIX 🇮🇳").tag(UserLanguageMode.hinglish)
+                Text("HI 🇮🇳").tag(UserLanguageMode.pureHindi)
+                Text("EN").tag(UserLanguageMode.pureEnglish)
             }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
-    }
-
-    private func languagePill(_ mode: UserLanguageMode) -> some View {
-        Button {
-            appState.languageMode = mode
-        } label: {
-            Text(languagePillText(mode))
-                .font(.system(size: 12, weight: appState.languageMode == mode ? .semibold : .regular))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 5)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(appState.languageMode == mode ? accentColor.opacity(0.2) : Color.clear)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 6)
-                        .stroke(appState.languageMode == mode ? accentColor : Color.gray.opacity(0.3), lineWidth: 1)
-                )
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func languagePillText(_ mode: UserLanguageMode) -> String {
-        switch mode {
-        case .hinglish: return "MIX 🇮🇳"
-        case .pureHindi: return "HI 🇮🇳"
-        case .pureEnglish: return "EN"
+            .pickerStyle(.segmented)
+            .labelsHidden()
         }
     }
-
-    // ─── TONE / MODE ─────────────────────────────────────────
 
     private var toneModeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("TONE")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundColor(.secondary)
-                .tracking(1.2)
+            HStack {
+                Text("TONE")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.secondary)
+                Spacer()
+                Button(action: {
+                    appState.selectedSettingsTab = .general
+                    NotificationCenter.default.post(name: .showSettings, object: nil)
+                }) {
+                    Text("Edit modes")
+                        .font(.system(size: 10))
+                        .foregroundColor(accentColor)
+                }
+                .buttonStyle(.plain)
+            }
 
-            // Replaced ScrollView with a fixed 2-row grid so all tones are visible without scrolling
             let tones: [(icon: String, name: String, id: UUID)] = [
                 ("🗣️", "Casual", DictationMode.casualHinglish.id),
                 ("📧", "Email", DictationMode.professionalEmail.id),
@@ -187,183 +169,163 @@ struct MenuBarView: View {
                 ("🔇", "Literal", DictationMode.literalNoEdit.id)
             ]
 
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 3), spacing: 6) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
                 ForEach(tones, id: \.id) { tone in
                     toneButton(icon: tone.icon, name: tone.name, id: tone.id)
                 }
             }
-
-            Button {
-                appState.selectedSettingsTab = .general
-                NotificationCenter.default.post(name: .showSettings, object: nil)
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "plus.circle")
-                        .font(.system(size: 11))
-                    Text("Custom modes")
-                        .font(.system(size: 11))
-                }
-                .foregroundColor(.secondary)
-            }
-            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
     }
 
     private func toneButton(icon: String, name: String, id: UUID) -> some View {
         let isActive = appState.dictationModeStore.activeModeID == id
 
-        return Button {
-            if isActive {
-                appState.dictationModeStore.activeModeID = nil
-            } else {
-                appState.dictationModeStore.activeModeID = id
-            }
-        } label: {
-            HStack(spacing: 6) {
-                Text(icon)
-                    .font(.system(size: 14))
-                Text(name)
-                    .font(.system(size: 11, weight: isActive ? .semibold : .regular))
-                    .foregroundColor(isActive ? accentColor : .primary)
+        return Button(action: {
+            appState.dictationModeStore.activeModeID = isActive ? nil : id
+        }) {
+            VStack(spacing: 4) {
+                Text(icon).font(.system(size: 16))
+                Text(name).font(.system(size: 11, weight: isActive ? .semibold : .medium))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 7)
+            .padding(.vertical, 8)
             .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(isActive ? accentColor.opacity(0.15) : Color.gray.opacity(0.08))
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(isActive ? accentColor.opacity(0.15) : Color(NSColor.controlBackgroundColor))
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 6)
                     .stroke(isActive ? accentColor : Color.gray.opacity(0.2), lineWidth: 1)
             )
+            .foregroundColor(isActive ? accentColor : .primary)
         }
         .buttonStyle(.plain)
     }
 
-    // ─── RECENT TRANSCRIPTIONS ───────────────────────────────
+    // ─── RECENT ───────────────────────────────────────────────
 
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                Text("📋 Recent")
-                    .font(.system(size: 11, weight: .semibold))
-                Spacer()
-            }
+            Text("RECENT")
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(.secondary)
 
             if !appState.lastTranscript.isEmpty && !appState.isRecording && !appState.isTranscribing {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(appState.lastTranscript.count > 80
-                        ? String(appState.lastTranscript.prefix(80)) + "…"
-                        : appState.lastTranscript)
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
+                HStack(alignment: .top) {
+                    Text(appState.lastTranscript)
+                        .font(.system(size: 12))
                         .lineLimit(3)
+                        .foregroundColor(.primary)
                         .frame(maxWidth: .infinity, alignment: .leading)
-
-                    Button("Copy") {
+                    
+                    Button(action: {
                         NSPasteboard.general.clearContents()
                         NSPasteboard.general.setString(appState.lastTranscript, forType: .string)
+                    }) {
+                        Image(systemName: "doc.on.doc")
+                            .font(.system(size: 12))
+                            .foregroundColor(accentColor)
+                            .padding(6)
+                            .background(accentColor.opacity(0.1))
+                            .cornerRadius(4)
                     }
-                    .font(.system(size: 10))
                     .buttonStyle(.plain)
-                    .foregroundColor(accentColor)
                 }
-                .padding(8)
-                .background(
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.gray.opacity(0.08))
-                )
+                .padding(10)
+                .background(Color(NSColor.controlBackgroundColor))
+                .cornerRadius(6)
+                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.15), lineWidth: 1))
             } else {
                 Text("No recent transcriptions")
-                    .font(.system(size: 10))
+                    .font(.system(size: 11))
                     .foregroundColor(.secondary)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .cornerRadius(6)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.15), lineWidth: 1))
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
     }
 
-    // ─── QUICK ACTIONS ───────────────────────────────────────
+    // ─── ACTIONS ──────────────────────────────────────────────
 
-    private var quickActionsSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+    private var actionsSection: some View {
+        VStack(spacing: 12) {
             if !appState.hasScreenRecordingPermission {
-                warningButton(
-                    label: "Screen Recording Needed",
-                    icon: "camera.viewfinder",
-                    color: .orange
-                ) {
-                    appState.requestScreenCapturePermission()
-                }
+                warningButton(label: "Screen Recording Needed", icon: "camera.viewfinder", color: .orange) { appState.requestScreenCapturePermission() }
             }
 
             if !appState.hasAccessibility {
-                warningButton(
-                    label: "Accessibility Required",
-                    icon: "exclamationmark.triangle.fill",
-                    color: .red
-                ) {
-                    appState.showAccessibilityAlert()
-                }
+                warningButton(label: "Accessibility Required", icon: "exclamationmark.triangle.fill", color: .red) { appState.showAccessibilityAlert() }
             }
 
-            Button(appState.isRecording ? "⏹ Stop Recording" : "🎙 Start Dictating") {
+            Button(action: {
                 appState.toggleRecording()
+            }) {
+                HStack(spacing: 8) {
+                    Image(systemName: appState.isRecording ? "stop.fill" : "mic.fill")
+                    Text(appState.isRecording ? "Stop Recording" : "Start Dictating")
+                }
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(appState.isRecording ? Color.red : accentColor)
+                .cornerRadius(6)
+                .shadow(color: (appState.isRecording ? Color.red : accentColor).opacity(0.3), radius: 4, y: 2)
             }
-            .font(.system(size: 12, weight: .medium))
+            .buttonStyle(.plain)
             .disabled(appState.isTranscribing)
 
             if let error = appState.errorMessage {
                 Text(error)
                     .foregroundColor(.red)
-                    .font(.system(size: 10))
+                    .font(.system(size: 11))
                     .lineLimit(2)
             }
+            
+            HStack {
+                Text("Provider: \(appState.activeTranscriptionProvider.displayName) \(appState.activeTranscriptionProvider == .groq ? "⚡️" : "")")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.secondary)
+                Spacer()
+                Button("Transcribe File...") {
+                    NotificationCenter.default.post(name: .showFileTranscription, object: nil)
+                }
+                .font(.system(size: 10, weight: .medium))
+                .foregroundColor(accentColor)
+                .buttonStyle(.plain)
+            }
+            
+            HStack {
+                Text("v\(appVersion)")
+                    .font(.system(size: 9))
+                    .foregroundColor(.secondary)
+                Spacer()
+                Button("Quit FlowKeys") {
+                    NSApplication.shared.terminate(nil)
+                }
+                .font(.system(size: 10))
+                .foregroundColor(.secondary)
+                .buttonStyle(.plain)
+            }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
+        .padding(16)
+        .background(Color(NSColor.controlBackgroundColor))
     }
 
     private func warningButton(label: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Label(label, systemImage: icon)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(color)
+                .cornerRadius(6)
         }
         .buttonStyle(.plain)
-        .foregroundColor(.white)
-        .font(.system(size: 10, weight: .semibold))
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        .frame(maxWidth: .infinity)
-        .background(RoundedRectangle(cornerRadius: 6).fill(color))
-    }
-
-    // ─── PROVIDER STATUS ─────────────────────────────────────
-
-    private var providerStatusSection: some View {
-        HStack {
-            Text("Provider:")
-                .font(.system(size: 10, weight: .medium))
-                .foregroundColor(.secondary)
-
-            Text(appState.activeTranscriptionProvider.displayName)
-                .font(.system(size: 10, weight: .semibold))
-
-            Text("✅")
-                .font(.system(size: 10))
-
-            Spacer()
-
-            Button("Change") {
-                NotificationCenter.default.post(name: .showSettings, object: nil)
-            }
-            .font(.system(size: 10))
-            .buttonStyle(.plain)
-            .foregroundColor(accentColor)
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
     }
 
     // ─── UPDATE ──────────────────────────────────────────────
@@ -374,72 +336,43 @@ struct MenuBarView: View {
             case .downloading:
                 VStack(spacing: 4) {
                     Text("Downloading update... \(Int((updateManager.downloadProgress ?? 0) * 100))%")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: 11, weight: .semibold))
                         .foregroundColor(.white)
                     ProgressView(value: updateManager.downloadProgress ?? 0)
                         .progressViewStyle(.linear)
                         .tint(.white)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .frame(maxWidth: .infinity)
+                .padding(16)
                 .background(Color.blue)
 
             case .installing, .readyToRelaunch:
-                HStack(spacing: 6) {
-                    ProgressView().controlSize(.small)
-                    Text("Installing...")
-                        .font(.system(size: 10, weight: .semibold))
+                HStack(spacing: 8) {
+                    ProgressView().controlSize(.small).tint(.white)
+                    Text("Installing update...")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white)
                 }
-                .foregroundColor(.white)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
                 .frame(maxWidth: .infinity)
+                .padding(16)
                 .background(Color.blue)
 
             default:
-                Button {
+                Button(action: {
                     updateManager.showUpdateAlert()
-                } label: {
-                    Label("Update Available", systemImage: "arrow.down.circle.fill")
+                }) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.down.circle.fill")
+                        Text("Update Available")
+                            .font(.system(size: 11, weight: .semibold))
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(12)
+                    .background(Color.blue)
                 }
                 .buttonStyle(.plain)
-                .foregroundColor(.white)
-                .font(.system(size: 10, weight: .semibold))
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .frame(maxWidth: .infinity)
-                .background(Color.blue)
             }
         }
-    }
-
-    // ─── FOOTER ──────────────────────────────────────────────
-
-    private var footerSection: some View {
-        HStack {
-            Text("v\(appVersion)")
-                .font(.system(size: 9))
-                .foregroundColor(.secondary)
-            Spacer()
-            Button("Transcribe File...") {
-                NotificationCenter.default.post(name: .showFileTranscription, object: nil)
-            }
-            .font(.system(size: 11))
-            Spacer()
-            Button("Settings") {
-                NotificationCenter.default.post(name: .showSettings, object: nil)
-            }
-            .font(.system(size: 11))
-            Spacer()
-            Button("Quit") {
-                NSApplication.shared.terminate(nil)
-            }
-            .font(.system(size: 11))
-            .keyboardShortcut("q")
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 8)
     }
 }
 
