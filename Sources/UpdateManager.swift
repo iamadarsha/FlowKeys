@@ -189,11 +189,11 @@ final class UpdateManager: ObservableObject {
                     updateAvailable = false
                     return
                 }
-                // Manual check: let user know and offer the update anyway
+                // Manual check: immediately download and install latest release
                 latestRelease = release
                 latestReleaseDate = releaseDateString
                 updateAvailable = true
-                showRecentReleaseAlert(daysSincePublished: daysSincePublished)
+                downloadAndInstall(release: release)
                 return
             }
 
@@ -208,7 +208,7 @@ final class UpdateManager: ObservableObject {
             updateAvailable = true
 
             if userInitiated {
-                showUpdateAlert()
+                downloadAndInstall(release: release)
             }
         } catch {
             if userInitiated {
