@@ -90,7 +90,43 @@ Output hygiene:
 - Never prepend boilerplate such as "Here is the clean transcript".
 - If the transcript is empty or only filler, return exactly: EMPTY
 """
-    static let defaultSystemPromptDate = "2026-04-08"
+    static let defaultSystemPromptDate = "2026-04-12"
+
+    // MARK: - Whisper hallucination blocklist
+    //
+    // Whisper's beam-search decoder is known to "hallucinate" these specific
+    // phrases when audio is short, quiet, noisy, or near-silent. They appear
+    // because the model was trained on videos/podcasts where these phrases are
+    // common closing lines and the decoder defaults to them when confidence is low.
+    //
+    // The anti-hallucination Whisper prompt (ANTI_HALLUCINATION_PRIMER) reduces
+    // the frequency of these hallucinations at the source, but does NOT eliminate
+    // them. This blocklist is a second line of defense that runs AFTER the LLM
+    // post-processor has had a chance to clean the transcript. If the final output
+    // is still one of these known-bad strings, we treat it as EMPTY.
+    //
+    // The list is deliberately conservative — only strings that can NEVER be a
+    // legitimate solo dictation result. Single-word utterances like "bye" or
+    // "okay" that could be real intent when spoken as a standalone voice command
+    // are NOT included. We only block the multi-word phrases that are pure
+    // Whisper attractors with no real-world dictation use.
+    private static let whisperHallucinationBlocklist: Set<String> = [
+        "thank you",
+        "thanks for watching",
+        "thanks for watching!",
+        "thanks for listening",
+        "thanks for listening!",
+        "please subscribe",
+        "like and subscribe",
+        "see you next time",
+        "see you in the next video",
+        "don't forget to subscribe",
+        "subscribe to the channel",
+        "hit the like button",
+        "hit the subscribe button",
+        "you",
+        "you.",
+    ]
 
     private let provider: TranscriptionProvider
     private let keyStore: APIKeyStore
@@ -383,6 +419,7 @@ Model: \(model)
         var result = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !result.isEmpty else { return "" }
 
+        // Strip surrounding quotes added by the LLM
         if result.hasPrefix("\"") && result.hasSuffix("\"") && result.count > 1 {
             result.removeFirst()
             result.removeLast()
@@ -390,6 +427,18 @@ Model: \(model)
         }
 
         if result == "EMPTY" {
+            return ""
+        }
+
+        // Block known Whisper hallucination attractors.
+        // Even after the anti-hallucination Whisper prompt, the model can still
+        // return these phrases on short/quiet audio. The LLM post-processor can
+        // also lightly reformat them (e.g. add a period), so we normalise before
+        // checking: lowercase + strip trailing punctuation.
+        let normalizedForBlocklist = result
+            .lowercased()
+            .trimmingCharacters(in: CharacterSet.punctuationCharacters.union(.whitespaces))
+        if Self.whisperHallucinationBlocklist.contains(normalizedForBlocklist) {
             return ""
         }
 

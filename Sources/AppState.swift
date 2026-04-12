@@ -1234,7 +1234,10 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 customSystemPrompt: finalPrompt
             )
             
-            let _ = personalDictionary.processTranscript(result.transcript)
+            let wordCount = result.transcript.split(whereSeparator: \.isWhitespace).count
+            if wordCount >= 3 {
+                let _ = personalDictionary.processTranscript(result.transcript)
+            }
             
             return (result.transcript, "Post-processing succeeded", result.prompt)
         } catch {

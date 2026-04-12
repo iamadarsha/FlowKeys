@@ -15,7 +15,7 @@ final class TranscriptionService {
     private let uploadChannelCount: AVAudioChannelCount = 1
 
     private let minimumAudioDuration: TimeInterval = 0.5
-    private let minimumPeakRMS: Float = 0.002
+    private let minimumPeakRMS: Float = 0.008
 
     init(provider: TranscriptionProvider, keyStore: APIKeyStore, forceHTTP2: Bool = false, languageMode: UserLanguageMode = .pureEnglish) {
         self.provider = provider
