@@ -62,10 +62,12 @@ struct SetupView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            currentStepView
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.horizontal, 40)
-                .padding(.vertical, 32)
+            ScrollView {
+                currentStepView
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 40)
+                    .padding(.vertical, 32)
+            }
 
             Divider()
 
@@ -141,7 +143,7 @@ struct SetupView: View {
             .padding(20)
             .background(Color(nsColor: .windowBackgroundColor))
         }
-        .frame(width: 520, height: 680)
+        .frame(width: 540, height: 700)
         .onAppear {
             selectedProvider = appState.activeLLMProvider
             apiKeyInput = appState.apiKey(for: selectedProvider)
@@ -199,126 +201,101 @@ struct SetupView: View {
     // MARK: - Steps
 
     var providerStep: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 20) {
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: 128, height: 128)
+                .frame(width: 100, height: 100)
 
             VStack(spacing: 6) {
                 Text("Choose Your AI Provider")
-                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
 
-                Text("FlowKeys lets you pick your preferred provider now,\nand you can switch transcription and LLM providers later in Settings.")
+                Text("FlowKeys lets you pick your preferred provider now,\nand you can switch providers later in Settings.")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
 
-            VStack(spacing: 10) {
+            VStack(spacing: 8) {
                 ForEach(TranscriptionProvider.allCases) { provider in
                     providerCard(provider)
                 }
             }
 
-            VStack(spacing: 10) {
-                HStack(spacing: 8) {
-                    AsyncImage(url: URL(string: "https://avatars.githubusercontent.com/u/992248")) { phase in
-                        switch phase {
-                        case .success(let image):
-                            image.resizable().aspectRatio(contentMode: .fill)
-                        default:
-                            Color.gray.opacity(0.2)
-                        }
-                    }
-                    .frame(width: 26, height: 26)
-                    .clipShape(Circle())
+            // Clean attribution footer — no random user avatars
+            HStack(spacing: 8) {
+                Image(systemName: "chevron.left.forwardslash.chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
-                    Button {
-                        openURL(flowKeysRepoURL)
-                    } label: {
+                Text("Made by ")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                +
+                Text("Adarsha")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.primary)
+
+                Text("·")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
+                Button {
+                    openURL(flowKeysRepoURL)
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "arrow.up.right.square")
+                            .font(.caption2)
                         Text("iamadarsha/FlowKeys")
                             .font(.system(.caption, design: .monospaced).weight(.medium))
                     }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(.blue)
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(.blue)
 
-                    Spacer()
-
-                    HStack(spacing: 4) {
+                if githubCache.isLoading {
+                    ProgressView().scaleEffect(0.45)
+                } else if let count = githubCache.starCount, count > 0 {
+                    HStack(spacing: 3) {
                         Image(systemName: "star.fill")
+                            .font(.caption2)
                             .foregroundStyle(.yellow)
-                            .font(.caption2)
-                        if githubCache.isLoading {
-                            ProgressView().scaleEffect(0.5)
-                        } else if let count = githubCache.starCount {
-                            Text("\(count.formatted()) \(count == 1 ? "star" : "stars")")
-                                .font(.caption2.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                        }
+                        Text("\(count)")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.secondary)
                     }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Capsule().fill(Color.yellow.opacity(0.14)))
-
-                    Button {
-                        openURL(flowKeysRepoURL)
-                    } label: {
-                        HStack(spacing: 4) {
-                            Image(systemName: "star")
-                            Text("Star")
-                        }
-                        .font(.caption.weight(.semibold))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Capsule().fill(Color.yellow.opacity(0.18)))
-                    }
-                    .buttonStyle(.plain)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(Capsule().fill(Color.yellow.opacity(0.12)))
                 }
 
-                if !githubCache.recentStargazers.isEmpty {
-                    Divider()
-                    HStack(spacing: 8) {
-                        HStack(spacing: -6) {
-                            ForEach(githubCache.recentStargazers) { star in
-                                Button {
-                                    openURL(star.user.htmlUrl)
-                                } label: {
-                                    AsyncImage(url: star.user.avatarThumbnailUrl) { phase in
-                                        switch phase {
-                                        case .success(let image):
-                                            image.resizable().aspectRatio(contentMode: .fill)
-                                        default:
-                                            Color.gray.opacity(0.2)
-                                        }
-                                    }
-                                    .frame(width: 22, height: 22)
-                                    .clipShape(Circle())
-                                    .overlay(Circle().stroke(Color(nsColor: .windowBackgroundColor), lineWidth: 1.5))
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                        .clipped()
-                        Text("recently starred")
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
-                            .fixedSize()
-                        Spacer()
+                Spacer()
+
+                Button {
+                    openURL(flowKeysRepoURL)
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "star")
+                        Text("Star")
                     }
-                    .clipped()
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(Capsule().fill(Color.yellow.opacity(0.15)))
                 }
+                .buttonStyle(.plain)
             }
-            .padding(12)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 10)
                     .fill(.ultraThinMaterial)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
+                        RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.primary.opacity(0.08), lineWidth: 1)
                     )
             )
-
         }
     }
 
@@ -379,7 +356,6 @@ struct SetupView: View {
                     }
                 }
             }
-
         }
     }
 
@@ -418,7 +394,6 @@ struct SetupView: View {
             .padding(12)
             .background(Color(nsColor: .controlBackgroundColor))
             .cornerRadius(8)
-
         }
     }
 
@@ -464,14 +439,9 @@ struct SetupView: View {
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-
         }
-        .onAppear {
-            startAccessibilityPolling()
-        }
-        .onDisappear {
-            accessibilityTimer?.invalidate()
-        }
+        .onAppear { startAccessibilityPolling() }
+        .onDisappear { accessibilityTimer?.invalidate() }
     }
 
     var screenRecordingStep: some View {
@@ -484,7 +454,7 @@ struct SetupView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("FlowKeys intelligently adapts the transcription to the current app you're working in (ex. spelling names in an email correctly).")
+            Text("FlowKeys intelligently adapts the transcription to the current app you're working in (e.g. spelling names in an email correctly).")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -515,14 +485,9 @@ struct SetupView: View {
             .padding(12)
             .background(Color(nsColor: .controlBackgroundColor))
             .cornerRadius(8)
-
         }
-        .onAppear {
-            startScreenRecordingPolling()
-        }
-        .onDisappear {
-            screenRecordingTimer?.invalidate()
-        }
+        .onAppear { startScreenRecordingPolling() }
+        .onDisappear { screenRecordingTimer?.invalidate() }
     }
 
     var holdShortcutStep: some View {
@@ -549,7 +514,7 @@ struct SetupView: View {
                     holdShortcutValidationMessage = appState.setShortcut(binding, for: .hold)
                 }
             )
-                .padding(.top, 10)
+            .padding(.top, 10)
 
             if appState.holdShortcut.usesFnKey {
                 Text("Tip: If Fn opens Emoji picker, go to System Settings > Keyboard and change \"Press fn key to\" to \"Do Nothing\".")
@@ -557,7 +522,6 @@ struct SetupView: View {
                     .foregroundStyle(.orange)
                     .multilineTextAlignment(.center)
             }
-
         }
     }
 
@@ -585,7 +549,7 @@ struct SetupView: View {
                     toggleShortcutValidationMessage = appState.setShortcut(binding, for: .toggle)
                 }
             )
-                .padding(.top, 10)
+            .padding(.top, 10)
 
             if appState.toggleShortcut.usesFnKey {
                 Text("Tip: If Fn opens Emoji picker, go to System Settings > Keyboard and change \"Press fn key to\" to \"Do Nothing\".")
@@ -593,7 +557,6 @@ struct SetupView: View {
                     .foregroundStyle(.orange)
                     .multilineTextAlignment(.center)
             }
-
         }
     }
 
@@ -646,7 +609,7 @@ struct SetupView: View {
             .padding()
             .background(Color(nsColor: .controlBackgroundColor))
             .cornerRadius(8)
-            
+
             if !appState.snippetEngine.snippets.isEmpty {
                 Text("\(appState.snippetEngine.snippets.count) snippet(s) configured. Manage them later in Settings.")
                     .font(.caption)
@@ -686,7 +649,6 @@ struct SetupView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
-
         }
     }
 
@@ -714,13 +676,11 @@ struct SetupView: View {
             .padding(12)
             .background(Color(nsColor: .controlBackgroundColor))
             .cornerRadius(8)
-
         }
     }
 
     var testTranscriptionStep: some View {
         VStack(spacing: 20) {
-            // Microphone picker
             VStack(spacing: 4) {
                 Picker("Microphone:", selection: $appState.selectedMicrophoneID) {
                     Text("System Default").tag("default")
@@ -884,7 +844,6 @@ struct SetupView: View {
                 HowToRow(icon: "doc.on.clipboard", text: "Text is typed at your cursor & copied")
             }
             .padding(.top, 10)
-
         }
     }
 
@@ -1086,18 +1045,14 @@ struct SetupView: View {
             switch action {
             case .start:
                 guard testPhase == .idle || testPhase == .done else { return }
-                if testPhase == .done {
-                    resetTest()
-                }
+                if testPhase == .done { resetTest() }
                 do {
                     let recorder = AudioRecorder()
                     try recorder.startRecording(deviceUID: appState.selectedMicrophoneID)
                     testAudioRecorder = recorder
                     testAudioLevelCancellable = recorder.$audioLevel
                         .receive(on: DispatchQueue.main)
-                        .sink { level in
-                            testAudioLevel = level
-                        }
+                        .sink { level in testAudioLevel = level }
                     withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                         testPhase = .recording
                     }
@@ -1189,14 +1144,11 @@ struct SetupView: View {
         testHotkeyHarness.isTranscribing = false
         testHotkeyHarness.resetSession()
         if let recorder = testAudioRecorder {
-            if recorder.isRecording {
-                _ = recorder.stopRecording()
-            }
+            if recorder.isRecording { _ = recorder.stopRecording() }
             recorder.cleanup()
             testAudioRecorder = nil
         }
     }
-
 }
 
 struct GitHubRepoInfo: Decodable {
@@ -1209,10 +1161,7 @@ struct GitHubRepoInfo: Decodable {
 
 struct GitHubStarRecord: Decodable, Identifiable {
     let user: GitHubStarUser
-
-    var id: Int {
-        user.id
-    }
+    var id: Int { user.id }
 }
 
 struct GitHubStarUser: Decodable {
@@ -1221,16 +1170,13 @@ struct GitHubStarUser: Decodable {
     let avatarUrl: URL
     let htmlUrl: URL
 
-    /// Avatar URL resized to 44px (2x for 22pt display) for efficient loading
     var avatarThumbnailUrl: URL {
-        // GitHub avatar URLs already have query params, so append with &
         let separator = avatarUrl.absoluteString.contains("?") ? "&" : "?"
         return URL(string: avatarUrl.absoluteString + "\(separator)s=44") ?? avatarUrl
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id
-        case login
+        case id; case login
         case avatarUrl = "avatar_url"
         case htmlUrl = "html_url"
     }
@@ -1245,18 +1191,14 @@ class GitHubMetadataCache: ObservableObject {
     @Published var isLoading = true
 
     private var lastFetchDate: Date?
-    private let cacheDuration: TimeInterval = 5 * 60 // 5 minutes
+    private let cacheDuration: TimeInterval = 5 * 60
     private let repoAPIURL = URL(string: "https://api.github.com/repos/iamadarsha/FlowKeys")!
 
     private init() {}
 
     func fetchIfNeeded() async {
-        if let lastFetch = lastFetchDate, Date().timeIntervalSince(lastFetch) < cacheDuration {
-            return
-        }
-
+        if let lastFetch = lastFetchDate, Date().timeIntervalSince(lastFetch) < cacheDuration { return }
         isLoading = true
-
         do {
             let repoResult = try await URLSession.shared.data(from: repoAPIURL)
             guard let repoHTTP = repoResult.1 as? HTTPURLResponse,
@@ -1264,24 +1206,7 @@ class GitHubMetadataCache: ObservableObject {
                 throw URLError(.badServerResponse)
             }
             let count = try JSONDecoder().decode(GitHubRepoInfo.self, from: repoResult.0).stargazersCount
-
-            var recent: [GitHubStarRecord] = []
-            if count > 0 {
-                let perPage = 100
-                let lastPage = max(1, Int(ceil(Double(count) / Double(perPage))))
-                let stargazersURL = URL(string: "https://api.github.com/repos/iamadarsha/FlowKeys/stargazers?per_page=\(perPage)&page=\(lastPage)")!
-                var request = URLRequest(url: stargazersURL)
-                request.setValue("application/vnd.github.v3.star+json", forHTTPHeaderField: "Accept")
-                let starredResult = try await URLSession.shared.data(for: request)
-                if let starredHTTP = starredResult.1 as? HTTPURLResponse,
-                   (200..<300).contains(starredHTTP.statusCode) {
-                    let all = try JSONDecoder().decode([GitHubStarRecord].self, from: starredResult.0)
-                    recent = Array(all.suffix(15).reversed())
-                }
-            }
-
             starCount = count
-            recentStargazers = recent
             isLoading = false
             lastFetchDate = Date()
         } catch {

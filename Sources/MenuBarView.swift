@@ -12,38 +12,29 @@ struct MenuBarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // ─── Header ─────────────────────────────────────
             headerSection
             divider
-            // ─── Status ─────────────────────────────────────
             statusSection
             divider
-            // ─── Language Mode Switcher ─────────────────────
             languageModeSection
             divider
-            // ─── Tone / Mode Quick Switcher ─────────────────
             toneModeSection
             divider
-            // ─── Recent Transcriptions ──────────────────────
             recentSection
             divider
-            // ─── Quick Actions ──────────────────────────────
             quickActionsSection
             divider
-            // ─── Provider Status ────────────────────────────
             providerStatusSection
 
-            // ─── Update Banner ──────────────────────────────
             if updateManager.updateAvailable {
                 divider
                 updateSection
             }
 
             divider
-            // ─── Footer ─────────────────────────────────────
             footerSection
         }
-        .frame(width: 320)
+        .frame(width: 340)
         .padding(.vertical, 4)
     }
 
@@ -71,7 +62,7 @@ struct MenuBarView: View {
             .buttonStyle(.plain)
 
             Button {
-                if let url = URL(string: "https://flowkeys.app/help") {
+                if let url = URL(string: "https://github.com/iamadarsha/FlowKeys") {
                     NSWorkspace.shared.open(url)
                 }
             } label: {
@@ -154,9 +145,9 @@ struct MenuBarView: View {
             appState.languageMode = mode
         } label: {
             Text(languagePillText(mode))
-                .font(.system(size: 11, weight: appState.languageMode == mode ? .semibold : .regular))
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
+                .font(.system(size: 12, weight: appState.languageMode == mode ? .semibold : .regular))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 5)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
                         .fill(appState.languageMode == mode ? accentColor.opacity(0.2) : Color.clear)
@@ -171,8 +162,8 @@ struct MenuBarView: View {
 
     private func languagePillText(_ mode: UserLanguageMode) -> String {
         switch mode {
-        case .hinglish: return "MIX🇮🇳"
-        case .pureHindi: return "HI🇮🇳"
+        case .hinglish: return "MIX 🇮🇳"
+        case .pureHindi: return "HI 🇮🇳"
         case .pureEnglish: return "EN"
         }
     }
@@ -180,20 +171,25 @@ struct MenuBarView: View {
     // ─── TONE / MODE ─────────────────────────────────────────
 
     private var toneModeSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 8) {
             Text("TONE")
                 .font(.system(size: 9, weight: .bold))
                 .foregroundStyle(.secondary)
                 .tracking(1.2)
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 6) {
-                    toneButton(icon: "🗣️", name: "Casual", id: DictationMode.casualHinglish.id)
-                    toneButton(icon: "📧", name: "Email", id: DictationMode.professionalEmail.id)
-                    toneButton(icon: "💻", name: "Code", id: DictationMode.codeAndTerminal.id)
-                    toneButton(icon: "📝", name: "Notes", id: DictationMode.meetingNotes.id)
-                    toneButton(icon: "📱", name: "Social", id: DictationMode.socialMedia.id)
-                    toneButton(icon: "🔇", name: "Literal", id: DictationMode.literalNoEdit.id)
+            // Replaced ScrollView with a fixed 2-row grid so all tones are visible without scrolling
+            let tones: [(icon: String, name: String, id: UUID)] = [
+                ("🗣️", "Casual", DictationMode.casualHinglish.id),
+                ("📧", "Email", DictationMode.professionalEmail.id),
+                ("💻", "Code", DictationMode.codeAndTerminal.id),
+                ("📝", "Notes", DictationMode.meetingNotes.id),
+                ("📱", "Social", DictationMode.socialMedia.id),
+                ("🔇", "Literal", DictationMode.literalNoEdit.id)
+            ]
+
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 6), count: 3), spacing: 6) {
+                ForEach(tones, id: \.id) { tone in
+                    toneButton(icon: tone.icon, name: tone.name, id: tone.id)
                 }
             }
 
@@ -203,9 +199,9 @@ struct MenuBarView: View {
             } label: {
                 HStack(spacing: 4) {
                     Image(systemName: "plus.circle")
-                        .font(.system(size: 10))
+                        .font(.system(size: 11))
                     Text("Custom modes")
-                        .font(.system(size: 10))
+                        .font(.system(size: 11))
                 }
                 .foregroundStyle(.secondary)
             }
@@ -225,20 +221,22 @@ struct MenuBarView: View {
                 appState.dictationModeStore.activeModeID = id
             }
         } label: {
-            VStack(spacing: 2) {
+            HStack(spacing: 6) {
                 Text(icon)
                     .font(.system(size: 14))
                 Text(name)
-                    .font(.system(size: 9, weight: isActive ? .semibold : .regular))
+                    .font(.system(size: 11, weight: isActive ? .semibold : .regular))
+                    .foregroundStyle(isActive ? accentColor : .primary)
             }
-            .frame(width: 48, height: 36)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 7)
             .background(
                 RoundedRectangle(cornerRadius: 8)
                     .fill(isActive ? accentColor.opacity(0.15) : Color.gray.opacity(0.08))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .stroke(isActive ? accentColor : Color.clear, lineWidth: 1)
+                    .stroke(isActive ? accentColor : Color.gray.opacity(0.2), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -291,7 +289,6 @@ struct MenuBarView: View {
 
     private var quickActionsSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            // Warnings
             if !appState.hasScreenRecordingPermission {
                 warningButton(
                     label: "Screen Recording Needed",
@@ -312,7 +309,6 @@ struct MenuBarView: View {
                 }
             }
 
-            // Manual record toggle
             Button(appState.isRecording ? "⏹ Stop Recording" : "🎙 Start Dictating") {
                 appState.toggleRecording()
             }
