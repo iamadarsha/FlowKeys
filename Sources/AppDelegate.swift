@@ -4,6 +4,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let appState = AppState()
     var setupWindow: NSWindow?
     private var settingsWindow: NSWindow?
+    private var fileTranscriptionWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NotificationCenter.default.addObserver(
@@ -16,6 +17,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self,
             selector: #selector(handleShowSettings),
             name: .showSettings,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleShowFileTranscription),
+            name: .showFileTranscription,
             object: nil
         )
 
@@ -54,6 +61,47 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         showSettingsWindow()
     }
 
+    @objc private func handleShowFileTranscription() {
+        showFileTranscriptionWindow()
+    }
+
+    private func showFileTranscriptionWindow() {
+        NSApp.setActivationPolicy(.regular)
+
+        if let fileTranscriptionWindow, fileTranscriptionWindow.isVisible {
+            fileTranscriptionWindow.makeKeyAndOrderFront(nil)
+            NSApp.activate(ignoringOtherApps: true)
+            return
+        }
+
+        let transcriptionView = FileTranscriptionView().environmentObject(appState)
+        let window = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: 480, height: 600),
+            styleMask: [.titled, .closable, .resizable, .miniaturizable],
+            backing: .buffered,
+            defer: false
+        )
+        window.title = "File Transcription"
+        window.contentView = NSHostingView(rootView: transcriptionView)
+        window.isReleasedWhenClosed = false
+        window.center()
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+
+        fileTranscriptionWindow = window
+
+        NotificationCenter.default.addObserver(
+            forName: NSWindow.willCloseNotification,
+            object: window,
+            queue: .main
+        ) { [weak self] _ in
+            if self?.setupWindow == nil && self?.settingsWindow == nil {
+                NSApp.setActivationPolicy(.accessory)
+            }
+            self?.fileTranscriptionWindow = nil
+        }
+    }
+
     private func showSettingsWindow() {
         NSApp.setActivationPolicy(.regular)
 
@@ -82,7 +130,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "FreeFlow"
+        window.title = "FlowKeys"
         window.contentView = hostingView
         window.isReleasedWhenClosed = false
         window.center()
@@ -117,7 +165,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "FreeFlow"
+        window.title = "FlowKeys"
         window.titlebarAppearsTransparent = true
         window.isMovableByWindowBackground = true
         window.contentView = NSHostingView(rootView: setupView)

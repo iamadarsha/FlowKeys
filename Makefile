@@ -1,8 +1,8 @@
-APP_NAME ?= FreeFlow Dev
-BUNDLE_ID ?= com.zachlatta.freeflow.dev
+APP_NAME ?= FlowKeys
+BUNDLE_ID ?= com.flowkeys.app
+CODESIGN_IDENTITY ?= -
 BUILD_DIR = build
 APP_BUNDLE = $(BUILD_DIR)/$(APP_NAME).app
-CODESIGN_IDENTITY ?= FreeFlow Dev
 CONTENTS = $(APP_BUNDLE)/Contents
 MACOS_DIR = $(CONTENTS)/MacOS
 empty :=
@@ -53,7 +53,10 @@ endif
 	@plutil -replace CFBundleExecutable -string "$(APP_NAME)" "$(CONTENTS)/Info.plist"
 	@plutil -replace CFBundleIdentifier -string "$(BUNDLE_ID)" "$(CONTENTS)/Info.plist"
 	@cp $(ICON_ICNS) "$(RESOURCES)/"
-	@codesign --force --options runtime --sign "$(CODESIGN_IDENTITY)" --entitlements FreeFlow.entitlements "$(APP_BUNDLE)"
+	@codesign --force --deep --options runtime \
+		--sign "$(CODESIGN_IDENTITY)" \
+		--entitlements FlowKeys.entitlements \
+		"$(APP_BUNDLE)"
 	@echo "Built $(APP_BUNDLE)"
 
 icon: $(ICON_ICNS)
@@ -79,22 +82,36 @@ dmg: all
 	@rm -rf $(BUILD_DIR)/dmg-staging
 	@mkdir -p $(BUILD_DIR)/dmg-staging
 	@cp -R "$(APP_BUNDLE)" $(BUILD_DIR)/dmg-staging/
-	@osascript -e 'tell application "Finder" to make alias file to POSIX file "/Applications" at POSIX file "'"$$(cd $(BUILD_DIR)/dmg-staging && pwd)"'"'
-	@ALIAS=$$(find $(BUILD_DIR)/dmg-staging -maxdepth 1 -not -name '*.app' -not -name '.DS_Store' -type f | head -1) && mv "$$ALIAS" "$(BUILD_DIR)/dmg-staging/Applications"
-	@fileicon set "$(BUILD_DIR)/dmg-staging/Applications" /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ApplicationsFolderIcon.icns
+	@ln -s /Applications $(BUILD_DIR)/dmg-staging/Applications
+	@if [ -x "$$(which fileicon 2>/dev/null)" ]; then \
+		fileicon set "$(BUILD_DIR)/dmg-staging/Applications" /System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ApplicationsFolderIcon.icns; \
+	fi
 	@echo "Creating DMG..."
-	@create-dmg \
-		--volname "$(APP_NAME)" \
-		--volicon "$(ICON_ICNS)" \
-		--window-pos 200 120 \
-		--window-size 660 400 \
-		--icon-size 128 \
-		--icon "$(APP_NAME).app" 180 170 \
-		--hide-extension "$(APP_NAME).app" \
-		--icon "Applications" 480 170 \
-		--no-internet-enable \
-		"$(BUILD_DIR)/$(APP_NAME).dmg" \
-		"$(BUILD_DIR)/dmg-staging"
+	@if [ -x "$$(which create-dmg 2>/dev/null)" ]; then \
+		create-dmg \
+			--volname "$(APP_NAME)" \
+			--volicon "$(ICON_ICNS)" \
+			--window-pos 200 120 \
+			--window-size 660 400 \
+			--icon-size 128 \
+			--icon "$(APP_NAME).app" 180 170 \
+			--hide-extension "$(APP_NAME).app" \
+			--icon "Applications" 480 170 \
+			--no-internet-enable \
+			"$(BUILD_DIR)/$(APP_NAME).dmg" \
+			"$(BUILD_DIR)/dmg-staging"; \
+	else \
+		echo "create-dmg not found, falling back to hdiutil (basic DMG)..."; \
+		hdiutil create -size 50m -volname "$(APP_NAME)" -fs HFS+ \
+			-type SPARSE "$(BUILD_DIR)/$(APP_NAME)-rw" ; \
+		hdiutil attach "$(BUILD_DIR)/$(APP_NAME)-rw.sparseimage" -mountpoint "$(BUILD_DIR)/dmg-mount" ; \
+		cp -R "$(BUILD_DIR)/dmg-staging/$(APP_NAME).app" "$(BUILD_DIR)/dmg-mount/" ; \
+		ln -s /Applications "$(BUILD_DIR)/dmg-mount/Applications" ; \
+		hdiutil detach "$(BUILD_DIR)/dmg-mount" ; \
+		hdiutil convert "$(BUILD_DIR)/$(APP_NAME)-rw.sparseimage" -format UDZO \
+			-o "$(BUILD_DIR)/$(APP_NAME).dmg" ; \
+		rm -f "$(BUILD_DIR)/$(APP_NAME)-rw.sparseimage" ; \
+	fi
 	@rm -rf $(BUILD_DIR)/dmg-staging
 	@echo "Created $(BUILD_DIR)/$(APP_NAME).dmg"
 
@@ -111,3 +128,30 @@ clean:
 
 run: all
 	open "$(APP_BUNDLE)"
+
+release: dmg
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "  FlowKeys DMG ready for GitHub Release"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo ""
+	@echo "NEXT STEPS TO PUBLISH:"
+	@echo ""
+	@echo "1. Commit and push everything:"
+	@echo "   git add -A"
+	@echo "   git commit -m 'Release v1.0.0'"
+	@echo "   git push origin main"
+	@echo ""
+	@echo "2. Create and push a version tag:"
+	@echo "   git tag v1.0.0"
+	@echo "   git push origin v1.0.0"
+	@echo ""
+	@echo "3. GitHub Actions will automatically:"
+	@echo "   - Build the universal DMG"
+	@echo "   - Create a GitHub Release"
+	@echo "   - Upload FlowKeys.dmg to the release"
+	@echo ""
+	@echo "4. Share this install command with anyone:"
+	@echo "   curl -fsSL https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/install.sh | bash"
+	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

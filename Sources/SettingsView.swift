@@ -75,6 +75,12 @@ struct SettingsView: View {
                 switch appState.selectedSettingsTab {
                 case .general, .none:
                     GeneralSettingsView()
+                case .modes:
+                    SmartModesSettingsView()
+                case .snippets:
+                    SnippetsSettingsView()
+                case .dictionary:
+                    DictionarySettingsView()
                 case .prompts:
                     PromptsSettingsView()
                 case .macros:
@@ -94,16 +100,17 @@ struct GeneralSettingsView: View {
     @EnvironmentObject var appState: AppState
     @Environment(\.openURL) private var openURL
     @AppStorage("show_menu_bar_icon") private var showMenuBarIcon = true
-    @State private var apiKeyInput: String = ""
-    @State private var apiBaseURLInput: String = ""
     @State private var isValidatingKey = false
     @State private var keyValidationError: String?
     @State private var keyValidationSuccess = false
+    @State private var editingProvider: TranscriptionProvider?
+    @State private var editingProviderKey: String = ""
+    @State private var providerValidationProvider: TranscriptionProvider?
     @State private var customVocabularyInput: String = ""
     @State private var micPermissionGranted = false
     @StateObject private var githubCache = GitHubMetadataCache.shared
     @ObservedObject private var updateManager = UpdateManager.shared
-    private let freeflowRepoURL = URL(string: "https://github.com/zachlatta/freeflow")!
+    private let flowKeysRepoURL = URL(string: "https://github.com/iamadarsha/FlowKeys")!
 
     var body: some View {
         ScrollView {
@@ -115,7 +122,7 @@ struct GeneralSettingsView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 64, height: 64)
 
-                    Text("FreeFlow")
+                    Text("FlowKeys")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
 
                     Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
@@ -137,9 +144,9 @@ struct GeneralSettingsView: View {
                             .clipShape(Circle())
 
                             Button {
-                                openURL(freeflowRepoURL)
+                                openURL(flowKeysRepoURL)
                             } label: {
-                                Text("zachlatta/freeflow")
+                                Text("iamadarsha/FlowKeys")
                                     .font(.system(.caption, design: .monospaced).weight(.medium))
                             }
                             .buttonStyle(.plain)
@@ -164,7 +171,7 @@ struct GeneralSettingsView: View {
                             .background(Capsule().fill(Color.yellow.opacity(0.14)))
 
                             Button {
-                                openURL(freeflowRepoURL)
+                                openURL(flowKeysRepoURL)
                             } label: {
                                 HStack(spacing: 4) {
                                     Image(systemName: "star")
@@ -240,6 +247,9 @@ struct GeneralSettingsView: View {
                 SettingsCard("Clipboard", icon: "doc.on.clipboard") {
                     clipboardSection
                 }
+                SettingsCard("Language", icon: "globe") {
+                    languageModeSection
+                }
                 SettingsCard("Microphone", icon: "mic.fill") {
                     microphoneSection
                 }
@@ -256,8 +266,6 @@ struct GeneralSettingsView: View {
             .padding(24)
         }
         .onAppear {
-            apiKeyInput = appState.apiKey
-            apiBaseURLInput = appState.apiBaseURL
             customVocabularyInput = appState.customVocabulary
             checkMicPermission()
             appState.refreshLaunchAtLoginStatus()
@@ -269,7 +277,7 @@ struct GeneralSettingsView: View {
 
     private var startupSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Toggle("Launch FreeFlow at login", isOn: $appState.launchAtLogin)
+            Toggle("Launch FlowKeys at login", isOn: $appState.launchAtLogin)
             Toggle("Show menu bar icon", isOn: $showMenuBarIcon)
 
             if SMAppService.mainApp.status == .requiresApproval {
@@ -385,7 +393,7 @@ struct GeneralSettingsView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "arrow.down.circle.fill")
                                 .foregroundStyle(.blue)
-                            Text("A new version of FreeFlow is available!")
+                            Text("A new version of FlowKeys is available!")
                                 .font(.caption.weight(.semibold))
                             Spacer()
                             Button("Update Now") {
@@ -408,24 +416,41 @@ struct GeneralSettingsView: View {
 
     private var apiKeySection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("FreeFlow uses Groq's whisper-large-v3 model for transcription.")
+            Text("Configure API keys per provider. Keys are stored in the macOS Keychain.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-            HStack(spacing: 8) {
-                SecureField("Enter your Groq API key", text: $apiKeyInput)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(.body, design: .monospaced))
-                    .disabled(isValidatingKey)
-                    .onChange(of: apiKeyInput) { _ in
-                        keyValidationError = nil
-                        keyValidationSuccess = false
+            HStack(alignment: .center, spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Active Transcription Provider")
+                        .font(.caption.weight(.semibold))
+                    Picker("Transcription Provider", selection: $appState.activeTranscriptionProvider) {
+                        ForEach(TranscriptionProvider.allCases) { provider in
+                            Text(provider.displayName).tag(provider)
+                        }
                     }
-
-                Button(isValidatingKey ? "Validating..." : "Save") {
-                    validateAndSaveKey()
+                    .labelsHidden()
+                    .pickerStyle(.menu)
                 }
-                .disabled(apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isValidatingKey)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Post-Processing LLM Provider")
+                        .font(.caption.weight(.semibold))
+                    Picker("LLM Provider", selection: $appState.activeLLMProvider) {
+                        ForEach(TranscriptionProvider.allCases) { provider in
+                            Text(provider.displayName).tag(provider)
+                        }
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                }
+
+                Spacer(minLength: 0)
+
+                Button("Change Provider") {
+                    editingProvider = appState.activeTranscriptionProvider
+                    editingProviderKey = appState.apiKey(for: appState.activeTranscriptionProvider)
+                }
             }
 
             if let error = keyValidationError {
@@ -440,32 +465,82 @@ struct GeneralSettingsView: View {
 
             Divider()
 
-            Text("API Base URL")
+            Text("Providers")
                 .font(.caption.weight(.semibold))
 
-            Text("Change this to use a different OpenAI-compatible API provider.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            ForEach(TranscriptionProvider.allCases) { provider in
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(alignment: .center, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(provider.displayName)
+                                .font(.subheadline.weight(.semibold))
+                            Text(provider.shortDescription)
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text(appState.hasAPIKey(for: provider) ? "✅ Configured" : "⚠️ Not set")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(appState.hasAPIKey(for: provider) ? .green : .orange)
+                    }
 
-            HStack(spacing: 8) {
-                TextField("https://api.groq.com/openai/v1", text: $apiBaseURLInput)
-                    .textFieldStyle(.roundedBorder)
-                    .font(.system(.body, design: .monospaced))
-                    .onChange(of: apiBaseURLInput) { newValue in
-                        let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-                        if !trimmed.isEmpty {
-                            appState.apiBaseURL = trimmed
+                    HStack(spacing: 8) {
+                        Text(appState.hasAPIKey(for: provider) ? appState.maskedAPIKey(for: provider) : "No key saved")
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundStyle(.secondary)
+
+                        Spacer()
+
+                        if editingProvider == provider {
+                            SecureField(provider.apiKeyPlaceholder, text: $editingProviderKey)
+                                .textFieldStyle(.roundedBorder)
+                                .font(.system(.caption, design: .monospaced))
+                                .frame(maxWidth: 220)
+
+                            Button(isValidatingKey && providerValidationProvider == provider ? "Validating..." : "Save") {
+                                validateAndSaveKey(provider: provider)
+                            }
+                            .disabled(isValidatingKey && providerValidationProvider == provider)
+
+                            Button("Cancel") {
+                                editingProvider = nil
+                                editingProviderKey = ""
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundStyle(.secondary)
+                        } else {
+                            Button("Edit") {
+                                editingProvider = provider
+                                editingProviderKey = appState.apiKey(for: provider)
+                                keyValidationError = nil
+                                keyValidationSuccess = false
+                            }
+
+                            Button("Remove") {
+                                appState.deleteAPIKey(for: provider)
+                            }
+                            .disabled(!appState.hasAPIKey(for: provider))
                         }
                     }
 
-                Button("Reset to Default") {
-                    apiBaseURLInput = "https://api.groq.com/openai/v1"
-                    appState.apiBaseURL = "https://api.groq.com/openai/v1"
-                }
-                .font(.caption)
-            }
+                    if editingProvider == provider {
+                        HStack(spacing: 10) {
+                            Text("Get key:")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                            Button("Open provider console →") {
+                                if let url = URL(string: provider.apiKeyURL) {
+                                    openURL(url)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                            .font(.caption)
+                        }
+                    }
 
-            Divider()
+                    Divider()
+                }
+            }
 
             HStack(alignment: .center, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -485,20 +560,28 @@ struct GeneralSettingsView: View {
         }
     }
 
-    private func validateAndSaveKey() {
-        let key = apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
-        let baseURL = apiBaseURLInput.trimmingCharacters(in: .whitespacesAndNewlines)
+    private func validateAndSaveKey(provider: TranscriptionProvider) {
+        let key = editingProviderKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard provider.keyLikelyValidFormat(key) else {
+            keyValidationError = "The key format does not look valid for \(provider.displayName)."
+            return
+        }
+
         isValidatingKey = true
+        providerValidationProvider = provider
         keyValidationError = nil
         keyValidationSuccess = false
 
         Task {
-            let valid = await TranscriptionService.validateAPIKey(key, baseURL: baseURL.isEmpty ? "https://api.groq.com/openai/v1" : baseURL)
+            let valid = await TranscriptionService.validateAPIKey(key, for: provider)
             await MainActor.run {
                 isValidatingKey = false
+                providerValidationProvider = nil
                 if valid {
-                    appState.apiKey = key
+                    appState.saveAPIKey(key, for: provider)
                     keyValidationSuccess = true
+                    editingProvider = nil
+                    editingProviderKey = ""
                 } else {
                     keyValidationError = "Invalid API key. Please check and try again."
                 }
@@ -549,7 +632,30 @@ struct GeneralSettingsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Toggle("Preserve clipboard after paste", isOn: $appState.preserveClipboard)
 
-            Text("FreeFlow will temporarily place the transcript on your clipboard to paste it, then restore whatever was there before. If you copy something else before the restore happens, FreeFlow leaves it alone.")
+            Text("FlowKeys will temporarily place the transcript on your clipboard to paste it, then restore whatever was there before. If you copy something else before the restore happens, FlowKeys leaves it alone.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    // MARK: Language Mode
+
+    private var languageModeSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Language Mode")
+                    .font(.headline)
+                Spacer()
+            }
+
+            Picker("Language Mode", selection: $appState.languageMode) {
+                ForEach(UserLanguageMode.allCases) { mode in
+                    Text(mode.displayName).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+
+            Text("Controls how FlowKeys processes your speech. Hinglish mode enables Hindi-English code-switching support with Indian vocabulary awareness. Hindi mode optimizes for pure Hindi. English mode is the default.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -911,9 +1017,9 @@ struct PromptsSettingsView: View {
                         }
                     }
                 }
-                .disabled(systemTestRunning || appState.apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || systemTestInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(systemTestRunning || appState.currentLLMAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || systemTestInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
-                if appState.apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                if appState.currentLLMAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     Label("API key required to test", systemImage: "exclamationmark.triangle")
                         .font(.caption)
                         .foregroundStyle(.orange)
@@ -959,17 +1065,21 @@ struct PromptsSettingsView: View {
         systemTestError = nil
         systemTestPrompt = nil
 
-        let service = PostProcessingService(apiKey: appState.apiKey, baseURL: appState.apiBaseURL)
+        let service = PostProcessingService(
+            provider: appState.activeLLMProvider,
+            keyStore: appState.apiKeyStore,
+            languageMode: appState.languageMode
+        )
         let input = systemTestInput
         let customPrompt = appState.customSystemPrompt
         let vocabulary = appState.customVocabulary
 
         let context = AppContext(
-            appName: "FreeFlow Settings",
-            bundleIdentifier: "com.zachlatta.freeflow",
+            appName: "FlowKeys Settings",
+            bundleIdentifier: "com.flowkeys.app",
             windowTitle: "System Prompt Test",
             selectedText: nil,
-            currentActivity: "User is testing the system prompt in FreeFlow settings.",
+            currentActivity: "User is testing the system prompt in FlowKeys settings.",
             contextPrompt: nil,
             screenshotDataURL: nil,
             screenshotMimeType: nil,
@@ -1007,7 +1117,7 @@ struct PromptsSettingsView: View {
             && appState.customContextPromptLastModified < AppContextService.defaultContextPromptDate
 
         return VStack(alignment: .leading, spacing: 10) {
-            Text("Controls how FreeFlow infers your current activity from app metadata and screenshots.")
+            Text("Controls how FlowKeys infers your current activity from app metadata and screenshots.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -1124,9 +1234,9 @@ struct PromptsSettingsView: View {
                         }
                     }
                 }
-                .disabled(contextTestRunning || appState.apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .disabled(contextTestRunning || appState.currentLLMAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
-                if appState.apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                if appState.currentLLMAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                     Label("API key required to test", systemImage: "exclamationmark.triangle")
                         .font(.caption)
                         .foregroundStyle(.orange)
@@ -1172,9 +1282,16 @@ struct PromptsSettingsView: View {
         contextTestError = nil
         contextTestPrompt = nil
 
+        let key = appState.apiKey(for: appState.activeLLMProvider).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !key.isEmpty else {
+            contextTestError = "Configure an API key for \(appState.activeLLMProvider.displayName) first."
+            contextTestRunning = false
+            return
+        }
+
         let service = AppContextService(
-            apiKey: appState.apiKey,
-            baseURL: appState.apiBaseURL,
+            provider: appState.activeLLMProvider,
+            keyStore: appState.apiKeyStore,
             customContextPrompt: appState.customContextPrompt
         )
 

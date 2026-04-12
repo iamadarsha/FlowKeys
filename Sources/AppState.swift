@@ -7,7 +7,7 @@ import ServiceManagement
 import ApplicationServices
 import ScreenCaptureKit
 import os.log
-private let recordingLog = OSLog(subsystem: "com.zachlatta.freeflow", category: "Recording")
+private let recordingLog = OSLog(subsystem: "com.flowkeys.app", category: "Recording")
 
 struct VoiceMacro: Codable, Identifiable, Equatable {
     var id: UUID = UUID()
@@ -22,6 +22,9 @@ struct PrecomputedMacro {
 
 enum SettingsTab: String, CaseIterable, Identifiable {
     case general
+    case modes
+    case snippets
+    case dictionary
     case prompts
     case macros
     case runLog
@@ -31,6 +34,9 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .general: return "General"
+        case .modes: return "Smart Modes"
+        case .snippets: return "Quick Snippets"
+        case .dictionary: return "Vocabulary"
         case .prompts: return "Prompts"
         case .macros: return "Voice Macros"
         case .runLog: return "Run Log"
@@ -40,6 +46,9 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .general: return "gearshape"
+        case .modes: return "swirl.circle.righthalf.filled"
+        case .snippets: return "text.badge.plus"
+        case .dictionary: return "character.book.closed"
         case .prompts: return "text.bubble"
         case .macros: return "music.mic"
         case .runLog: return "clock.arrow.circlepath"
@@ -112,8 +121,8 @@ private struct PendingClipboardRestore {
 }
 
 final class AppState: ObservableObject, @unchecked Sendable {
-    private let apiKeyStorageKey = "groq_api_key"
-    private let apiBaseURLStorageKey = "api_base_url"
+    private let activeTranscriptionProviderStorageKey = "active_transcription_provider"
+    private let activeLLMProviderStorageKey = "active_llm_provider"
     private let holdShortcutStorageKey = "hold_shortcut"
     private let toggleShortcutStorageKey = "toggle_shortcut"
     private let savedHoldCustomShortcutStorageKey = "saved_hold_custom_shortcut"
@@ -129,6 +138,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     private let forceHTTP2TranscriptionStorageKey = "force_http2_transcription"
     private let soundVolumeStorageKey = "sound_volume"
     private let voiceMacrosStorageKey = "voice_macros"
+    private let languageModeStorageKey = "language_mode"
     private let transcribingIndicatorDelay: TimeInterval = 1.0
     private let clipboardRestoreDelay: TimeInterval = 0.15
     let maxPipelineHistoryCount = 20
@@ -139,17 +149,17 @@ final class AppState: ObservableObject, @unchecked Sendable {
         }
     }
 
-    @Published var apiKey: String {
+    @Published var activeTranscriptionProvider: TranscriptionProvider {
         didSet {
-            persistAPIKey(apiKey)
-            contextService = AppContextService(apiKey: apiKey, baseURL: apiBaseURL, customContextPrompt: customContextPrompt)
+            UserDefaults.standard.set(activeTranscriptionProvider.rawValue, forKey: activeTranscriptionProviderStorageKey)
+            rebuildContextService()
         }
     }
 
-    @Published var apiBaseURL: String {
+    @Published var activeLLMProvider: TranscriptionProvider {
         didSet {
-            persistAPIBaseURL(apiBaseURL)
-            contextService = AppContextService(apiKey: apiKey, baseURL: apiBaseURL, customContextPrompt: customContextPrompt)
+            UserDefaults.standard.set(activeLLMProvider.rawValue, forKey: activeLLMProviderStorageKey)
+            rebuildContextService()
         }
     }
 
@@ -194,7 +204,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     @Published var customContextPrompt: String {
         didSet {
             UserDefaults.standard.set(customContextPrompt, forKey: customContextPromptStorageKey)
-            contextService = AppContextService(apiKey: apiKey, baseURL: apiBaseURL, customContextPrompt: customContextPrompt)
+            rebuildContextService()
         }
     }
 
@@ -231,6 +241,13 @@ final class AppState: ObservableObject, @unchecked Sendable {
     @Published var soundVolume: Float {
         didSet {
             UserDefaults.standard.set(soundVolume, forKey: soundVolumeStorageKey)
+        }
+    }
+
+    @Published var languageMode: UserLanguageMode {
+        didSet {
+            UserDefaults.standard.set(languageMode.rawValue, forKey: languageModeStorageKey)
+            overlayManager.updateLanguageMode(languageMode)
         }
     }
 
@@ -276,6 +293,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     @Published var availableMicrophones: [AudioDevice] = []
 
     let audioRecorder = AudioRecorder()
+    let apiKeyStore = APIKeyStore()
     let hotkeyManager = HotkeyManager()
     let overlayManager = RecordingOverlayManager()
     private var accessibilityTimer: Timer?
@@ -294,11 +312,19 @@ final class AppState: ObservableObject, @unchecked Sendable {
     private var pendingShortcutStartMode: RecordingTriggerMode?
     private var shouldMonitorHotkeys = false
     private var isCapturingShortcut = false
+    let dictationModeStore = DictationModeStore()
+    let snippetEngine = SnippetEngine()
+    let personalDictionary = PersonalDictionary()
 
     init() {
         let hasCompletedSetup = UserDefaults.standard.bool(forKey: "hasCompletedSetup")
-        let apiKey = Self.loadStoredAPIKey(account: apiKeyStorageKey)
-        let apiBaseURL = Self.loadStoredAPIBaseURL(account: "api_base_url")
+        let legacyGroqKey = Self.loadLegacyGroqAPIKey(account: "groq_api_key")
+        let activeTranscriptionProvider = TranscriptionProvider(
+            rawValue: UserDefaults.standard.string(forKey: activeTranscriptionProviderStorageKey) ?? ""
+        ) ?? .groq
+        let activeLLMProvider = TranscriptionProvider(
+            rawValue: UserDefaults.standard.string(forKey: activeLLMProviderStorageKey) ?? ""
+        ) ?? activeTranscriptionProvider
         let shortcuts = Self.loadShortcutConfiguration(
             holdKey: holdShortcutStorageKey,
             toggleKey: toggleShortcutStorageKey
@@ -319,7 +345,10 @@ final class AppState: ObservableObject, @unchecked Sendable {
         let forceHTTP2Transcription = UserDefaults.standard.bool(forKey: forceHTTP2TranscriptionStorageKey)
         let soundVolume: Float = UserDefaults.standard.object(forKey: soundVolumeStorageKey) != nil
             ? UserDefaults.standard.float(forKey: soundVolumeStorageKey) : 1.0
-        
+        let languageMode = UserLanguageMode(
+            rawValue: UserDefaults.standard.string(forKey: languageModeStorageKey) ?? ""
+        ) ?? .pureEnglish
+
         let initialMacros: [VoiceMacro]
         if let data = UserDefaults.standard.data(forKey: "voice_macros"),
            let decoded = try? JSONDecoder().decode([VoiceMacro].self, from: data) {
@@ -343,10 +372,19 @@ final class AppState: ObservableObject, @unchecked Sendable {
 
         let selectedMicrophoneID = UserDefaults.standard.string(forKey: selectedMicrophoneStorageKey) ?? "default"
 
-        self.contextService = AppContextService(apiKey: apiKey, baseURL: apiBaseURL, customContextPrompt: customContextPrompt)
+        if !legacyGroqKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           apiKeyStore.getKey(for: .groq) == nil {
+            apiKeyStore.saveKey(legacyGroqKey, for: .groq)
+        }
+
+        self.activeTranscriptionProvider = activeTranscriptionProvider
+        self.activeLLMProvider = activeLLMProvider
+        self.contextService = AppContextService(
+            provider: activeLLMProvider,
+            keyStore: apiKeyStore,
+            customContextPrompt: customContextPrompt
+        )
         self.hasCompletedSetup = hasCompletedSetup
-        self.apiKey = apiKey
-        self.apiBaseURL = apiBaseURL
         self.holdShortcut = shortcuts.hold
         self.toggleShortcut = shortcuts.toggle
         self.savedHoldCustomShortcut = savedHoldCustomShortcut
@@ -360,6 +398,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
         self.preserveClipboard = preserveClipboard
         self.forceHTTP2Transcription = forceHTTP2Transcription
         self.soundVolume = soundVolume
+        self.languageMode = languageMode
         self.voiceMacros = initialMacros
         self.pipelineHistory = savedHistory
         self.hasAccessibility = initialAccessibility
@@ -383,6 +422,13 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 self?.handleOverlayStopButtonPressed()
             }
         }
+        overlayManager.onRetryButtonPressed = { [weak self] in
+            DispatchQueue.main.async {
+                self?.retryAfterOverlayError()
+            }
+        }
+
+        rebuildContextService()
     }
 
     deinit {
@@ -405,23 +451,69 @@ final class AppState: ObservableObject, @unchecked Sendable {
         audioDeviceListenerBlock = nil
     }
 
-    private static func loadStoredAPIKey(account: String) -> String {
+    var currentTranscriptionAPIKey: String {
+        apiKeyStore.getKey(for: activeTranscriptionProvider) ?? ""
+    }
+
+    var currentLLMAPIKey: String {
+        apiKeyStore.getKey(for: activeLLMProvider) ?? ""
+    }
+
+    func apiKey(for provider: TranscriptionProvider) -> String {
+        apiKeyStore.getKey(for: provider) ?? ""
+    }
+
+    func hasAPIKey(for provider: TranscriptionProvider) -> Bool {
+        apiKeyStore.hasKey(for: provider)
+    }
+
+    func saveAPIKey(_ key: String, for provider: TranscriptionProvider) {
+        apiKeyStore.saveKey(key, for: provider)
+        rebuildContextService()
+    }
+
+    func deleteAPIKey(for provider: TranscriptionProvider) {
+        apiKeyStore.deleteKey(for: provider)
+        rebuildContextService()
+    }
+
+    func maskedAPIKey(for provider: TranscriptionProvider) -> String {
+        apiKeyStore.maskedKey(for: provider)
+    }
+
+    private func contextLLMProvider() -> TranscriptionProvider {
+        let candidates: [TranscriptionProvider] = [
+            activeLLMProvider,
+            activeTranscriptionProvider,
+            .groq,
+            .openai,
+            .grok,
+            .gemini,
+            .claude
+        ]
+        for candidate in candidates {
+            let key = apiKeyStore.getKey(for: candidate) ?? ""
+            if !key.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                return candidate
+            }
+        }
+        return activeLLMProvider
+    }
+
+    private func rebuildContextService() {
+        contextService = AppContextService(
+            provider: contextLLMProvider(),
+            keyStore: apiKeyStore,
+            customContextPrompt: customContextPrompt
+        )
+    }
+
+    private static func loadLegacyGroqAPIKey(account: String) -> String {
         if let storedKey = AppSettingsStorage.load(account: account), !storedKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return storedKey
         }
         return ""
     }
-
-    private func persistAPIKey(_ value: String) {
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.isEmpty {
-            AppSettingsStorage.delete(account: apiKeyStorageKey)
-        } else {
-            AppSettingsStorage.save(trimmed, account: apiKeyStorageKey)
-        }
-    }
-
-    private static let defaultAPIBaseURL = "https://api.groq.com/openai/v1"
 
     private struct StoredShortcutConfiguration {
         let hold: ShortcutBinding
@@ -429,12 +521,6 @@ final class AppState: ObservableObject, @unchecked Sendable {
         let didMigrateLegacyValue: Bool
     }
 
-    private static func loadStoredAPIBaseURL(account: String) -> String {
-        if let stored = AppSettingsStorage.load(account: account), !stored.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return stored
-        }
-        return defaultAPIBaseURL
-    }
 
     private static func loadShortcutConfiguration(holdKey: String, toggleKey: String) -> StoredShortcutConfiguration {
         if let hold = loadShortcut(forKey: holdKey),
@@ -457,14 +543,6 @@ final class AppState: ObservableObject, @unchecked Sendable {
         return try? JSONDecoder().decode(ShortcutBinding.self, from: data)
     }
 
-    private func persistAPIBaseURL(_ value: String) {
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmed.isEmpty || trimmed == Self.defaultAPIBaseURL {
-            AppSettingsStorage.delete(account: apiBaseURLStorageKey)
-        } else {
-            AppSettingsStorage.save(trimmed, account: apiBaseURLStorageKey)
-        }
-    }
 
     private func persistShortcut(_ binding: ShortcutBinding, key: String) {
         guard let data = try? JSONEncoder().encode(binding) else { return }
@@ -486,7 +564,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
 
     static func audioStorageDirectory() -> URL {
         let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "FreeFlow"
+        let appName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String ?? "FlowKeys"
         let audioDir = appSupport.appendingPathComponent("\(appName)/audio", isDirectory: true)
         if !FileManager.default.fileExists(atPath: audioDir.path) {
             try? FileManager.default.createDirectory(at: audioDir, withIntermediateDirectories: true)
@@ -560,11 +638,16 @@ final class AppState: ObservableObject, @unchecked Sendable {
         )
 
         let transcriptionService = TranscriptionService(
-            apiKey: apiKey,
-            baseURL: apiBaseURL,
-            forceHTTP2: forceHTTP2Transcription
+            provider: activeTranscriptionProvider,
+            keyStore: apiKeyStore,
+            forceHTTP2: forceHTTP2Transcription,
+            languageMode: languageMode
         )
-        let postProcessingService = PostProcessingService(apiKey: apiKey, baseURL: apiBaseURL)
+        let postProcessingService = PostProcessingService(
+            provider: activeLLMProvider,
+            keyStore: apiKeyStore,
+            languageMode: languageMode
+        )
         let capturedCustomVocabulary = customVocabulary
         let capturedCustomSystemPrompt = customSystemPrompt
 
@@ -971,6 +1054,11 @@ final class AppState: ObservableObject, @unchecked Sendable {
         isRecording = true
         statusText = "Starting..."
         hasShownScreenshotPermissionAlert = false
+        
+        let bundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
+        let mode = dictationModeStore.effectiveMode(forAppBundleID: bundleID)
+        overlayManager.updateLanguageMode(languageMode)
+        overlayManager.updateModeName(mode?.name ?? "", icon: mode?.icon ?? "")
 
         // Show initializing dots only if engine takes longer than 0.5s to start
         var overlayShown = false
@@ -998,7 +1086,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
                     self.overlayManager.showRecording(mode: self.activeRecordingTriggerMode ?? triggerMode)
                 }
                 overlayShown = true
-                let s = NSSound(named: "Tink"); s?.volume = self.soundVolume; s?.play()
+                AudioFeedbackManager.shared.playStartRecording(volume: self.soundVolume)
             }
         }
 
@@ -1025,7 +1113,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
                     self.shortcutSessionController.reset()
                     self.errorMessage = self.formattedRecordingStartError(error)
                     self.statusText = "Error"
-                    self.overlayManager.dismiss()
+                    self.overlayManager.showError(message: self.errorMessage ?? "Unable to start recording.")
                 }
             }
         }
@@ -1052,7 +1140,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     func showMicrophonePermissionAlert() {
         let alert = NSAlert()
         alert.messageText = "Microphone Permission Required"
-        alert.informativeText = "FreeFlow cannot record audio without Microphone access.\n\nGo to System Settings > Privacy & Security > Microphone and enable FreeFlow."
+        alert.informativeText = "FlowKeys cannot record audio without Microphone access.\n\nGo to System Settings > Privacy & Security > Microphone and enable FlowKeys."
         alert.alertStyle = .critical
         alert.addButton(withTitle: "Open System Settings")
         alert.addButton(withTitle: "Dismiss")
@@ -1070,7 +1158,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     func showAccessibilityAlert() {
         let alert = NSAlert()
         alert.messageText = "Accessibility Permission Required"
-        alert.informativeText = "FreeFlow cannot type transcriptions without Accessibility access.\n\nGo to System Settings > Privacy & Security > Accessibility and enable FreeFlow."
+        alert.informativeText = "FlowKeys cannot type transcriptions without Accessibility access.\n\nGo to System Settings > Privacy & Security > Accessibility and enable FlowKeys."
         alert.alertStyle = .critical
         alert.addButton(withTitle: "Open System Settings")
         alert.addButton(withTitle: "Dismiss")
@@ -1106,29 +1194,52 @@ final class AppState: ObservableObject, @unchecked Sendable {
         }?.original
     }
 
-    private func processTranscript(
+    func processTranscript(
         _ rawTranscript: String,
         context: AppContext,
         postProcessingService: PostProcessingService,
         customVocabulary: String,
         customSystemPrompt: String
     ) async -> (finalTranscript: String, status: String, prompt: String) {
-        if let macro = findMatchingMacro(for: rawTranscript) {
+        
+        let expandedTranscript = snippetEngine.process(rawTranscript)
+        if expandedTranscript != rawTranscript {
+            // Snippet was expanded, play sound
+            await MainActor.run {
+                AudioFeedbackManager.shared.playSnippetExpanded(volume: self.soundVolume)
+            }
+        }
+        
+        if let macro = findMatchingMacro(for: expandedTranscript) {
             os_log(.info, log: recordingLog, "Voice macro triggered: %{public}@", macro.command)
             return (macro.payload, "Voice macro used: \(macro.command)", "")
         }
-        
+
+        let mode = dictationModeStore.effectiveMode(forAppBundleID: context.bundleIdentifier)
+        let effectiveSystemPrompt = mode?.systemPromptOverride ?? customSystemPrompt
+        let appendedPrompt = mode?.appendToBasePrompt ?? ""
+        let modeAppendedPrompt = appendedPrompt.isEmpty ? "" : "\n\nCRITICAL CONTEXT MODE RULES:\n\(appendedPrompt)"
+        let finalPrompt = effectiveSystemPrompt + modeAppendedPrompt
+
+        let learnedVocab = personalDictionary.promptInjectionString()
+        let combinedVocab = [customVocabulary, learnedVocab]
+            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            .joined(separator: ", ")
+
         do {
             let result = try await postProcessingService.postProcess(
-                transcript: rawTranscript,
+                transcript: expandedTranscript,
                 context: context,
-                customVocabulary: customVocabulary,
-                customSystemPrompt: customSystemPrompt
+                customVocabulary: combinedVocab,
+                customSystemPrompt: finalPrompt
             )
+            
+            let _ = personalDictionary.processTranscript(result.transcript)
+            
             return (result.transcript, "Post-processing succeeded", result.prompt)
         } catch {
             os_log(.error, log: recordingLog, "Post-processing failed: %{public}@", error.localizedDescription)
-            return (rawTranscript, "Post-processing failed, using raw transcript", "")
+            return (expandedTranscript, "Post-processing failed, using raw transcript", "")
         }
     }
 
@@ -1166,7 +1277,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
         statusText = "Transcribing..."
         debugStatusMessage = "Transcribing audio"
         errorMessage = nil
-        let s = NSSound(named: "Pop"); s?.volume = soundVolume; s?.play()
+        AudioFeedbackManager.shared.playStopRecording(volume: soundVolume)
         overlayManager.slideUpToNotch { }
 
         transcribingIndicatorTask?.cancel()
@@ -1183,11 +1294,16 @@ final class AppState: ObservableObject, @unchecked Sendable {
         }
 
         let transcriptionService = TranscriptionService(
-            apiKey: apiKey,
-            baseURL: apiBaseURL,
-            forceHTTP2: forceHTTP2Transcription
+            provider: activeTranscriptionProvider,
+            keyStore: apiKeyStore,
+            forceHTTP2: forceHTTP2Transcription,
+            languageMode: languageMode
         )
-        let postProcessingService = PostProcessingService(apiKey: apiKey, baseURL: apiBaseURL)
+        let postProcessingService = PostProcessingService(
+            provider: activeLLMProvider,
+            keyStore: apiKeyStore,
+            languageMode: languageMode
+        )
 
         Task {
             do {
@@ -1278,7 +1394,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
                     self.isTranscribing = false
                     self.statusText = "Error"
                     self.audioRecorder.cleanup()
-                    self.overlayManager.dismiss()
+                    self.overlayManager.showError(message: self.errorMessage ?? "Transcription failed.")
                     self.lastPostProcessedTranscript = ""
                     self.lastRawTranscript = ""
                     self.lastContextSummary = ""
@@ -1456,7 +1572,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     private func showScreenshotPermissionAlert(message: String) {
         let alert = NSAlert()
         alert.messageText = "Screen Recording Permission Required"
-        alert.informativeText = "\(message)\n\nFreeFlow requires Screen Recording permission to capture screenshots for context-aware transcription.\n\nGo to System Settings > Privacy & Security > Screen Recording and enable FreeFlow."
+        alert.informativeText = "\(message)\n\nFlowKeys requires Screen Recording permission to capture screenshots for context-aware transcription.\n\nGo to System Settings > Privacy & Security > Screen Recording and enable FlowKeys."
         alert.alertStyle = .critical
         alert.addButton(withTitle: "Open System Settings")
         alert.addButton(withTitle: "Dismiss")
@@ -1476,6 +1592,13 @@ final class AppState: ObservableObject, @unchecked Sendable {
         alert.addButton(withTitle: "Dismiss")
         alert.icon = NSImage(systemSymbolName: "camera.viewfinder", accessibilityDescription: nil)
         _ = alert.runModal()
+    }
+
+    private func retryAfterOverlayError() {
+        guard !isRecording, !isTranscribing else { return }
+        errorMessage = nil
+        statusText = "Ready"
+        startRecording(triggerMode: .toggle)
     }
 
     func toggleDebugOverlay() {

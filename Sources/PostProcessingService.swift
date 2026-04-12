@@ -1,6 +1,7 @@
 import Foundation
 
 enum PostProcessingError: LocalizedError {
+    case missingAPIKey(String)
     case requestFailed(Int, String)
     case invalidResponse(String)
     case emptyOutput
@@ -8,14 +9,16 @@ enum PostProcessingError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
+        case .missingAPIKey(let message):
+            return message
         case .requestFailed(let statusCode, let details):
-            "Post-processing failed with status \(statusCode): \(details)"
+            return "Post-processing failed with status \(statusCode): \(details)"
         case .invalidResponse(let details):
-            "Invalid post-processing response: \(details)"
+            return "Invalid post-processing response: \(details)"
         case .emptyOutput:
-            "Post-processing returned empty output"
+            return "Post-processing returned empty output"
         case .requestTimedOut(let seconds):
-            "Post-processing timed out after \(Int(seconds))s"
+            return "Post-processing timed out after \(Int(seconds))s"
         }
     }
 }
@@ -89,35 +92,40 @@ Output hygiene:
 """
     static let defaultSystemPromptDate = "2026-04-08"
 
-    private let apiKey: String
-    private let baseURL: String
-    private let defaultModel = "openai/gpt-oss-20b"
-    private let fallbackModel = "meta-llama/llama-4-scout-17b-16e-instruct"
-    private let postProcessingMaxCompletionTokens = 4096
-    private let postProcessingTimeoutSeconds: TimeInterval = 20
+    private let provider: TranscriptionProvider
+    private let keyStore: APIKeyStore
+    private let languageMode: UserLanguageMode
+    private let postProcessingTimeoutSeconds: TimeInterval = 30
 
-    init(apiKey: String, baseURL: String = "https://api.groq.com/openai/v1") {
-        self.apiKey = apiKey
-        self.baseURL = baseURL
+    init(provider: TranscriptionProvider, keyStore: APIKeyStore, languageMode: UserLanguageMode = .pureEnglish) {
+        self.provider = provider
+        self.keyStore = keyStore
+        self.languageMode = languageMode
     }
 
     func postProcess(
         transcript: String,
         context: AppContext,
         customVocabulary: String,
-        customSystemPrompt: String = ""
+        customSystemPrompt: String = "",
+        model overrideModel: String? = nil
     ) async throws -> PostProcessingResult {
-        let vocabularyTerms = mergedVocabularyTerms(rawVocabulary: customVocabulary)
+        let selectedModel = overrideModel?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
+            ? overrideModel ?? provider.defaultPostProcessingModel
+            : provider.defaultPostProcessingModel
 
+        let vocabularyTerms = mergedVocabularyTerms(rawVocabulary: customVocabulary)
         let timeoutSeconds = postProcessingTimeoutSeconds
+
         return try await withThrowingTaskGroup(of: PostProcessingResult.self) { group in
             group.addTask { [weak self] in
                 guard let self else {
                     throw PostProcessingError.invalidResponse("Post-processing service deallocated")
                 }
-                return try await self.processWithFallback(
+                return try await self.process(
                     transcript: transcript,
                     contextSummary: context.contextSummary,
+                    model: selectedModel,
                     customVocabulary: vocabularyTerms,
                     customSystemPrompt: customSystemPrompt
                 )
@@ -128,56 +136,12 @@ Output hygiene:
                 throw PostProcessingError.requestTimedOut(timeoutSeconds)
             }
 
-            do {
-                guard let result = try await group.next() else {
-                    throw PostProcessingError.invalidResponse("No post-processing result")
-                }
-                group.cancelAll()
-                return result
-            } catch {
-                group.cancelAll()
-                throw error
+            guard let result = try await group.next() else {
+                throw PostProcessingError.invalidResponse("No post-processing result")
             }
+            group.cancelAll()
+            return result
         }
-    }
-
-    private func processWithFallback(
-        transcript: String,
-        contextSummary: String,
-        customVocabulary: [String],
-        customSystemPrompt: String = ""
-    ) async throws -> PostProcessingResult {
-        do {
-            return try await process(
-                transcript: transcript,
-                contextSummary: contextSummary,
-                model: defaultModel,
-                customVocabulary: customVocabulary,
-                customSystemPrompt: customSystemPrompt
-            )
-        } catch let error as PostProcessingError {
-            let shouldFallback: Bool
-            switch error {
-            case .requestFailed(let statusCode, _):
-                shouldFallback = statusCode == 429
-            case .emptyOutput:
-                shouldFallback = true
-            default:
-                shouldFallback = false
-            }
-
-            guard shouldFallback else {
-                throw error
-            }
-        }
-
-        return try await process(
-            transcript: transcript,
-            contextSummary: contextSummary,
-            model: fallbackModel,
-            customVocabulary: customVocabulary,
-            customSystemPrompt: customSystemPrompt
-        )
     }
 
     private func process(
@@ -185,30 +149,28 @@ Output hygiene:
         contextSummary: String,
         model: String,
         customVocabulary: [String],
-        customSystemPrompt: String = ""
+        customSystemPrompt: String
     ) async throws -> PostProcessingResult {
-        var request = URLRequest(url: URL(string: "\(baseURL)/chat/completions")!)
-        request.httpMethod = "POST"
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.timeoutInterval = postProcessingTimeoutSeconds
+        let systemPromptBase = customSystemPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? Self.defaultSystemPrompt
+            : customSystemPrompt
 
         let normalizedVocabulary = normalizedVocabularyText(customVocabulary)
-        let vocabularyPrompt = if !normalizedVocabulary.isEmpty {
-            """
+        let vocabularyPrompt = normalizedVocabulary.isEmpty ? "" : """
 The following vocabulary must be treated as high-priority terms while rewriting.
 Use these spellings exactly in the output when relevant:
 \(normalizedVocabulary)
 """
-        } else {
-            ""
-        }
 
-        var systemPrompt = customSystemPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            ? Self.defaultSystemPrompt
-            : customSystemPrompt
-        if !vocabularyPrompt.isEmpty {
-            systemPrompt += "\n\n" + vocabularyPrompt
+        var fullSystemPrompt = vocabularyPrompt.isEmpty
+            ? systemPromptBase
+            : "\(systemPromptBase)\n\n\(vocabularyPrompt)"
+
+        // Append the Indian language/Hinglish post-processing rules when language mode
+        // indicates Hindi or Hinglish. This gives the LLM comprehensive rules for
+        // code-switching preservation, Indian vocabulary, and dialect awareness.
+        if languageMode != .pureEnglish {
+            fullSystemPrompt += INDIAN_POSTPROCESSING_PROMPT_ADDENDUM
         }
 
         let userMessage = """
@@ -220,42 +182,67 @@ RAW_TRANSCRIPTION: "\(transcript)"
 """
 
         let promptForDisplay = """
+Provider: \(provider.rawValue)
 Model: \(model)
 
 [System]
-\(systemPrompt)
+\(fullSystemPrompt)
 
 [User]
 \(userMessage)
 """
 
-        var payload: [String: Any] = [
+        let rawOutput: String
+        switch provider {
+        case .groq, .openai, .grok:
+            rawOutput = try await runOpenAICompatibleRequest(systemPrompt: fullSystemPrompt, userMessage: userMessage, model: model)
+        case .gemini:
+            rawOutput = try await runGeminiRequest(systemPrompt: fullSystemPrompt, userMessage: userMessage, model: model)
+        case .claude:
+            rawOutput = try await runClaudeRequest(systemPrompt: fullSystemPrompt, userMessage: userMessage, model: model)
+        }
+
+        let sanitized = sanitizePostProcessedTranscript(rawOutput)
+        guard !sanitized.isEmpty else {
+            throw PostProcessingError.emptyOutput
+        }
+
+        return PostProcessingResult(transcript: sanitized, prompt: promptForDisplay)
+    }
+
+    private func runOpenAICompatibleRequest(systemPrompt: String, userMessage: String, model: String) async throws -> String {
+        guard let key = keyStore.getKey(for: provider) else {
+            throw PostProcessingError.missingAPIKey("\(provider.displayName) API key is missing")
+        }
+
+        guard let endpoint = URL(string: provider.llmEndpoint) else {
+            throw PostProcessingError.invalidResponse("Invalid provider endpoint")
+        }
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.timeoutInterval = postProcessingTimeoutSeconds
+        request.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let payload: [String: Any] = [
             "model": model,
             "temperature": 0.0,
             "messages": [
-                [
-                    "role": "system",
-                    "content": systemPrompt
-                ],
-                [
-                    "role": "user",
-                    "content": userMessage
-                ]
+                ["role": "system", "content": systemPrompt],
+                ["role": "user", "content": userMessage]
             ]
         ]
-        if model == defaultModel {
-            payload["max_completion_tokens"] = postProcessingMaxCompletionTokens
-        }
 
-        request.httpBody = try JSONSerialization.data(withJSONObject: payload, options: [])
-
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
         let (data, response) = try await URLSession.shared.data(for: request)
+
         guard let httpResponse = response as? HTTPURLResponse else {
             throw PostProcessingError.invalidResponse("No HTTP response")
         }
 
         guard httpResponse.statusCode == 200 else {
-            let message = String(data: data, encoding: .utf8) ?? ""
+            let message = parseRequestErrorMessage(from: data)
             throw PostProcessingError.requestFailed(httpResponse.statusCode, message)
         }
 
@@ -267,29 +254,141 @@ Model: \(model)
             throw PostProcessingError.invalidResponse("Missing choices[0].message.content")
         }
 
-        let sanitizedTranscript = sanitizePostProcessedTranscript(content)
-        guard !sanitizedTranscript.isEmpty else {
-            throw PostProcessingError.emptyOutput
+        return content
+    }
+
+    private func runGeminiRequest(systemPrompt: String, userMessage: String, model: String) async throws -> String {
+        guard let key = keyStore.getKey(for: .gemini) else {
+            throw PostProcessingError.missingAPIKey("Google Gemini API key is missing")
         }
 
-        return PostProcessingResult(
-            transcript: sanitizedTranscript,
-            prompt: promptForDisplay
-        )
+        guard var components = URLComponents(string: provider.llmEndpoint) else {
+            throw PostProcessingError.invalidResponse("Invalid Gemini endpoint")
+        }
+        components.queryItems = [URLQueryItem(name: "key", value: key)]
+        guard let endpoint = components.url else {
+            throw PostProcessingError.invalidResponse("Invalid Gemini endpoint")
+        }
+
+        let payload: [String: Any] = [
+            "systemInstruction": [
+                "parts": [["text": systemPrompt]]
+            ],
+            "contents": [[
+                "parts": [["text": userMessage]]
+            ]],
+            "generationConfig": [
+                "temperature": 0.0
+            ]
+        ]
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.timeoutInterval = postProcessingTimeoutSeconds
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw PostProcessingError.invalidResponse("No HTTP response")
+        }
+
+        guard httpResponse.statusCode == 200 else {
+            throw PostProcessingError.requestFailed(httpResponse.statusCode, parseRequestErrorMessage(from: data))
+        }
+
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let candidates = json["candidates"] as? [[String: Any]],
+              let firstCandidate = candidates.first,
+              let content = firstCandidate["content"] as? [String: Any],
+              let parts = content["parts"] as? [[String: Any]] else {
+            throw PostProcessingError.invalidResponse("Missing Gemini candidates content")
+        }
+
+        let combined = parts.compactMap { $0["text"] as? String }.joined(separator: " ")
+        return combined
+    }
+
+    private func runClaudeRequest(systemPrompt: String, userMessage: String, model: String) async throws -> String {
+        guard let key = keyStore.getKey(for: .claude) else {
+            throw PostProcessingError.missingAPIKey("Anthropic Claude API key is missing")
+        }
+
+        guard let endpoint = URL(string: provider.llmEndpoint) else {
+            throw PostProcessingError.invalidResponse("Invalid Claude endpoint")
+        }
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.timeoutInterval = postProcessingTimeoutSeconds
+        request.setValue(key, forHTTPHeaderField: "x-api-key")
+        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let payload: [String: Any] = [
+            "model": model,
+            "max_tokens": 1024,
+            "temperature": 0.0,
+            "system": systemPrompt,
+            "messages": [
+                [
+                    "role": "user",
+                    "content": userMessage
+                ]
+            ]
+        ]
+
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw PostProcessingError.invalidResponse("No HTTP response")
+        }
+
+        guard httpResponse.statusCode == 200 else {
+            throw PostProcessingError.requestFailed(httpResponse.statusCode, parseRequestErrorMessage(from: data))
+        }
+
+        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let content = json["content"] as? [[String: Any]] else {
+            throw PostProcessingError.invalidResponse("Missing Claude content")
+        }
+
+        let combined = content
+            .filter { ($0["type"] as? String) == "text" }
+            .compactMap { $0["text"] as? String }
+            .joined(separator: " ")
+
+        return combined
+    }
+
+    private func parseRequestErrorMessage(from data: Data) -> String {
+        if let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            if let errorObj = json["error"] as? [String: Any],
+               let message = errorObj["message"] as? String,
+               !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                return message
+            }
+            if let message = json["message"] as? String,
+               !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                return message
+            }
+        }
+
+        let raw = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return raw.isEmpty ? "Unknown error" : raw
     }
 
     private func sanitizePostProcessedTranscript(_ value: String) -> String {
         var result = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !result.isEmpty else { return "" }
 
-        // Strip outer quotes if the LLM wrapped the entire response
         if result.hasPrefix("\"") && result.hasSuffix("\"") && result.count > 1 {
             result.removeFirst()
             result.removeLast()
             result = result.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
-        // Treat the sentinel value as empty
         if result == "EMPTY" {
             return ""
         }

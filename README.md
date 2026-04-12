@@ -1,78 +1,123 @@
-<p align="center">
-  <img src="Resources/AppIcon-Source.png" width="128" height="128" alt="FreeFlow icon">
-</p>
+# 🎙 FlowKeys
 
-<h1 align="center">FreeFlow</h1>
+> **Aapki awaaz, aapke words.** 🇮🇳  
+> AI-powered voice dictation for macOS — built for India.
 
-<p align="center">
-  Free and open source alternative to <a href="https://wisprflow.ai">Wispr Flow</a>, <a href="https://superwhisper.com">Superwhisper</a>, and <a href="https://monologue.to">Monologue</a>.
-</p>
-
-<p align="center">
-  <a href="https://github.com/zachlatta/freeflow/releases/latest/download/FreeFlow.dmg"><b>⬇ Download FreeFlow.dmg</b></a><br>
-  <sub>Works on all Macs (Apple Silicon + Intel)</sub>
-</p>
+FlowKeys lets you dictate in **Hindi, English, or Hinglish** into any
+app on your Mac. Hold a hotkey → talk → text appears wherever your
+cursor is. Works with Gmail, WhatsApp Web, Notion, Slack, VS Code,
+Notes — literally everywhere.
 
 ---
 
-<p align="center">
-  <img src="Resources/demo.gif" alt="FreeFlow demo" width="600">
-</p>
+## ⬇️ Install (One Command)
 
-I like the concept of apps like [Wispr Flow](https://wisprflow.ai/), [Superwhisper](https://superwhisper.com/), and [Monologue](https://www.monologue.to/) that use AI to add accurate and easy-to-use transcription to your computer, but they all charge fees of ~$10/month when the underlying AI models are free to use or cost pennies.
+Open **Terminal** on your Mac and paste this:
 
-So over the weekend I vibe-coded my own free version!
+```bash
+curl -fsSL https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/install.sh | bash
+```
 
-It's called FreeFlow. Here's how it works:
+That's it. No App Store. No account. No warnings. Takes ~30 seconds.
 
-1. Download the app from above or [click here](https://github.com/zachlatta/freeflow/releases/latest/download/FreeFlow.dmg)
-2. Get a free Groq API key from [groq.com](https://groq.com/)
-3. Hold `Fn` to talk, or tap `Command-Fn` to start and stop dictation, and have whatever you say pasted into the current text field
+---
 
-You can also customize both shortcuts. If your toggle shortcut extends your hold shortcut, you can start in hold mode and press the extra modifier keys to latch into tap mode without stopping the recording.
+## ✨ Features
 
-One of the cool features is that it's context aware. If you're replying to an email, it'll read the names of the people you're replying to and make sure to spell their names correctly. Same with if you're dictating into a terminal or another app. This is the same thing as Monologue's "Deep Context" feature.
+- 🎙 **Hold [Fn]** to record, release to paste — or tap **[⌘+Fn]** to toggle
+- 🇮🇳 **Hindi + English + Hinglish** — understands code-switching naturally
+- 🧠 **Context-aware** — reads your app and formats text accordingly
+  - Emails → formal tone  
+  - WhatsApp → casual Hinglish  
+  - Terminal → literal, no cleanup
+- ⚡ **7 Dictation Modes** — Casual, Email, Code, Meeting, Social, Literal, Hindi
+- 🔤 **Personal Dictionary** — learns your names, brands, and custom vocab
+- 📋 **Snippet Engine** — say "mera address" → types your full address
+- 📁 **File Transcription** — drag any audio/video file to transcribe it
+- 🔑 **5 AI Providers** — Groq (free), OpenAI, Gemini, Grok, Claude
+- 🔒 **100% Private** — API keys stored in macOS Keychain, no server
 
-An added bonus is that there's no FreeFlow server, so no data is stored or retained - making it more privacy friendly than the SaaS apps. The only information that leaves your computer are the API calls to Groq's transcription and LLM API (LLM is for post-processing the transcription to adapt to context).
+---
 
-If you'd rather keep cleanup more literal and less context-aware, you can paste this simpler prompt into the custom system prompt setting:
+## 🔑 Get a Free API Key (Takes 2 Minutes)
 
-<details>
-  <summary>Simple post-processing prompt</summary>
+FlowKeys needs one AI API key to work. **Groq is free** and fastest:
 
-  <pre><code>You are a dictation post-processor. You receive raw speech-to-text output and return clean text ready to be typed into an application.
+1. Go to [console.groq.com](https://console.groq.com) → Sign up free
+2. Click "Create API Key" → copy the key
+3. Paste it into FlowKeys when prompted on first launch
 
-Your job:
-- Remove filler words (um, uh, you know, like) unless they carry meaning.
-- Fix spelling, grammar, and punctuation errors.
-- When the transcript already contains a word that is a close misspelling of a name or term from the context or custom vocabulary, correct the spelling. Never insert names or terms from context that the speaker did not say.
-- Preserve the speaker's intent, tone, and meaning exactly.
+Other supported providers: OpenAI, Google Gemini, xAI Grok, Anthropic Claude
 
-Output rules:
-- Return ONLY the cleaned transcript text, nothing else. So NEVER output words like "Here is the cleaned transcript text:"
-- If the transcription is empty, return exactly: EMPTY
-- Do not add words, names, or content that are not in the transcription. The context is only for correcting spelling of words already spoken.
-- Do not change the meaning of what was said.
+---
 
-Example:
-RAW_TRANSCRIPTION: "hey um so i just wanted to like follow up on the meating from yesterday i think we should definately move the dedline to next friday becuz the desine team still needs more time to finish the mock ups and um yeah let me know if that works for you ok thanks"
+## 🚀 How to Use
 
-Then your response would be ONLY the cleaned up text, so here your response is ONLY:
-"Hey, I just wanted to follow up on the meeting from yesterday. I think we should definitely move the deadline to next Friday because the design team still needs more time to finish the mockups. Let me know if that works for you. Thanks."</code></pre>
-</details>
+| Action | Hotkey |
+|--------|--------|
+| Hold to dictate | Hold `Fn` |
+| Toggle dictate on/off | `⌘ + Fn` |
+| Open settings | Click menubar icon → ⚙️ |
+| Switch language mode | Click menubar icon → HI / EN / MIX |
 
-### FAQ
+---
 
-**Why does this use Groq instead of a local transcription model?**
+## 💻 System Requirements
 
-I love this idea, and originally planned to build FreeFlow using local models, but to have post-processing (that's where you get correctly spelled names when replying to emails / etc), you need to have a local LLM too.
+- macOS 13.0 (Ventura) or later
+- Apple Silicon (M1/M2/M3/M4) or Intel Mac
+- Internet connection (for AI transcription API calls)
+- Microphone
 
-If you do that, the total pipeline takes too long for the UX to be good (5-10 seconds per transcription instead of <1s). I also had concerns around battery life.
+---
 
-Some day!
+## 🛠 Build From Source
 
-**Update:** You can now use a custom model with FreeFlow by configuring the LLM API URL in the FreeFlow settings to use Ollama. Thank you @taciturnaxolotl!
+If you prefer to build yourself:
 
-## License
+```bash
+# Clone the repo
+git clone https://github.com/iamadarsha/FlowKeys.git
+cd FlowKeys
 
-Licensed under the MIT license.
+# Install build tools
+brew install create-dmg fileicon
+
+# Build universal DMG
+ARCH=universal make dmg
+
+# Install from DMG
+open build/FlowKeys.dmg
+```
+
+---
+
+## ❓ FAQ
+
+**Does it work offline?**  
+No — transcription needs an API call. Groq's free tier is very generous.
+
+**Is my voice data stored anywhere?**  
+Only your chosen AI provider receives the audio (for transcription).
+FlowKeys itself has no server and stores nothing.
+
+**Why does macOS show a warning on first install?**  
+FlowKeys is not from the App Store. The install script handles this
+automatically. If you downloaded the DMG manually, run:
+```bash
+xattr -dr com.apple.quarantine /Applications/FlowKeys.app
+```
+
+**Which provider should I use?**  
+Start with Groq — it's free, fastest (<1 second), and most reliable
+for Indian languages.
+
+---
+
+## 📄 License
+
+MIT — free to use, modify, and distribute.
+
+---
+
+<p align="center">Built with ❤️ for Bharat 🇮🇳</p>

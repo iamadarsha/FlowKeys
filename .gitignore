@@ -2,3 +2,5 @@ build/
 .DS_Store
 *.swp
 .env
+build/
+.DS_Store

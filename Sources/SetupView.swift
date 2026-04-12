@@ -8,30 +8,34 @@ struct SetupView: View {
     var onComplete: () -> Void
     @EnvironmentObject var appState: AppState
     @Environment(\.openURL) private var openURL
-    private let freeflowRepoURL = URL(string: "https://github.com/zachlatta/freeflow")!
+    private let flowKeysRepoURL = URL(string: "https://github.com/iamadarsha/FlowKeys")!
     private enum SetupStep: Int, CaseIterable {
-        case welcome = 0
+        case provider = 0
         case apiKey
         case micPermission
         case accessibility
         case screenRecording
         case holdShortcut
         case toggleShortcut
+        case snippets
         case vocabulary
         case launchAtLogin
         case testTranscription
         case ready
     }
 
-    @State private var currentStep = SetupStep.welcome
+    @State private var currentStep = SetupStep.provider
     @State private var micPermissionGranted = false
     @State private var accessibilityGranted = false
     @State private var apiKeyInput: String = ""
+    @State private var selectedProvider: TranscriptionProvider = .groq
     @State private var isValidatingKey = false
     @State private var keyValidationError: String?
     @State private var accessibilityTimer: Timer?
     @State private var screenRecordingTimer: Timer?
     @State private var customVocabularyInput: String = ""
+    @State private var newSnippetTrigger: String = ""
+    @State private var newSnippetReplacement: String = ""
     @StateObject private var githubCache = GitHubMetadataCache.shared
 
     // Test transcription state
@@ -70,7 +74,7 @@ struct SetupView: View {
 
                 HStack(alignment: .center) {
                     Group {
-                        if currentStep != .welcome {
+                        if currentStep != .provider {
                             Button("Back") {
                                 keyValidationError = nil
                                 withAnimation {
@@ -90,7 +94,7 @@ struct SetupView: View {
                                     validateAndContinue()
                                 }
                                 .keyboardShortcut(.defaultAction)
-                                .disabled(apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isValidatingKey)
+                                .disabled(!canContinueFromCurrentStep || isValidatingKey)
                             } else if currentStep == .vocabulary {
                                 Button("Continue") {
                                     saveCustomVocabularyAndContinue()
@@ -139,7 +143,8 @@ struct SetupView: View {
         }
         .frame(width: 520, height: 680)
         .onAppear {
-            apiKeyInput = appState.apiKey
+            selectedProvider = appState.activeLLMProvider
+            apiKeyInput = appState.apiKey(for: selectedProvider)
             customVocabularyInput = appState.customVocabulary
             checkMicPermission()
             checkAccessibility()
@@ -164,8 +169,8 @@ struct SetupView: View {
     @ViewBuilder
     private var currentStepView: some View {
         switch currentStep {
-        case .welcome:
-            welcomeStep
+        case .provider:
+            providerStep
         case .apiKey:
             apiKeyStep
         case .micPermission:
@@ -178,6 +183,8 @@ struct SetupView: View {
             holdShortcutStep
         case .toggleShortcut:
             toggleShortcutStep
+        case .snippets:
+            snippetsStep
         case .vocabulary:
             vocabularyStep
         case .launchAtLogin:
@@ -191,7 +198,7 @@ struct SetupView: View {
 
     // MARK: - Steps
 
-    var welcomeStep: some View {
+    var providerStep: some View {
         VStack(spacing: 16) {
             Image(nsImage: NSApp.applicationIconImage)
                 .resizable()
@@ -199,13 +206,19 @@ struct SetupView: View {
                 .frame(width: 128, height: 128)
 
             VStack(spacing: 6) {
-                Text("Welcome to FreeFlow")
+                Text("Choose Your AI Provider")
                     .font(.system(size: 30, weight: .bold, design: .rounded))
 
-                Text("Dictate text anywhere on your Mac.\nHold to talk or tap to toggle dictation.")
+                Text("FlowKeys lets you pick your preferred provider now,\nand you can switch transcription and LLM providers later in Settings.")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(spacing: 10) {
+                ForEach(TranscriptionProvider.allCases) { provider in
+                    providerCard(provider)
+                }
             }
 
             VStack(spacing: 10) {
@@ -222,9 +235,9 @@ struct SetupView: View {
                     .clipShape(Circle())
 
                     Button {
-                        openURL(freeflowRepoURL)
+                        openURL(flowKeysRepoURL)
                     } label: {
-                        Text("zachlatta/freeflow")
+                        Text("iamadarsha/FlowKeys")
                             .font(.system(.caption, design: .monospaced).weight(.medium))
                     }
                     .buttonStyle(.plain)
@@ -249,7 +262,7 @@ struct SetupView: View {
                     .background(Capsule().fill(Color.yellow.opacity(0.14)))
 
                     Button {
-                        openURL(freeflowRepoURL)
+                        openURL(flowKeysRepoURL)
                     } label: {
                         HStack(spacing: 4) {
                             Image(systemName: "star")
@@ -315,23 +328,30 @@ struct SetupView: View {
                 .font(.system(size: 60))
                 .foregroundStyle(.blue)
 
-            Text("Groq API Key")
+            Text("Enter Your \(selectedProvider.displayName) API Key")
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("FreeFlow uses Groq for fast, high-accuracy transcription.")
+            Text(selectedProvider.shortDescription)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: 10) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("How to get a free API key:")
+                    Text("How to get your API key:")
                         .font(.subheadline.weight(.semibold))
-                    VStack(alignment: .leading, spacing: 2) {
-                        instructionRow(number: "1", text: "Go to [console.groq.com/keys](https://console.groq.com/keys)")
-                        instructionRow(number: "2", text: "Create a free account (if you don't have one)")
-                        instructionRow(number: "3", text: "Click **Create API Key** and copy it")
+                    HStack {
+                        Text("Use the provider console to create an API key.")
+                            .font(.subheadline)
+                        Spacer()
+                        Button("Get free API key →") {
+                            if let url = URL(string: selectedProvider.apiKeyURL) {
+                                openURL(url)
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.blue)
                     }
                 }
                 .padding(10)
@@ -344,7 +364,7 @@ struct SetupView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("API Key")
                         .font(.headline)
-                    SecureField("Paste your Groq API key", text: $apiKeyInput)
+                    SecureField(selectedProvider.apiKeyPlaceholder, text: $apiKeyInput)
                         .textFieldStyle(.roundedBorder)
                         .font(.system(.body, design: .monospaced))
                         .disabled(isValidatingKey)
@@ -373,7 +393,7 @@ struct SetupView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("FreeFlow needs access to your microphone to record audio for transcription.")
+            Text("FlowKeys needs access to your microphone to record audio for transcription.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -412,7 +432,7 @@ struct SetupView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("FreeFlow needs Accessibility access to paste transcribed text into your apps.")
+            Text("FlowKeys needs Accessibility access to paste transcribed text into your apps.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -464,12 +484,12 @@ struct SetupView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("FreeFlow intelligently adapts the transcription to the current app you're working in (ex. spelling names in an email correctly).")
+            Text("FlowKeys intelligently adapts the transcription to the current app you're working in (ex. spelling names in an email correctly).")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("It needs this permission to see which app you're working in and any in-progress work. Nothing is stored on FreeFlow's servers (FreeFlow doesn't have servers).")
+            Text("It needs this permission to see which app you're working in and any in-progress work. Nothing is stored on FlowKeys servers.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .font(.callout)
@@ -551,7 +571,7 @@ struct SetupView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("Choose the shortcut you want to tap once to start dictating and tap again to stop.\nIf this shortcut becomes active while you are holding the hold shortcut, FreeFlow latches into tap mode. You can also disable tap-to-toggle entirely.")
+            Text("Choose the shortcut you want to tap once to start dictating and tap again to stop.\nIf this shortcut becomes active while you are holding the hold shortcut, FlowKeys latches into tap mode. You can also disable tap-to-toggle entirely.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -574,6 +594,64 @@ struct SetupView: View {
                     .multilineTextAlignment(.center)
             }
 
+        }
+    }
+
+    var snippetsStep: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "text.badge.plus")
+                .font(.system(size: 60))
+                .foregroundStyle(.blue)
+
+            Text("Quick Snippets")
+                .font(.title)
+                .fontWeight(.bold)
+
+            Text("Define shorthand phrases (like 'my email') that automatically expand to full text during transcription.")
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("When I say...")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        TextField("e.g. my email", text: $newSnippetTrigger)
+                            .textFieldStyle(.roundedBorder)
+                    }
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Replace with...")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        TextField("e.g. adarsha@example.com", text: $newSnippetReplacement)
+                            .textFieldStyle(.roundedBorder)
+                    }
+                }
+
+                Button("Add Snippet") {
+                    let s = VoiceSnippet(
+                        trigger: newSnippetTrigger,
+                        replacement: newSnippetReplacement
+                    )
+                    appState.snippetEngine.addSnippet(s)
+                    newSnippetTrigger = ""
+                    newSnippetReplacement = ""
+                }
+                .disabled(newSnippetTrigger.isEmpty || newSnippetReplacement.isEmpty)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+            .padding()
+            .background(Color(nsColor: .controlBackgroundColor))
+            .cornerRadius(8)
+            
+            if !appState.snippetEngine.snippets.isEmpty {
+                Text("\(appState.snippetEngine.snippets.count) snippet(s) configured. Manage them later in Settings.")
+                    .font(.caption)
+                    .foregroundStyle(.green)
+            }
         }
     }
 
@@ -622,7 +700,7 @@ struct SetupView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("Start FreeFlow automatically when you log in so it's always ready.")
+            Text("Start FlowKeys automatically when you log in so it's always ready.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -631,7 +709,7 @@ struct SetupView: View {
                 Image(systemName: "sunrise.fill")
                     .frame(width: 24)
                     .foregroundStyle(.blue)
-                Toggle("Launch FreeFlow at login", isOn: $appState.launchAtLogin)
+                Toggle("Launch FlowKeys at login", isOn: $appState.launchAtLogin)
             }
             .padding(12)
             .background(Color(nsColor: .controlBackgroundColor))
@@ -697,7 +775,7 @@ struct SetupView: View {
                                 .frame(width: 100, height: 100)
                                 .shadow(color: .blue.opacity(0.5), radius: 10)
 
-                            WaveformView(audioLevel: testAudioLevel)
+                            PillWaveformView(audioLevel: testAudioLevel)
                         }
 
                         Text("Listening...")
@@ -745,7 +823,7 @@ struct SetupView: View {
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                         } else {
-                            Text("Perfect — FreeFlow is ready to go.")
+                            Text("Perfect — FlowKeys is ready to go.")
                                 .font(.title2)
                                 .fontWeight(.semibold)
 
@@ -789,7 +867,7 @@ struct SetupView: View {
                 .font(.title)
                 .fontWeight(.bold)
 
-            Text("FreeFlow lives in your menu bar.")
+            Text("FlowKeys lives in your menu bar.")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
 
@@ -820,8 +898,48 @@ struct SetupView: View {
         }
     }
 
+    @ViewBuilder
+    private func providerCard(_ provider: TranscriptionProvider) -> some View {
+        Button {
+            selectedProvider = provider
+            apiKeyInput = appState.apiKey(for: provider)
+            keyValidationError = nil
+        } label: {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: selectedProvider == provider ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(selectedProvider == provider ? .blue : .secondary)
+                    .font(.system(size: 18, weight: .semibold))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(provider.displayName)
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    Text(provider.shortDescription)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(12)
+            .background(selectedProvider == provider ? Color.blue.opacity(0.12) : Color(nsColor: .controlBackgroundColor))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(selectedProvider == provider ? Color.blue : Color.clear, lineWidth: 1.5)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
     private var canContinueFromCurrentStep: Bool {
         switch currentStep {
+        case .provider:
+            return true
+        case .apiKey:
+            let key = apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
+            return selectedProvider.keyLikelyValidFormat(key)
         case .micPermission:
             return micPermissionGranted
         case .accessibility:
@@ -870,15 +988,26 @@ struct SetupView: View {
 
     func validateAndContinue() {
         let key = apiKeyInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard selectedProvider.keyLikelyValidFormat(key) else {
+            keyValidationError = "The key format does not look valid for \(selectedProvider.displayName)."
+            return
+        }
         isValidatingKey = true
         keyValidationError = nil
 
         Task {
-            let valid = await TranscriptionService.validateAPIKey(key, baseURL: appState.apiBaseURL)
+            let valid = await TranscriptionService.validateAPIKey(key, for: selectedProvider)
             await MainActor.run {
                 isValidatingKey = false
                 if valid {
-                    appState.apiKey = key
+                    appState.saveAPIKey(key, for: selectedProvider)
+                    if selectedProvider == .claude {
+                        appState.activeTranscriptionProvider = .claude
+                        appState.activeLLMProvider = .claude
+                    } else {
+                        appState.activeTranscriptionProvider = selectedProvider
+                        appState.activeLLMProvider = selectedProvider
+                    }
                     withAnimation {
                         currentStep = nextStep(currentStep)
                     }
@@ -898,7 +1027,7 @@ struct SetupView: View {
 
     private func previousStep(_ step: SetupStep) -> SetupStep {
         let previous = SetupStep(rawValue: step.rawValue - 1)
-        return previous ?? .welcome
+        return previous ?? .provider
     }
 
     private func nextStep(_ step: SetupStep) -> SetupStep {
@@ -1004,9 +1133,10 @@ struct SetupView: View {
                 Task {
                     do {
                         let service = TranscriptionService(
-                            apiKey: appState.apiKey,
-                            baseURL: appState.apiBaseURL,
-                            forceHTTP2: appState.forceHTTP2Transcription
+                            provider: appState.activeTranscriptionProvider,
+                            keyStore: appState.apiKeyStore,
+                            forceHTTP2: appState.forceHTTP2Transcription,
+                            languageMode: appState.languageMode
                         )
                         let transcript = try await service.transcribe(fileURL: url)
                         await MainActor.run {
@@ -1116,7 +1246,7 @@ class GitHubMetadataCache: ObservableObject {
 
     private var lastFetchDate: Date?
     private let cacheDuration: TimeInterval = 5 * 60 // 5 minutes
-    private let repoAPIURL = URL(string: "https://api.github.com/repos/zachlatta/freeflow")!
+    private let repoAPIURL = URL(string: "https://api.github.com/repos/iamadarsha/FlowKeys")!
 
     private init() {}
 
@@ -1139,7 +1269,7 @@ class GitHubMetadataCache: ObservableObject {
             if count > 0 {
                 let perPage = 100
                 let lastPage = max(1, Int(ceil(Double(count) / Double(perPage))))
-                let stargazersURL = URL(string: "https://api.github.com/repos/zachlatta/freeflow/stargazers?per_page=\(perPage)&page=\(lastPage)")!
+                let stargazersURL = URL(string: "https://api.github.com/repos/iamadarsha/FlowKeys/stargazers?per_page=\(perPage)&page=\(lastPage)")!
                 var request = URLRequest(url: stargazersURL)
                 request.setValue("application/vnd.github.v3.star+json", forHTTPHeaderField: "Accept")
                 let starredResult = try await URLSession.shared.data(for: request)

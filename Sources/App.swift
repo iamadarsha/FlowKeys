@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct FreeFlowApp: App {
+struct FlowKeysApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("show_menu_bar_icon") private var showMenuBarIcon = true
 

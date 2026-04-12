@@ -28,19 +28,32 @@ Return only two sentences, no labels, no markdown, no extra commentary.
 """
     static let defaultContextPromptDate = "2026-02-24"
 
-    private let apiKey: String
-    private let baseURL: String
+    private let provider: TranscriptionProvider
+    private let keyStore: APIKeyStore
     private let customContextPrompt: String
-    private let fallbackTextModel = "meta-llama/llama-4-scout-17b-16e-instruct"
-    private let visionModel = "meta-llama/llama-4-scout-17b-16e-instruct"
+    private let fallbackTextModel: String
+    private let visionModel: String
     private let maxScreenshotDataURILength = 500_000
     private let screenshotCompressionPrimary = 0.5
     private let screenshotMaxDimension: CGFloat = 1024
 
-    init(apiKey: String, baseURL: String = "https://api.groq.com/openai/v1", customContextPrompt: String = "") {
-        self.apiKey = apiKey
-        self.baseURL = baseURL
+    init(provider: TranscriptionProvider, keyStore: APIKeyStore, customContextPrompt: String = "") {
+        self.provider = provider
+        self.keyStore = keyStore
         self.customContextPrompt = customContextPrompt
+        
+        // Default models for context inference
+        switch provider {
+        case .gemini:
+            self.fallbackTextModel = "gemini-1.5-flash"
+            self.visionModel = "gemini-1.5-flash"
+        case .claude:
+            self.fallbackTextModel = "claude-3-5-haiku-latest"
+            self.visionModel = "claude-3-5-sonnet-latest" // Sonnet for better vision
+        default:
+            self.fallbackTextModel = "meta-llama/llama-4-scout-17b-16e-instruct"
+            self.visionModel = "meta-llama/llama-4-scout-17b-16e-instruct"
+        }
     }
 
     func collectContext() async -> AppContext {
@@ -71,7 +84,7 @@ Return only two sentences, no labels, no markdown, no extra commentary.
         )
         let currentActivity: String
         let contextPrompt: String?
-        if !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+        if let apiKey = keyStore.getKey(for: provider), !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             if let result = await inferActivityWithLLM(
                 appName: appName,
                 bundleIdentifier: bundleIdentifier,
@@ -152,80 +165,199 @@ Return only two sentences, no labels, no markdown, no extra commentary.
         screenshotDataURL: String?,
         model: String
     ) async -> (activity: String, prompt: String)? {
-        do {
-            var request = URLRequest(url: URL(string: "\(baseURL)/chat/completions")!)
-            request.httpMethod = "POST"
-            request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        guard let apiKey = keyStore.getKey(for: provider) else { return nil }
 
-            let metadata = """
+        let metadata = """
 App: \(appName ?? "Unknown")
 Bundle ID: \(bundleIdentifier ?? "Unknown")
 Window: \(windowTitle ?? "Unknown")
 Selected text: \(selectedText ?? "None")
 """
 
-            let systemPrompt = customContextPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                ? Self.defaultContextPrompt
-                : customContextPrompt
+        let systemPrompt = customContextPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? Self.defaultContextPrompt
+            : customContextPrompt
 
-            let textOnlyPrompt = "Analyze the context and infer the user's current activity in exactly two sentences.\n\n\(metadata)"
-            var userMessageDescription: String
-            var userMessage: Any = textOnlyPrompt
+        let userMessage = if screenshotDataURL != nil {
+            "[screenshot attached]\nAnalyze the screenshot plus metadata to infer current activity.\n\(metadata)"
+        } else {
+            "Analyze the context and infer the user's current activity in exactly two sentences.\n\n\(metadata)"
+        }
 
-            if let screenshotDataURL {
-                userMessageDescription = "[screenshot attached]\nAnalyze the screenshot plus metadata to infer current activity.\n\(metadata)"
-                userMessage = [
-                    [
-                        "type": "text",
-                        "text": "Analyze the screenshot plus metadata to infer current activity."
-                    ],
-                    [
-                        "type": "text",
-                        "text": metadata
-                    ],
-                    [
-                        "type": "image_url",
-                        "image_url": ["url": screenshotDataURL]
-                    ]
-                ]
-            } else {
-                userMessageDescription = textOnlyPrompt
+        let promptForDisplay = "Provider: \(provider.rawValue)\nModel: \(model)\n\n[System]\n\(systemPrompt)\n[User]\n\(userMessage)"
+
+        do {
+            let activity: String
+            switch provider {
+            case .groq, .openai, .grok:
+                activity = try await runOpenAICompatibleInference(
+                    apiKey: apiKey,
+                    systemPrompt: systemPrompt,
+                    metadata: metadata,
+                    screenshotDataURL: screenshotDataURL,
+                    model: model
+                )
+            case .gemini:
+                activity = try await runGeminiInference(
+                    apiKey: apiKey,
+                    systemPrompt: systemPrompt,
+                    metadata: metadata,
+                    screenshotDataURL: screenshotDataURL,
+                    model: model
+                )
+            case .claude:
+                activity = try await runClaudeInference(
+                    apiKey: apiKey,
+                    systemPrompt: systemPrompt,
+                    metadata: metadata,
+                    screenshotDataURL: screenshotDataURL,
+                    model: model
+                )
             }
 
-            let fullPrompt = "Model: \(model)\n\n[System]\n\(systemPrompt)\n[User]\n\(userMessageDescription)"
-
-            let payload: [String: Any] = [
-                "model": model,
-                "temperature": 0.2,
-                "messages": [
-                    ["role": "system", "content": systemPrompt],
-                    ["role": "user", "content": userMessage]
-                ]
-            ]
-
-            request.httpBody = try JSONSerialization.data(withJSONObject: payload, options: [])
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse else {
-                return nil
-            }
-            guard httpResponse.statusCode == 200 else {
-                return nil
-            }
-            guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                  let choices = json["choices"] as? [[String: Any]],
-                  let firstChoice = choices.first,
-                  let message = firstChoice["message"] as? [String: Any],
-                  let content = message["content"] as? String else {
-                return nil
-            }
-
-            let cleaned = content.trimmingCharacters(in: .whitespacesAndNewlines)
+            let cleaned = activity.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !cleaned.isEmpty else { return nil }
-            return (activity: normalizedActivitySummary(cleaned), prompt: fullPrompt)
+            return (activity: normalizedActivitySummary(cleaned), prompt: promptForDisplay)
         } catch {
             return nil
         }
+    }
+
+    private func runOpenAICompatibleInference(
+        apiKey: String,
+        systemPrompt: String,
+        metadata: String,
+        screenshotDataURL: String?,
+        model: String
+    ) async throws -> String {
+        let baseURL = provider.openAICompatibleBaseURL ?? "https://api.groq.com/openai/v1"
+        var request = URLRequest(url: URL(string: "\(baseURL)/chat/completions")!)
+        request.httpMethod = "POST"
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let userContent: Any = if let screenshotDataURL {
+            [
+                ["type": "text", "text": "Analyze the screenshot plus metadata to infer current activity."],
+                ["type": "text", "text": metadata],
+                ["type": "image_url", "image_url": ["url": screenshotDataURL]]
+            ]
+        } else {
+            "Analyze the context and infer the user's current activity in exactly two sentences.\n\n\(metadata)"
+        }
+
+        let payload: [String: Any] = [
+            "model": model,
+            "temperature": 0.2,
+            "messages": [
+                ["role": "system", "content": systemPrompt],
+                ["role": "user", "content": userContent]
+            ]
+        ]
+
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else { return "" }
+
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let choices = json?["choices"] as? [[String: Any]]
+        let message = choices?.first?["message"] as? [String: Any]
+        return message?["content"] as? String ?? ""
+    }
+
+    private func runGeminiInference(
+        apiKey: String,
+        systemPrompt: String,
+        metadata: String,
+        screenshotDataURL: String?,
+        model: String
+    ) async throws -> String {
+        guard var components = URLComponents(string: provider.llmEndpoint) else { return "" }
+        components.queryItems = [URLQueryItem(name: "key", value: apiKey)]
+        guard let url = components.url else { return "" }
+
+        var parts: [[String: Any]] = [["text": metadata]]
+        if let screenshotDataURL, let commaIndex = screenshotDataURL.firstIndex(of: ",") {
+            let header = String(screenshotDataURL[..<commaIndex])
+            let base64Data = String(screenshotDataURL[screenshotDataURL.index(after: commaIndex)...])
+            let mimeType = header.contains("image/png") ? "image/png" : "image/jpeg"
+            parts.append([
+                "inlineData": [
+                    "mimeType": mimeType,
+                    "data": base64Data
+                ]
+            ])
+        }
+        parts.append(["text": "Analyze the context and infer the user's current activity in exactly two sentences."])
+
+        let payload: [String: Any] = [
+            "systemInstruction": ["parts": [["text": systemPrompt]]],
+            "contents": [["parts": parts]],
+            "generationConfig": ["temperature": 0.2]
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else { return "" }
+
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let candidates = json?["candidates"] as? [[String: Any]]
+        let content = candidates?.first?["content"] as? [String: Any]
+        let resParts = content?["parts"] as? [[String: Any]]
+        return resParts?.compactMap { $0["text"] as? String }.joined(separator: " ") ?? ""
+    }
+
+    private func runClaudeInference(
+        apiKey: String,
+        systemPrompt: String,
+        metadata: String,
+        screenshotDataURL: String?,
+        model: String
+    ) async throws -> String {
+        var request = URLRequest(url: URL(string: provider.llmEndpoint)!)
+        request.httpMethod = "POST"
+        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        var userContent: [[String: Any]] = [["type": "text", "text": metadata]]
+        if let screenshotDataURL, let commaIndex = screenshotDataURL.firstIndex(of: ",") {
+            let header = String(screenshotDataURL[..<commaIndex])
+            let base64Data = String(screenshotDataURL[screenshotDataURL.index(after: commaIndex)...])
+            let mimeType = header.contains("image/png") ? "image/png" : "image/jpeg"
+            userContent.append([
+                "type": "image",
+                "source": [
+                    "type": "base64",
+                    "media_type": mimeType,
+                    "data": base64Data
+                ]
+            ])
+        }
+        userContent.append(["type": "text", "text": "Analyze the context and infer the user's current activity in exactly two sentences."])
+
+        let payload: [String: Any] = [
+            "model": model,
+            "max_tokens": 1024,
+            "temperature": 0.2,
+            "system": systemPrompt,
+            "messages": [["role": "user", "content": userContent]]
+        ]
+
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else { return "" }
+
+        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        let content = json?["content"] as? [[String: Any]]
+        return content?
+            .filter { ($0["type"] as? String) == "text" }
+            .compactMap { $0["text"] as? String }
+            .joined(separator: " ") ?? ""
     }
 
     private func normalizedActivitySummary(_ value: String) -> String {
