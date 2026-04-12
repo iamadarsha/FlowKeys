@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
+<script>
+tailwind.config = { theme: { extend: { colors: { surface: '#131313', 'surface-container': '#20201F', 'primary-container': '#FF6B35' }, fontFamily: { headline: ['Manrope'], sans: ['Inter'] } } } };
+</script>
+<body class="bg-[#0C0C0E] flex min-h-screen text-[#E5E2E1] font-sans">
+  
+  <!-- Sidebar stub -->
+  <div class="w-64 bg-surface p-6 flex flex-col border-r border-white/5">
+    <div class="font-headline font-bold text-xl flex items-center gap-2 mb-10"><span class="text-primary-container">FlowKeys</span></div>
+    <div class="space-y-4 text-sm text-white/50">
+      <div class="flex items-center gap-3"><span class="material-symbols-outlined text-lg">settings</span> General</div>
+      <div class="flex items-center gap-3 text-white bg-white/5 p-2 rounded-lg -ml-2"><span class="material-symbols-outlined text-lg text-primary-container">edit_note</span> Prompts</div>
+    </div>
+  </div>
+
+  <div class="flex-1 p-10 flex flex-col gap-8 h-screen overflow-y-auto">
+    
+    <div class="flex justify-between items-center border-b border-white/5 pb-4">
+      <h1 class="text-2xl font-headline font-bold">System Prompts</h1>
+      <div class="bg-surface-container rounded-full px-4 py-2 flex items-center gap-2 border border-white/5 w-64">
+        <span class="material-symbols-outlined text-white/40 text-sm">search</span>
+        <input type="text" placeholder="Search prompts..." class="bg-transparent outline-none text-sm w-full text-white placeholder-white/40">
+      </div>
+    </div>
+
+    <div class="space-y-8">
+      
+      <!-- Transcription Prompt -->
+      <div>
+        <h2 class="text-lg font-headline font-bold text-white">Transcription Prompt</h2>
+        <p class="text-sm text-white/40 mb-3">Fine-tune the raw audio-to-text conversion engine.</p>
+        <div class="bg-surface-container border border-white/5 rounded-xl p-4 relative">
+          <textarea class="w-full h-24 bg-transparent outline-none text-sm text-white/60 font-mono resize-none" placeholder="e.g. You are a transcription assistant. Transcribe the audio precisely as spoken."></textarea>
+          <div class="flex justify-end mt-2">
+            <button class="bg-primary-container text-[#5F1900] font-bold text-xs px-4 py-2 rounded-full cursor-pointer hover:opacity-90">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Post-Processing Prompt -->
+      <div>
+        <h2 class="text-lg font-headline font-bold text-white">Post-Processing Prompt</h2>
+        <p class="text-sm text-white/40 mb-3">Define how FlowKeys refines and formats your final text.</p>
+        <div class="bg-surface-container border border-white/5 rounded-xl p-4 relative">
+          <textarea class="w-full h-24 bg-transparent outline-none text-sm text-white/60 font-mono resize-none">Clean up the grammar and punctuation. If {selected_text} is provided, use it as context for style matching. Output the final result within markdown code blocks...</textarea>
+          
+          <div class="mt-4 pt-4 border-t border-white/5">
+             <div class="text-[10px] uppercase font-bold text-white/30 tracking-widest mb-2">Variable Injectors</div>
+             <div class="flex flex-wrap gap-2">
+               <span class="bg-white/5 border border-white/10 text-white/60 text-xs px-3 py-1 rounded-full font-mono cursor-pointer hover:border-primary-container hover:text-primary-container transition-colors">{app_name}</span>
+               <span class="bg-white/5 border border-white/10 text-white/60 text-xs px-3 py-1 rounded-full font-mono cursor-pointer hover:border-primary-container hover:text-primary-container transition-colors">{selected_text}</span>
+               <span class="bg-white/5 border border-white/10 text-white/60 text-xs px-3 py-1 rounded-full font-mono cursor-pointer hover:border-primary-container hover:text-primary-container transition-colors">{clipboard_content}</span>
+             </div>
+          </div>
+          
+          <div class="flex justify-end mt-4">
+            <button class="bg-primary-container text-[#5F1900] font-bold text-xs px-4 py-2 rounded-full cursor-pointer hover:opacity-90">Save Changes</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</body>
+</html>
