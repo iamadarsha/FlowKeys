@@ -19,15 +19,16 @@ private struct SettingsCard<Content: View>: View {
         VStack(alignment: .leading, spacing: 12) {
             Label(title, systemImage: icon)
                 .font(.headline)
+                .foregroundColor(Color.white)
             content
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
-        .cornerRadius(10)
+        .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
+        .cornerRadius(12)
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.white.opacity(0.05), lineWidth: 1)
         )
     }
 }
@@ -55,21 +56,22 @@ struct SettingsView: View {
                             .padding(.vertical, 8)
                             .padding(.horizontal, 10)
                             .background(
-                                RoundedRectangle(cornerRadius: 6)
+                                RoundedRectangle(cornerRadius: 8)
                                     .fill(appState.selectedSettingsTab == tab
-                                          ? Color.accentColor.opacity(0.15)
+                                          ? Color(red: 255/255, green: 107/255, blue: 53/255).opacity(0.15) // #FF6B35
                                           : Color.clear)
                             )
+                            .foregroundColor(appState.selectedSettingsTab == tab ? Color(red: 255/255, green: 107/255, blue: 53/255) : Color.white.opacity(0.7))
                     }
                     .buttonStyle(.plain)
                 }
                 Spacer()
             }
-            .padding(10)
-            .frame(width: 180)
-            .background(Color(nsColor: .windowBackgroundColor))
+            .padding(16)
+            .frame(width: 220)
+            .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
 
-            Divider()
+            Divider().background(Color.white.opacity(0.05))
 
             Group {
                 switch appState.selectedSettingsTab {
@@ -90,7 +92,9 @@ struct SettingsView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
         }
+        .preferredColorScheme(.dark)
     }
 }
 

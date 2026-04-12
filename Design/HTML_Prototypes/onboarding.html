@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
+<script>
+tailwind.config = { theme: { extend: { colors: { surface: '#131313', 'primary-container': '#FF6B35' }, fontFamily: { headline: ['Manrope'], sans: ['Inter'] } } } };
+</script>
+<body class="bg-[#0C0C0E] flex items-center justify-center min-h-screen text-[#E5E2E1] font-sans gap-8">
+  <div class="w-[480px] h-[420px] bg-surface rounded-2xl shadow-[0_32px_64px_rgba(0,0,0,0.8)] border border-white/5 flex flex-col">
+    <div class="py-6 flex justify-center gap-2">
+      <div class="w-2 h-2 rounded-full bg-primary-container"></div>
+      <div class="w-6 h-px bg-white/10 self-center"></div><div class="w-1.5 h-1.5 rounded-full bg-white/10 self-center"></div>
+      <div class="w-6 h-px bg-white/10 self-center"></div><div class="w-1.5 h-1.5 rounded-full bg-white/10 self-center"></div>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center px-10 gap-5 pb-10">
+      <span class="material-symbols-outlined text-6xl text-primary-container" style="filter: drop-shadow(0 0 20px rgba(255,107,53,0.4));">waves</span>
+      <h1 class="font-headline font-black text-3xl tracking-tight">Welcome to FlowKeys</h1>
+      <p class="text-sm text-white/60 text-center leading-relaxed max-w-xs">Voice dictation powered by AI. Speaks your language — literally.</p>
+      <button class="mt-4 bg-primary-container text-[#5F1900] font-headline font-extrabold text-sm py-3 px-10 rounded-full shadow-[0_4px_12px_rgba(255,107,53,0.4)]">Get Started &rarr;</button>
+    </div>
+  </div>
+</body>
+</html>

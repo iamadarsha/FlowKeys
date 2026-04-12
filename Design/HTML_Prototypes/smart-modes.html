@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        background: '#131313', surface: '#131313', 'surface-container': '#20201F',
+        'surface-container-high': '#2A2A2A', 'surface-container-highest': '#353535',
+        'surface-container-low': '#1C1B1B', 'surface-container-lowest': '#0E0E0E',
+        'primary-container': '#FF6B35', 'on-primary-container': '#5F1900',
+        'on-surface': '#E5E2E1', 'on-surface-variant': '#E1BFB5',
+        'outline-variant': '#594139', 'tertiary': '#08B146', 'error': '#FFB4AB',
+        'white5': 'rgba(255,255,255,0.05)', 'white10': 'rgba(255,255,255,0.1)',
+        'white20': 'rgba(255,255,255,0.2)', 'white30': 'rgba(255,255,255,0.3)',
+        'white40': 'rgba(255,255,255,0.4)', 'white60': 'rgba(255,255,255,0.6)',
+        'primary-container10': 'rgba(255,107,53,0.1)', 'primary-container30': 'rgba(255,107,53,0.3)',
+      },
+      fontFamily: { headline: ['Manrope', 'sans-serif'], sans: ['Inter', 'sans-serif'] },
+      fontSize: { '10px': '10px', '11px': '11px' }
+    }
+  }
+}
+</script>
+<style> body { background-color: #131313; color: #E5E2E1; } </style>
+</head>
+<body class="flex items-center justify-center min-h-screen">
+  <div class="w-[740px] h-[560px] bg-background flex overflow-hidden rounded-xl border border-white10 shadow-2xl">
+    <!-- Sidebar -->
+    <div class="w-[200px] bg-[#0C0C0E] border-r border-white5 flex flex-col pt-10">
+      <div class="px-4 space-y-2">
+        <div class="px-3 py-2 text-white40 flex items-center gap-3 text-sm rounded-lg"><span class="material-symbols-outlined text-[18px]">settings</span> General</div>
+        <div class="px-3 py-2 text-[#FFB59D] bg-primary-container10 flex items-center gap-3 text-sm rounded-lg font-medium"><span class="material-symbols-outlined text-[18px]">psychology</span> Smart Modes</div>
+      </div>
+    </div>
+    <!-- Content -->
+    <div class="flex-1 p-10 overflow-y-auto space-y-8">
+      <div>
+        <h2 class="text-3xl font-headline font-bold mb-2">Smart Modes</h2>
+        <p class="text-white60 max-w-xl text-sm">FlowKeys detects your active app and applies the right writing tone automatically.</p>
+      </div>
+      
+      <div class="bg-surface-container-high rounded-xl p-6 border border-white10">
+        <div class="flex justify-between items-center">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary-container text-xl">auto_awesome</span>
+            <span class="font-headline font-bold">Enable App-Based Auto Mode</span>
+          </div>
+          <div class="w-10 h-5 bg-primary-container rounded-full relative"><div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5"></div></div>
+        </div>
+        <div class="border-t border-white5 my-4"></div>
+        <div class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-white40 text-sm">info</span>
+          <span class="text-xs text-white40 italic">Automatically switches tone when you change apps.</span>
+        </div>
+      </div>
+
+      <div class="bg-surface-container-high rounded-xl p-6 border border-white10">
+        <div class="flex justify-between items-center mb-4">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary-container text-xl">apps_settings_alt</span>
+            <span class="font-headline font-bold">Per-App Rules</span>
+          </div>
+          <button class="bg-primary-container10 border border-primary-container30 text-primary-container text-xs font-bold px-3 py-1.5 rounded-lg">+ Add Rule</button>
+        </div>
+        <p class="text-xs text-white40 mb-4">Define which dictation mode activates for each app.</p>
+        <div class="space-y-3">
+          <div class="bg-surface-container rounded-lg p-4 flex items-center justify-between border border-transparent hover:border-white20">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-lg bg-surface-container-lowest flex items-center justify-center text-primary-container font-headline font-black">M</div>
+              <div><div class="font-semibold text-sm">Mail</div><div class="text-[10px] text-white30 italic">com.apple.mail</div></div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="bg-primary-container10 border border-primary-container30 text-primary-container text-[11px] font-bold px-3 py-1 rounded-lg flex items-center gap-1">Email <span class="material-symbols-outlined text-xs">expand_more</span></div>
+              <span class="material-symbols-outlined text-white20 hover:text-error text-sm cursor-pointer">delete</span>
+            </div>
+          </div>
+        </div>
+        <div class="w-full mt-4 py-3 border border-dashed border-white10 rounded-lg text-center text-xs text-white30 hover:text-white60 cursor-pointer">+ Add new app rule</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

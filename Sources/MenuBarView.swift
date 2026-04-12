@@ -35,8 +35,9 @@ struct MenuBarView: View {
                 updateSection
             }
         }
-        .frame(width: 300)
-        .background(Color(NSColor.windowBackgroundColor))
+        .frame(width: 320)
+        .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
+        .preferredColorScheme(.dark)
     }
 
     // ─── HEADER ──────────────────────────────────────────────
@@ -82,7 +83,7 @@ struct MenuBarView: View {
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 3)
-                        .background(Color(NSColor.controlBackgroundColor))
+                        .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
                         .cornerRadius(4)
                 } else {
                     Text("No shortcuts set")
@@ -104,7 +105,7 @@ struct MenuBarView: View {
         .padding(.horizontal, 16)
         .padding(.top, 16)
         .padding(.bottom, 12)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
     }
 
     private var statusColor: Color {
@@ -197,16 +198,16 @@ struct MenuBarView: View {
                 Text(name).font(.system(size: 10, weight: isActive ? .semibold : .medium))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
+            .padding(.vertical, 10)
             .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(isActive ? accentColor.opacity(0.15) : Color(NSColor.controlBackgroundColor))
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(isActive ? accentColor.opacity(0.15) : Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
             )
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .stroke(isActive ? accentColor : Color.gray.opacity(0.2), lineWidth: 1.5)
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isActive ? accentColor : Color.white.opacity(0.05), lineWidth: 1.5)
             )
-            .foregroundColor(isActive ? accentColor : .primary)
+            .foregroundColor(isActive ? accentColor : .white.opacity(0.8))
         }
         .buttonStyle(.plain)
     }
@@ -243,19 +244,19 @@ struct MenuBarView: View {
                     }
                     .buttonStyle(.plain)
                 }
-                .padding(10)
-                .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(6)
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.15), lineWidth: 1))
+                .padding(12)
+                .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
+                .cornerRadius(8)
+                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white.opacity(0.05), lineWidth: 1))
             } else {
                 Text("No recent transcriptions")
                     .font(.system(size: 11))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.white.opacity(0.4))
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(Color(NSColor.controlBackgroundColor))
-                    .cornerRadius(6)
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.15), lineWidth: 1))
+                    .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
+                    .cornerRadius(8)
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white.opacity(0.05), lineWidth: 1))
             }
         }
     }
@@ -321,7 +322,7 @@ struct MenuBarView: View {
             }
         }
         .padding(16)
-        .background(Color(NSColor.controlBackgroundColor))
+        .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
     }
 
     private func warningButton(label: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {

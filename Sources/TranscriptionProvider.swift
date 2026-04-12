@@ -41,7 +41,7 @@ enum TranscriptionProvider: String, CaseIterable, Codable, Identifiable {
         case .openai:
             return "https://api.openai.com/v1/audio/transcriptions"
         case .gemini:
-            return "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+            return "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
         case .grok:
             return "https://api.x.ai/v1/audio/transcriptions"
         case .claude:
@@ -57,7 +57,7 @@ enum TranscriptionProvider: String, CaseIterable, Codable, Identifiable {
         case .openai:
             return "https://api.openai.com/v1/chat/completions"
         case .gemini:
-            return "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+            return "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
         case .grok:
             return "https://api.x.ai/v1/chat/completions"
         case .claude:
@@ -85,7 +85,7 @@ enum TranscriptionProvider: String, CaseIterable, Codable, Identifiable {
         case .openai:
             return "whisper-1"
         case .gemini:
-            return "gemini-1.5-flash"
+            return "gemini-2.5-flash"
         case .grok:
             return "whisper-1"
         case .claude:
@@ -101,7 +101,7 @@ enum TranscriptionProvider: String, CaseIterable, Codable, Identifiable {
         case .openai:
             return "gpt-4o-mini"
         case .gemini:
-            return "gemini-1.5-flash"
+            return "gemini-2.5-flash"
         case .grok:
             return "grok-2-latest"
         case .claude:

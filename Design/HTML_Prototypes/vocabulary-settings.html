@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
+<script>
+tailwind.config = { theme: { extend: { colors: { surface: '#131313', 'surface-container': '#20201F', 'primary-container': '#FF6B35', 'tertiary': '#08B146' }, fontFamily: { headline: ['Manrope'], sans: ['Inter'] } } } };
+</script>
+<body class="bg-[#0C0C0E] flex min-h-screen text-[#E5E2E1] font-sans">
+  
+  <!-- Sidebar stub -->
+  <div class="w-64 bg-surface p-6 flex flex-col border-r border-white/5">
+    <div class="font-headline font-bold text-xl flex items-center gap-2 mb-10"><span class="text-primary-container">FlowKeys</span></div>
+    <div class="space-y-4 text-sm text-white/50">
+      <div class="flex items-center gap-3"><span class="material-symbols-outlined text-lg">settings</span> General</div>
+      <div class="flex items-center gap-3"><span class="material-symbols-outlined text-lg">smart_toy</span> Smart Modes</div>
+      <div class="flex items-center gap-3"><span class="material-symbols-outlined text-lg">content_cut</span> Quick Snippets</div>
+      <div class="flex items-center gap-3 text-white bg-white/5 p-2 rounded-lg -ml-2"><span class="material-symbols-outlined text-lg text-primary-container">translate</span> Vocabulary</div>
+      <div class="flex items-center gap-3"><span class="material-symbols-outlined text-lg">edit_note</span> Prompts</div>
+      <div class="flex items-center gap-3"><span class="material-symbols-outlined text-lg">keyboard_command_key</span> Voice Macros</div>
+    </div>
+  </div>
+
+  <div class="flex-1 p-10 flex flex-col gap-8">
+    
+    <div class="flex justify-between items-center border-b border-white/5 pb-4">
+      <h1 class="text-2xl font-headline font-bold flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary-container">translate</span> Vocabulary settings
+      </h1>
+      <div class="bg-surface-container rounded-full px-4 py-2 flex items-center gap-2 border border-white/5 w-64">
+        <span class="material-symbols-outlined text-white/40 text-sm">search</span>
+        <input type="text" placeholder="Search dictionary..." class="bg-transparent outline-none text-sm w-full text-white placeholder-white/40">
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="grid grid-cols-3 gap-6">
+      <div class="bg-surface-container p-6 rounded-xl border border-white/5">
+        <div class="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-2 flex justify-between">Words Learned <span class="text-tertiary lowercase font-normal tracking-normal">+12% this wk</span></div>
+        <div class="text-4xl font-headline font-bold">1,482</div>
+        <div class="mt-4 h-1.5 w-full bg-white/5 rounded-full overflow-hidden flex">
+          <div class="bg-primary-container h-full w-[70%]"></div>
+        </div>
+      </div>
+      <div class="bg-surface-container p-6 rounded-xl border border-white/5">
+        <div class="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-2 flex justify-between">Used Today <span class="text-primary-container lowercase font-normal tracking-normal">Peak 14:00</span></div>
+        <div class="text-4xl font-headline font-bold">64</div>
+        <div class="mt-4 flex items-end gap-1 h-6">
+          <div class="w-full bg-white/10 rounded-sm h-[20%]"></div>
+          <div class="w-full bg-white/10 rounded-sm h-[30%]"></div>
+          <div class="w-full bg-primary-container rounded-sm h-[80%]"></div>
+          <div class="w-full bg-white/10 rounded-sm h-[40%]"></div>
+          <div class="w-full bg-white/10 rounded-sm h-[20%]"></div>
+        </div>
+      </div>
+      <div class="bg-surface-container p-6 rounded-xl border border-white/5">
+        <div class="text-[10px] uppercase font-bold text-white/40 tracking-wider mb-2">Accuracy Boost</div>
+        <div class="flex justify-between items-center mb-2">
+          <div class="text-4xl font-headline font-bold">24%</div>
+          <span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-1 rounded">trending_up</span>
+        </div>
+        <p class="text-xs text-white/40 italic">Smart corrections are prioritizing custom slang terms.</p>
+      </div>
+    </div>
+
+    <!-- List -->
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <h2 class="text-lg font-headline font-bold">Active Dictionary</h2>
+          <span class="bg-surface-container text-xs px-2 py-0.5 rounded text-white/40">248 words</span>
+        </div>
+        <div class="text-xs flex items-center gap-4 text-white/40">
+          Sort by: 
+          <span class="bg-surface-container px-3 py-1 rounded text-white">Frequency</span>
+          <span class="cursor-pointer hover:text-white transition-colors">Alphabetical</span>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        
+        <div class="bg-surface-container p-4 rounded-xl border border-white/5 flex items-center justify-between group">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-lg bg-[#0C0C0E] flex items-center justify-center font-bold text-primary-container border border-white/5">H</div>
+            <div>
+              <div class="font-bold">Hinglish</div>
+              <div class="text-[10px] text-white/40 italic">Added Dec 12, 2023</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-6">
+             <div class="flex flex-col items-end gap-1">
+               <span class="text-[8px] tracking-widest text-white/30 uppercase font-bold">Usage Frequency</span>
+               <div class="flex gap-1">
+                 <div class="w-3 h-2 bg-primary-container rounded-sm"></div><div class="w-3 h-2 bg-primary-container rounded-sm"></div><div class="w-3 h-2 bg-primary-container/80 rounded-sm"></div><div class="w-3 h-2 bg-primary-container/60 rounded-sm"></div><div class="w-3 h-2 bg-white/10 rounded-sm"></div>
+               </div>
+             </div>
+             <span class="material-symbols-outlined text-white/20 hover:text-white cursor-pointer transition-colors text-lg">delete</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
