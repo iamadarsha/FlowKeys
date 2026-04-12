@@ -52,7 +52,7 @@ struct OverlayTheme {
 final class RecordingOverlayManager {
     private var pillWindow: NSPanel?
     private let overlayState = RecordingOverlayState()
-    private let pillWidth: CGFloat = 280
+    private var pillWidth: CGFloat { overlayState.phase == .error ? 340 : 260 }
     private let pillHeight: CGFloat = 52
     private let pillCornerRadius: CGFloat = 26
     private let bottomOffset: CGFloat = 40
@@ -209,7 +209,7 @@ final class RecordingOverlayManager {
         let targetFrame = pillFrame(on: screen)
         let startFrame = NSRect(
             x: targetFrame.origin.x,
-            y: targetFrame.origin.y - 30,
+            y: targetFrame.origin.y - 20,
             width: targetFrame.width,
             height: targetFrame.height
         )
@@ -251,7 +251,6 @@ final class RecordingOverlayManager {
         guard let panel = pillWindow else { return }
         NSAnimationContext.runAnimationGroup({ ctx in
             ctx.duration = 0.2
-            ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
             panel.animator().alphaValue = 0.0
         }, completionHandler: {
             panel.orderOut(nil)
@@ -303,57 +302,18 @@ struct PillOverlayView: View {
 
     var body: some View {
         ZStack {
-            // Background: dark glass
+            // Background: deep frosted glass
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(Color.black.opacity(0.65))
+                .fill(Color.black.opacity(0.75))
                 .background(
                     RoundedRectangle(cornerRadius: cornerRadius)
                         .fill(.ultraThinMaterial)
                 )
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
 
-            // Gradient border based on language mode
-            RoundedRectangle(cornerRadius: cornerRadius)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: borderColors,
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    ),
-                    lineWidth: borderWidth
-                )
-
-            // Content
+            // Main Content
             contentView
-                .padding(.horizontal, 12)
-        }
-        .shadow(color: .black.opacity(0.4), radius: 16, x: 0, y: 8)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityDescription)
-    }
-
-    private var borderColors: [Color] {
-        switch state.phase {
-        case .done:
-            return [Color.green, Color.green.opacity(0.7)]
-        case .error:
-            return [Color.red, Color.red.opacity(0.7)]
-        default:
-            return OverlayTheme.borderGradient(for: state.languageMode)
-        }
-    }
-
-    private var borderWidth: CGFloat {
-        state.phase == .done || state.phase == .error ? 2.0 : 1.0
-    }
-
-    private var accessibilityDescription: String {
-        switch state.phase {
-        case .initializing: return "FlowKeys: preparing to record"
-        case .recording: return "FlowKeys: recording audio"
-        case .transcribing: return "FlowKeys: transcribing your speech"
-        case .done: return "FlowKeys: transcription complete"
-        case .error: return "FlowKeys: error occurred — \(state.errorMessage)"
+                .padding(.horizontal, 16)
         }
     }
 
@@ -363,6 +323,8 @@ struct PillOverlayView: View {
             errorContent
         } else if state.phase == .done {
             doneContent
+        } else if state.phase == .transcribing || state.phase == .initializing {
+            transcribingContent
         } else {
             recordingContent
         }
@@ -370,104 +332,42 @@ struct PillOverlayView: View {
 
     // MARK: Recording State Content
     private var recordingContent: some View {
+        HStack {
+            // LEFT side: Pulsing Mic Icon
+            MicPulsingView(audioLevel: state.audioLevel)
+                .frame(width: 24, height: 24, alignment: .leading)
+            
+            Spacer()
+
+            // CENTER: Waveform
+            PillWaveformView(audioLevel: state.audioLevel)
+            
+            Spacer()
+
+            // RIGHT side: Timer
+            RecordingTimerView(startDate: state.recordingStartDate ?? Date())
+                .frame(width: 36, alignment: .trailing)
+        }
+    }
+    
+    // MARK: Transcribing State Content
+    private var transcribingContent: some View {
         HStack(spacing: 8) {
-            // Language badge
-            languageBadge
-
-            Spacer(minLength: 4)
-
-            // Waveform or initializing dots
-            Group {
-                if state.phase == .initializing || state.phase == .transcribing {
-                    ProcessingDotsView()
-                        .transition(.opacity)
-                } else {
-                    PillWaveformView(audioLevel: state.audioLevel)
-                        .transition(.opacity)
-                }
-            }
-            .frame(width: 60)
-
-            Spacer(minLength: 4)
-
-            // Timer or processing indicator
-            if state.phase == .recording {
-                RecordingTimerView(startDate: state.recordingStartDate ?? Date())
-            } else {
-                Text("...")
-                    .font(.system(size: 13, weight: .medium, design: .monospaced))
-                    .foregroundColor(.white.opacity(0.6))
-            }
-
-            // Mode tag (if active)
-            if !state.activeModeName.isEmpty, state.phase == .recording {
-                modeTag
-            }
-
-            // Stop button for toggle mode
-            if state.phase == .recording && state.recordingTriggerMode == .toggle {
-                Button(action: onStopButtonPressed) {
-                    Image(systemName: "stop.fill")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.white)
-                        .frame(width: 28, height: 28)
-                        .background(Circle().fill(Color.red.opacity(0.85)))
-                }
-                .buttonStyle(.plain)
-            }
-        }
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.phase)
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.recordingTriggerMode)
-    }
-
-    // MARK: Language Badge
-    private var languageBadge: some View {
-        Text(languageBadgeText)
-            .font(.system(size: 11, weight: .semibold, design: .monospaced))
-            .foregroundColor(.white)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color(OverlayTheme.borderColor(for: state.languageMode)).opacity(0.3))
-            )
-            .fixedSize()
-    }
-
-    private var languageBadgeText: String {
-        switch state.languageMode {
-        case .hinglish: return "MIX🇮🇳"
-        case .pureHindi: return "HI🇮🇳"
-        case .pureEnglish: return "EN🇺🇸"
+            ProgressView()
+                .progressViewStyle(.circular)
+                .controlSize(.small)
+                .colorScheme(.dark)
+            Text("Processing")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.white)
         }
     }
 
-    // MARK: Mode Tag
-    private var modeTag: some View {
-        HStack(spacing: 2) {
-            if !state.activeModeIcon.isEmpty {
-                Text(state.activeModeIcon)
-                    .font(.system(size: 9))
-            }
-            Text(state.activeModeName)
-                .font(.system(size: 10, weight: .medium, design: .rounded))
-                .lineLimit(1)
-        }
-        .foregroundColor(.white.opacity(0.6))
-        .padding(.horizontal, 5)
-        .padding(.vertical, 2)
-        .background(
-            RoundedRectangle(cornerRadius: 4)
-                .fill(.white.opacity(0.08))
-        )
-        .fixedSize()
-    }
-
-    // MARK: Done State
+    // MARK: Done State Content
     private var doneContent: some View {
         HStack(spacing: 8) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 18, weight: .semibold))
+            Image(systemName: "checkmark")
+                .font(.system(size: 14, weight: .bold))
                 .foregroundColor(.green)
             Text("Done")
                 .font(.system(size: 14, weight: .semibold, design: .rounded))
@@ -475,49 +375,61 @@ struct PillOverlayView: View {
         }
     }
 
-    // MARK: Error State
+    // MARK: Error State Content
     private var errorContent: some View {
         HStack(spacing: 8) {
-            Image(systemName: "exclamationmark.triangle.fill")
+            Image(systemName: "exclamationmark.circle.fill")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(.yellow)
+                .foregroundColor(.red)
 
             Text(state.errorMessage)
                 .font(.system(size: 11, weight: .medium, design: .rounded))
-                .lineLimit(2)
+                .lineLimit(1)
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Button(action: onRetryButtonPressed) {
                 Text("Retry")
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(Capsule().fill(Color.blue.opacity(0.85)))
+                    .background(Capsule().fill(Color.white))
             }
             .buttonStyle(.plain)
         }
     }
 }
 
-// MARK: - Pill Waveform (7 bars, spring animated)
+// MARK: - Pulsing Mic View
+struct MicPulsingView: View {
+    let audioLevel: Float
+    
+    var body: some View {
+        Image(systemName: "mic.fill")
+            .font(.system(size: 16))
+            .foregroundColor(.white)
+            .scaleEffect(1.0 + CGFloat(audioLevel) * 0.4)
+            .animation(.interpolatingSpring(stiffness: 300, damping: 20), value: audioLevel)
+    }
+}
 
+// MARK: - Pill Waveform (5 bars, white)
 struct PillWaveformView: View {
     let audioLevel: Float
 
-    private static let barCount = 7
-    private static let multipliers: [CGFloat] = [0.35, 0.55, 0.8, 1.0, 0.8, 0.55, 0.35]
+    private static let barCount = 5
+    private static let multipliers: [CGFloat] = [0.4, 0.8, 1.0, 0.8, 0.4]
     private let barWidth: CGFloat = 3
     private let barSpacing: CGFloat = 4
-    private let minHeight: CGFloat = 8
-    private let maxHeight: CGFloat = 28
+    private let minHeight: CGFloat = 6
+    private let maxHeight: CGFloat = 24
 
     var body: some View {
         HStack(spacing: barSpacing) {
             ForEach(0..<Self.barCount, id: \.self) { index in
                 Capsule()
-                    .fill(barColor(for: index))
+                    .fill(.white.opacity(isActive(for: index) ? 1.0 : 0.2))
                     .frame(width: barWidth, height: barHeight(for: index))
                     .animation(
                         .interpolatingSpring(stiffness: 500, damping: 25),
@@ -534,46 +446,13 @@ struct PillWaveformView: View {
         return minHeight + (maxHeight - minHeight) * amplitude
     }
 
-    private func barColor(for index: Int) -> Color {
+    private func isActive(for index: Int) -> Bool {
         let level = CGFloat(audioLevel)
-        let activity = level * Self.multipliers[index]
-        return activity > 0.1 ? .white : .white.opacity(0.3)
-    }
-}
-
-// MARK: - Processing Dots
-
-struct ProcessingDotsView: View {
-    @State private var activeDot = 0
-    @State private var timer: Timer?
-
-    var body: some View {
-        HStack(spacing: 6) {
-            ForEach(0..<3, id: \.self) { index in
-                Circle()
-                    .fill(.white.opacity(activeDot == index ? 0.9 : 0.25))
-                    .frame(width: 6, height: 6)
-                    .scaleEffect(activeDot == index ? 1.2 : 1.0)
-                    .animation(.easeInOut(duration: 0.4), value: activeDot)
-            }
-        }
-        .onAppear {
-            timer?.invalidate()
-            timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-                DispatchQueue.main.async {
-                    activeDot = (activeDot + 1) % 3
-                }
-            }
-        }
-        .onDisappear {
-            timer?.invalidate()
-            timer = nil
-        }
+        return (level * Self.multipliers[index]) > 0.05
     }
 }
 
 // MARK: - Recording Timer
-
 struct RecordingTimerView: View {
     let startDate: Date
     @State private var elapsed: TimeInterval = 0
@@ -582,13 +461,13 @@ struct RecordingTimerView: View {
     var body: some View {
         Text(formattedTime)
             .font(.system(size: 13, weight: .medium, design: .monospaced))
-            .foregroundColor(.white.opacity(0.8))
-            .fixedSize()
+            .foregroundColor(.white.opacity(0.7))
             .onAppear {
                 timer?.invalidate()
                 timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { _ in
-                    DispatchQueue.main.async {
-                        elapsed = Date().timeIntervalSince(startDate)
+                    let newElapsed = Date().timeIntervalSince(startDate)
+                    if Int(newElapsed) != Int(self.elapsed) {
+                        self.elapsed = newElapsed
                     }
                 }
             }
@@ -603,14 +482,5 @@ struct RecordingTimerView: View {
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
         return String(format: "%d:%02d", minutes, seconds)
-    }
-}
-
-// MARK: - Legacy Compat (TranscribingIndicatorView)
-
-struct TranscribingIndicatorView: View {
-    var body: some View {
-        ProcessingDotsView()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

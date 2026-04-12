@@ -35,7 +35,7 @@ struct MenuBarView: View {
                 updateSection
             }
         }
-        .frame(width: 320)
+        .frame(width: 300)
         .background(Color(NSColor.windowBackgroundColor))
     }
 
@@ -76,15 +76,6 @@ struct MenuBarView: View {
             }
             
             HStack {
-                Circle()
-                    .fill(statusColor)
-                    .frame(width: 8, height: 8)
-                Text(statusText)
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(appState.isRecording ? .red : .primary)
-                
-                Spacer()
-                
                 if !shortcutHint.isEmpty {
                     Text(shortcutHint)
                         .font(.system(size: 10, weight: .medium, design: .monospaced))
@@ -93,7 +84,21 @@ struct MenuBarView: View {
                         .padding(.vertical, 3)
                         .background(Color(NSColor.controlBackgroundColor))
                         .cornerRadius(4)
+                } else {
+                    Text("No shortcuts set")
+                        .font(.system(size: 10, weight: .medium, design: .monospaced))
+                        .foregroundColor(.secondary)
                 }
+                
+                Spacer()
+                
+                Text("\(appState.activeTranscriptionProvider.displayName) \(appState.activeTranscriptionProvider == .groq ? "⚡️" : "")")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(accentColor)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(accentColor.opacity(0.15))
+                    .cornerRadius(10)
             }
         }
         .padding(.horizontal, 16)
@@ -127,10 +132,11 @@ struct MenuBarView: View {
     // ─── SETTINGS & MODES ────────────────────────────────────
 
     private var languageModeSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("LANGUAGE")
-                .font(.system(size: 10, weight: .bold))
+        HStack(spacing: 8) {
+            Image(systemName: "globe")
+                .font(.system(size: 12))
                 .foregroundColor(.secondary)
+                .frame(width: 16)
             
             Picker("Language Mode", selection: $appState.languageMode) {
                 Text("MIX 🇮🇳").tag(UserLanguageMode.hinglish)
@@ -139,15 +145,18 @@ struct MenuBarView: View {
             }
             .pickerStyle(.segmented)
             .labelsHidden()
+            .frame(maxWidth: .infinity)
+            .cornerRadius(6)
         }
     }
 
     private var toneModeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("TONE")
-                    .font(.system(size: 10, weight: .bold))
+                Image(systemName: "slider.horizontal.3")
+                    .font(.system(size: 12))
                     .foregroundColor(.secondary)
+                    .frame(width: 16)
                 Spacer()
                 Button(action: {
                     appState.selectedSettingsTab = .general
@@ -161,12 +170,12 @@ struct MenuBarView: View {
             }
 
             let tones: [(icon: String, name: String, id: UUID)] = [
-                ("🗣️", "Casual", DictationMode.casualHinglish.id),
-                ("📧", "Email", DictationMode.professionalEmail.id),
-                ("💻", "Code", DictationMode.codeAndTerminal.id),
-                ("📝", "Notes", DictationMode.meetingNotes.id),
-                ("📱", "Social", DictationMode.socialMedia.id),
-                ("🔇", "Literal", DictationMode.literalNoEdit.id)
+                ("bubble.left.fill", "Casual", DictationMode.casualHinglish.id),
+                ("envelope.fill", "Email", DictationMode.professionalEmail.id),
+                ("chevron.left.forwardslash.chevron.right", "Code", DictationMode.codeAndTerminal.id),
+                ("note.text", "Notes", DictationMode.meetingNotes.id),
+                ("heart.fill", "Social", DictationMode.socialMedia.id),
+                ("equal.circle.fill", "Literal", DictationMode.literalNoEdit.id)
             ]
 
             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 3), spacing: 8) {
@@ -184,8 +193,8 @@ struct MenuBarView: View {
             appState.dictationModeStore.activeModeID = isActive ? nil : id
         }) {
             VStack(spacing: 4) {
-                Text(icon).font(.system(size: 16))
-                Text(name).font(.system(size: 11, weight: isActive ? .semibold : .medium))
+                Image(systemName: icon).font(.system(size: 14))
+                Text(name).font(.system(size: 10, weight: isActive ? .semibold : .medium))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 8)
@@ -195,7 +204,7 @@ struct MenuBarView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .stroke(isActive ? accentColor : Color.gray.opacity(0.2), lineWidth: 1)
+                    .stroke(isActive ? accentColor : Color.gray.opacity(0.2), lineWidth: 1.5)
             )
             .foregroundColor(isActive ? accentColor : .primary)
         }
@@ -206,9 +215,12 @@ struct MenuBarView: View {
 
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("RECENT")
-                .font(.system(size: 10, weight: .bold))
-                .foregroundColor(.secondary)
+            HStack {
+                Image(systemName: "clock")
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+                    .frame(width: 16)
+            }
 
             if !appState.lastTranscript.isEmpty && !appState.isRecording && !appState.isTranscribing {
                 HStack(alignment: .top) {
@@ -286,9 +298,6 @@ struct MenuBarView: View {
             }
             
             HStack {
-                Text("Provider: \(appState.activeTranscriptionProvider.displayName) \(appState.activeTranscriptionProvider == .groq ? "⚡️" : "")")
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(.secondary)
                 Spacer()
                 Button("Transcribe File...") {
                     NotificationCenter.default.post(name: .showFileTranscription, object: nil)
