@@ -28,8 +28,12 @@ fi
 
 echo "⬇️  Fetching latest release info from GitHub..."
 
-# Get DMG download URL from GitHub API
-DMG_URL=$(curl -fsSL "$RELEASE_API" \
+# Try latest endpoint first, then fallback to releases list
+JSON_DATA=$(curl -fsSL -H "Accept: application/vnd.github.v3+json" "$RELEASE_API" || \
+             curl -fsSL -H "Accept: application/vnd.github.v3+json" "https://api.github.com/repos/$REPO/releases")
+
+# Extract the first DMG link found in the JSON
+DMG_URL=$(echo "$JSON_DATA" \
   | grep "browser_download_url" \
   | grep "\.dmg" \
   | head -1 \
@@ -38,6 +42,8 @@ DMG_URL=$(curl -fsSL "$RELEASE_API" \
 if [[ -z "$DMG_URL" ]]; then
   echo "❌ Could not find a DMG in the latest release."
   echo "   Check: https://github.com/$REPO/releases"
+  # Show what we got for debugging
+  echo "Debug: Data received size: $(echo "$JSON_DATA" | wc -c) bytes"
   exit 1
 fi
 
