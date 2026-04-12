@@ -92,7 +92,7 @@ struct SettingsView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(red: 12/255, green: 12/255, blue: 14/255)) // #0C0C0E
+            .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
         }
         .preferredColorScheme(.dark)
     }

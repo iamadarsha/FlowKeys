@@ -36,7 +36,7 @@ struct MenuBarView: View {
             }
         }
         .frame(width: 320)
-        .background(Color(red: 12/255, green: 12/255, blue: 14/255)) // #0C0C0E
+        .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
         .preferredColorScheme(.dark)
     }
 
@@ -105,7 +105,7 @@ struct MenuBarView: View {
         .padding(.horizontal, 16)
         .padding(.top, 16)
         .padding(.bottom, 12)
-        .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
+        .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
     }
 
     private var statusColor: Color {
@@ -322,7 +322,7 @@ struct MenuBarView: View {
             }
         }
         .padding(16)
-        .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
+        .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
     }
 
     private func warningButton(label: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
