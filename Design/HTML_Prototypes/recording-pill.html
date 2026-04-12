@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
+<script>
+tailwind.config = { theme: { extend: { colors: { 'primary-container': '#FF6B35', 'tertiary-container': '#08B146', 'error': '#FFB4AB' }, fontFamily: { headline: ['Manrope'], sans: ['Inter'] } } } };
+</script>
+<body class="bg-[#0C0C0E] flex flex-col items-center justify-center min-h-screen text-[#E5E2E1] font-sans gap-6" style="background-image: url('https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&blur=50&w=1920'); background-size: cover;">
+  
+  <div>
+    <div class="text-[10px] text-white/30 uppercase tracking-widest mb-1 text-center">RECORDING · HOLD</div>
+    <div class="w-[260px] h-[52px] rounded-full bg-[#0D0D0F]/90 backdrop-blur-xl shadow-[0_8px_24px_rgba(0,0,0,0.5)] border border-white/5 px-4 flex items-center justify-between">
+      <span class="material-symbols-outlined text-white text-[14px] scale-[1.15]" style="filter: drop-shadow(0 0 4px #FF6B35);">mic</span>
+      <div class="flex gap-1.5 items-end h-8">
+        <div class="w-0.5 rounded-full h-3 bg-white"></div><div class="w-0.5 rounded-full h-5 bg-white"></div><div class="w-0.5 rounded-full h-8 bg-white"></div><div class="w-0.5 rounded-full h-5 bg-white"></div><div class="w-0.5 rounded-full h-3 bg-white/20"></div>
+      </div>
+      <span class="text-xs font-mono text-white/70">0:03</span>
+    </div>
+  </div>
+
+  <div>
+    <div class="text-[10px] text-white/30 uppercase tracking-widest mb-1 text-center">RECORDING · TOGGLE</div>
+    <div class="w-[260px] h-[52px] rounded-full bg-[#0D0D0F]/90 backdrop-blur-xl shadow-[0_8px_24px_rgba(0,0,0,0.5)] border border-white/5 px-4 flex items-center justify-between">
+      <span class="material-symbols-outlined text-white text-[14px] scale-[1.15]" style="filter: drop-shadow(0 0 4px #FF6B35);">mic</span>
+      <div class="flex gap-1.5 items-end h-8">
+        <div class="w-0.5 rounded-full h-3 bg-white"></div><div class="w-0.5 rounded-full h-5 bg-white/20"></div><div class="w-0.5 rounded-full h-8 bg-white/20"></div><div class="w-0.5 rounded-full h-5 bg-white/20"></div><div class="w-0.5 rounded-full h-3 bg-white/20"></div>
+      </div>
+      <span class="text-xs font-mono text-white/70">0:08</span>
+      <div class="w-7 h-7 rounded-full bg-error flex items-center justify-center cursor-pointer"><span class="material-symbols-outlined text-white text-xs">stop_circle</span></div>
+    </div>
+  </div>
+
+</body>
+</html>
