@@ -14,6 +14,11 @@ final class TranscriptionService {
     private let uploadSampleRate = 16_000.0
     private let uploadChannelCount: AVAudioChannelCount = 1
 
+    /// Minimum recording duration (seconds) below which Whisper hallucinates.
+    private let minimumAudioDuration: TimeInterval = 0.5
+    /// Minimum peak RMS — below this the mic captured nothing useful.
+    private let minimumPeakRMS: Float = 0.002
+
     init(provider: TranscriptionProvider, keyStore: APIKeyStore, forceHTTP2: Bool = false, languageMode: UserLanguageMode = .pureEnglish) {
         self.provider = provider
         self.keyStore = keyStore
@@ -75,6 +80,8 @@ final class TranscriptionService {
         let prepared = try prepareAudioForUpload(from: fileURL)
         defer { prepared.cleanup() }
 
+        try validateAudioForTranscription(fileURL: prepared.fileURL)
+
         var lastError: Error?
         for attempt in 1...maxAttempts {
             do {
@@ -104,6 +111,65 @@ final class TranscriptionService {
             throw lastError
         }
         throw TranscriptionError.transcriptionFailed("Unknown transcription failure")
+    }
+
+    // MARK: - Audio validation
+
+    /// Throws `TranscriptionError.transcriptionFailed` if the audio is too short
+    /// or too quiet to produce a real transcript. This prevents Whisper from
+    /// hallucinating phrases like "Thank you" on silent / near-silent input.
+    private func validateAudioForTranscription(fileURL: URL) throws {
+        guard let audioFile = try? AVAudioFile(forReading: fileURL) else { return }
+
+        let sampleRate = audioFile.fileFormat.sampleRate
+        guard sampleRate > 0 else { return }
+
+        let durationSeconds = Double(audioFile.length) / sampleRate
+        guard durationSeconds >= minimumAudioDuration else {
+            os_log(.info, log: transcriptionLog,
+                   "Audio too short (%.2fs < %.2fs) — skipping transcription",
+                   durationSeconds, minimumAudioDuration)
+            throw TranscriptionError.transcriptionFailed("Recording too short — hold the shortcut for at least half a second while speaking.")
+        }
+
+        // Read up to the first 2 seconds to check for meaningful audio energy.
+        let framesToCheck = AVAudioFrameCount(min(Double(audioFile.length), sampleRate * 2.0))
+        guard framesToCheck > 0,
+              let format = AVAudioFormat(
+                commonFormat: audioFile.fileFormat.commonFormat,
+                sampleRate: sampleRate,
+                channels: audioFile.fileFormat.channelCount,
+                interleaved: audioFile.fileFormat.isInterleaved
+              ),
+              let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: framesToCheck),
+              (try? audioFile.read(into: buffer, frameCount: framesToCheck)) != nil,
+              buffer.frameLength > 0 else {
+            return
+        }
+
+        var peakRMS: Float = 0
+        let frames = Int(buffer.frameLength)
+
+        if let floatData = buffer.floatChannelData {
+            var sumSq: Float = 0
+            let samples = floatData[0]
+            for i in 0..<frames { sumSq += samples[i] * samples[i] }
+            peakRMS = sqrtf(sumSq / Float(frames))
+        } else if let int16Data = buffer.int16ChannelData {
+            var sumSq: Float = 0
+            let samples = int16Data[0]
+            for i in 0..<frames {
+                let s = Float(samples[i]) / Float(Int16.max)
+                sumSq += s * s
+            }
+            peakRMS = sqrtf(sumSq / Float(frames))
+        }
+
+        os_log(.info, log: transcriptionLog, "Audio validation — duration=%.2fs rms=%.5f", durationSeconds, peakRMS)
+
+        guard peakRMS >= minimumPeakRMS else {
+            throw TranscriptionError.transcriptionFailed("No speech detected — check that your microphone is working and not muted.")
+        }
     }
 
     private func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
