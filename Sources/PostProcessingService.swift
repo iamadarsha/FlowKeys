@@ -379,6 +379,10 @@ Model: \(model)
         return raw.isEmpty ? "Unknown error" : raw
     }
 
+    private let whisperHallucinationBlocklist: Set<String> = [
+        "thank you", "thanks for watching", "you"
+    ]
+
     private func sanitizePostProcessedTranscript(_ value: String) -> String {
         var result = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !result.isEmpty else { return "" }
@@ -390,6 +394,15 @@ Model: \(model)
         }
 
         if result == "EMPTY" {
+            return ""
+        }
+
+        let normalizedForBlocklist = result
+            .lowercased()
+            .trimmingCharacters(in: .punctuationCharacters)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        if whisperHallucinationBlocklist.contains(normalizedForBlocklist) {
             return ""
         }
 

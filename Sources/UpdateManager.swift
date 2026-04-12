@@ -261,6 +261,10 @@ final class UpdateManager: ObservableObject {
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {
             downloadAndInstall(release: release)
+        } else {
+            updateAvailable = false
+            latestRelease = nil
+            latestReleaseDate = ""
         }
     }
 

@@ -36,6 +36,8 @@ enum UserLanguageMode: String, CaseIterable, Codable, Identifiable {
 
 // MARK: - Indian Whisper Primer
 
+let ANTI_HALLUCINATION_PRIMER = "Okay so I wanted to say"
+
 /// Seeds Whisper's vocabulary decoder with common Hinglish patterns, Indian names,
 /// and brand names so that recognition accuracy improves significantly.
 /// For Groq/OpenAI Whisper — passed as the `prompt` field in the multipart body.

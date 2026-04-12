@@ -13,6 +13,8 @@ final class TranscriptionService {
     private let maxAttempts = 2 // first attempt + one retry
     private let uploadSampleRate = 16_000.0
     private let uploadChannelCount: AVAudioChannelCount = 1
+    private let minimumPeakRMS: Float = 0.008
+    private let minimumAudioDuration: TimeInterval = 0.5
 
     init(provider: TranscriptionProvider, keyStore: APIKeyStore, forceHTTP2: Bool = false, languageMode: UserLanguageMode = .pureEnglish) {
         self.provider = provider
@@ -72,6 +74,38 @@ final class TranscriptionService {
     }
 
     func transcribe(fileURL: URL) async throws -> String {
+        let inputFile = try AVAudioFile(forReading: fileURL)
+        let duration = Double(inputFile.length) / inputFile.processingFormat.sampleRate
+        guard duration >= minimumAudioDuration else {
+            throw TranscriptionError.transcriptionFailed("Recording too short")
+        }
+
+        let frameCount = AVAudioFrameCount(inputFile.length)
+        guard let buffer = AVAudioPCMBuffer(pcmFormat: inputFile.processingFormat, frameCapacity: frameCount) else {
+            throw TranscriptionError.transcriptionFailed("Could not allocate buffer")
+        }
+        try inputFile.read(into: buffer)
+
+        var rms: Float = 0
+        if let channelData = buffer.floatChannelData {
+            let samples = channelData[0]
+            var sum: Float = 0
+            for i in 0..<Int(frameCount) { sum += samples[i] * samples[i] }
+            rms = sqrtf(sum / Float(frameCount))
+        } else if let channelData = buffer.int16ChannelData {
+            let samples = channelData[0]
+            var sum: Float = 0
+            for i in 0..<Int(frameCount) {
+                let sample = Float(samples[i]) / Float(Int16.max)
+                sum += sample * sample  
+            }
+            rms = sqrtf(sum / Float(frameCount))
+        }
+
+        guard rms >= minimumPeakRMS else {
+            throw TranscriptionError.transcriptionFailed("No speech detected")
+        }
+
         let prepared = try prepareAudioForUpload(from: fileURL)
         defer { prepared.cleanup() }
 
@@ -193,7 +227,9 @@ final class TranscriptionService {
             ]
             // Add the Indian Whisper primer for non-English language modes
             if self.languageMode != .pureEnglish {
-                curlArgs.insert(contentsOf: ["-F", "prompt=\(INDIAN_WHISPER_PRIMER)"], at: curlArgs.count - 2)
+                curlArgs.insert(contentsOf: ["-F", "prompt=\(INDIAN_WHISPER_PRIMER) \(ANTI_HALLUCINATION_PRIMER)"], at: curlArgs.count - 2)
+            } else {
+                curlArgs.insert(contentsOf: ["-F", "prompt=\(ANTI_HALLUCINATION_PRIMER)"], at: curlArgs.count - 2)
             }
             process.arguments = curlArgs
 
@@ -371,7 +407,11 @@ final class TranscriptionService {
         if languageMode != .pureEnglish {
             append("--\(boundary)\r\n")
             append("Content-Disposition: form-data; name=\"prompt\"\r\n\r\n")
-            append("\(INDIAN_WHISPER_PRIMER)\r\n")
+            append("\(INDIAN_WHISPER_PRIMER) \(ANTI_HALLUCINATION_PRIMER)\r\n")
+        } else {
+            append("--\(boundary)\r\n")
+            append("Content-Disposition: form-data; name=\"prompt\"\r\n\r\n")
+            append("\(ANTI_HALLUCINATION_PRIMER)\r\n")
         }
 
         append("--\(boundary)\r\n")
@@ -426,6 +466,7 @@ final class TranscriptionService {
         if languageMode != .pureEnglish {
             prompt += "\n\nThe speaker is likely using Hindi, English, or Hinglish (code-switched Hindi-English). Preserve all code-switching exactly as spoken. Use Roman script for Hinglish and Devanagari only if the speaker clearly uses Hindi throughout.\n\n" + INDIAN_WHISPER_PRIMER
         }
+        prompt += "\n\n\(ANTI_HALLUCINATION_PRIMER)"
         return prompt
     }
 }
