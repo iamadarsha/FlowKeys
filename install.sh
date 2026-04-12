@@ -75,13 +75,22 @@ fi
 
 echo ""
 echo "💿 Mounting DMG..."
-# REMOVE -quiet to see errors clearly
-MOUNT_OUTPUT=$(hdiutil attach "$TMP_DMG" -nobrowse 2>&1)
-MOUNT_POINT=$(echo "$MOUNT_OUTPUT" | grep "/Volumes/" | sed 's/.*\/Volumes\//\/Volumes\//' | head -n 1)
+MOUNT_PLIST=$(hdiutil attach "$TMP_DMG" -nobrowse -plist 2>&1)
+MOUNT_POINT=$(echo "$MOUNT_PLIST" \
+  | grep -A1 "mount-point" \
+  | grep "<string>" \
+  | sed 's/.*<string>\(.*\)<\/string>/\1/' \
+  | head -1)
+
+if [[ -z "$MOUNT_POINT" ]]; then
+  # Fallback: try simple grep for /Volumes
+  MOUNT_POINT=$(hdiutil attach "$TMP_DMG" -nobrowse 2>/dev/null \
+    | awk '/\/Volumes\//{print $NF}' | head -1)
+fi
 
 if [[ -z "$MOUNT_POINT" ]]; then
   echo "❌ Could not mount DMG."
-  echo "   Error details: $MOUNT_OUTPUT"
+  echo "   Error details: $MOUNT_PLIST"
   rm -f "$TMP_DMG"
   exit 1
 fi

@@ -17,13 +17,27 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          brew install fileicon
+          brew install create-dmg fileicon
 
-
+      - name: Generate AppIcon.icns from source PNG
+        run: |
+          mkdir -p build/AppIcon.iconset
+          sips -z 16 16     Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_16x16.png
+          sips -z 32 32     Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_16x16@2x.png
+          sips -z 32 32     Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_32x32.png
+          sips -z 64 64     Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_32x32@2x.png
+          sips -z 128 128   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_128x128.png
+          sips -z 256 256   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_128x128@2x.png
+          sips -z 256 256   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_256x256.png
+          sips -z 512 512   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_256x256@2x.png
+          sips -z 512 512   Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_512x512.png
+          sips -z 1024 1024 Resources/AppIcon-Source.png --out build/AppIcon.iconset/icon_512x512@2x.png
+          iconutil -c icns -o Resources/AppIcon.icns build/AppIcon.iconset
+          echo "✅ AppIcon.icns generated: $(ls -lh Resources/AppIcon.icns)"
 
       - name: Build universal DMG
         run: |
-          ARCH=universal make dmg-hdiutil
+          ARCH=universal make dmg
         env:
           APP_NAME: FlowKeys
           BUNDLE_ID: com.flowkeys.app
@@ -33,6 +47,7 @@ jobs:
         run: |
           ls -lh build/FlowKeys.dmg
           hdiutil verify build/FlowKeys.dmg
+          echo "✅ DMG verified OK"
 
       - name: Get version from tag
         id: version
@@ -44,20 +59,19 @@ jobs:
           name: "FlowKeys ${{ steps.version.outputs.VERSION }}"
           body: |
             ## 🎙 FlowKeys ${{ steps.version.outputs.VERSION }}
-            
+
             **Install with one command:**
             ```bash
             curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/main/install.sh | bash
             ```
-            
-            Or download the DMG below and drag to Applications.
-            
-            **First time opening the DMG manually?**
-            Run this after copying to Applications:
+
+            Or download the DMG below and drag FlowKeys to Applications.
+
+            **Downloaded the DMG manually?** Run once after install:
             ```bash
             xattr -dr com.apple.quarantine /Applications/FlowKeys.app
             ```
-            
+
             🇮🇳 Aapki awaaz, aapke words.
           files: build/FlowKeys.dmg
           draft: false
