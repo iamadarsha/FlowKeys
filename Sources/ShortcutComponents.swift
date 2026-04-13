@@ -124,18 +124,16 @@ private struct ShortcutPresetRow: View {
         Button(action: action) {
             HStack {
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(isSelected ? .blue : .secondary)
+                    .foregroundColor(isSelected ? KM.accent : KM.muted)
                 Text(title)
-                    .foregroundColor(.primary)
+                    .foregroundColor(KM.onSurface)
                 Spacer()
             }
             .padding(12)
-            .background(isSelected ? Color.blue.opacity(0.1) : Color(nsColor: .controlBackgroundColor))
-            .cornerRadius(8)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 1.5)
-            )
+            .background(isSelected ? KM.accent.opacity(0.12) : KM.surfaceHi)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(isSelected ? KM.accent : KM.outline, lineWidth: isSelected ? 1.5 : 1))
         }
         .buttonStyle(.plain)
     }
@@ -165,7 +163,7 @@ private struct ShortcutCaptureRow: View {
                 } label: {
                     HStack(alignment: .center, spacing: 10) {
                         Image(systemName: isSelected ? "checkmark.circle.fill" : (savedBinding == nil ? "plus.circle" : "circle"))
-                            .foregroundColor(isSelected ? .blue : .secondary)
+                            .foregroundColor(isSelected ? KM.accent : KM.muted)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(displayedBindingName)
@@ -173,18 +171,19 @@ private struct ShortcutCaptureRow: View {
                                 .foregroundColor(.primary)
                             Text(displayedBindingSubtitle)
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(KM.muted)
                         }
 
                         Spacer()
                     }
                     .padding(12)
-                    .background(isSelected ? Color.blue.opacity(0.1) : Color(nsColor: .controlBackgroundColor))
-                    .cornerRadius(8)
+                    .background(isSelected ? KM.accent.opacity(0.12) : KM.surfaceHi)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 1.5)
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .stroke(isSelected ? KM.accent : KM.outline, lineWidth: isSelected ? 1.5 : 1)
                     )
+                    .animation(.spring(response: 0.25, dampingFraction: 0.8), value: isSelected)
                 }
                 .buttonStyle(.plain)
                 .disabled(isCapturing)
@@ -214,7 +213,7 @@ private struct ShortcutCaptureRow: View {
                     systemImage: "keyboard"
                 )
                     .font(.subheadline.weight(.semibold))
-                    .foregroundColor(.blue)
+                    .foregroundColor(KM.accent)
             }
         }
         .onDisappear {

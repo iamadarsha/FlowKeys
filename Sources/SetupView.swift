@@ -62,14 +62,31 @@ struct SetupView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            // Step dots
+            HStack(spacing: 6) {
+                ForEach(SetupStep.allCases, id: \.rawValue) { step in
+                    let isCurrent = step == currentStep
+                    let isDone = step.rawValue < currentStep.rawValue
+                    RoundedRectangle(cornerRadius: 3, style: .continuous)
+                        .fill(isCurrent ? KM.accent : (isDone ? KM.accent.opacity(0.5) : KM.surfaceHi))
+                        .frame(width: isCurrent ? 20 : 6, height: 6)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: currentStep)
+                }
+            }
+            .padding(.top, 16)
+            .padding(.bottom, 4)
+
             ScrollView {
                 currentStepView
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal, 40)
-                    .padding(.vertical, 32)
+                    .padding(.vertical, 24)
             }
 
-            Divider()
+            // Footer navigation
+            Rectangle()
+                .fill(KM.outline)
+                .frame(height: 1)
 
             ZStack {
                 stepIndicator
@@ -79,10 +96,9 @@ struct SetupView: View {
                         if currentStep != .provider {
                             Button("Back") {
                                 keyValidationError = nil
-                                withAnimation {
-                                    currentStep = previousStep(currentStep)
-                                }
+                                withAnimation { currentStep = previousStep(currentStep) }
                             }
+                            .foregroundColor(KM.muted)
                             .disabled(isValidatingKey)
                         }
                     }
@@ -92,58 +108,48 @@ struct SetupView: View {
                     Group {
                         if currentStep != .ready {
                             if currentStep == .apiKey {
-                                Button(isValidatingKey ? "Validating..." : "Continue") {
-                                    validateAndContinue()
-                                }
-                                .keyboardShortcut(.defaultAction)
-                                .disabled(!canContinueFromCurrentStep || isValidatingKey)
+                                kmContinueButton(
+                                    label: isValidatingKey ? "Validating…" : "Continue",
+                                    disabled: !canContinueFromCurrentStep || isValidatingKey
+                                ) { validateAndContinue() }
                             } else if currentStep == .vocabulary {
-                                Button("Continue") {
+                                kmContinueButton(label: "Continue", disabled: false) {
                                     saveCustomVocabularyAndContinue()
                                 }
-                                .keyboardShortcut(.defaultAction)
                             } else if currentStep == .testTranscription {
                                 HStack(spacing: 10) {
                                     Button("Skip") {
                                         stopTestHotkeyMonitoring()
-                                        withAnimation {
-                                            currentStep = nextStep(currentStep)
-                                        }
+                                        withAnimation { currentStep = nextStep(currentStep) }
                                     }
+                                    .foregroundColor(KM.muted)
                                     .buttonStyle(.plain)
-                                    .foregroundColor(.secondary)
 
-                                    Button("Continue") {
+                                    kmContinueButton(
+                                        label: "Continue",
+                                        disabled: testPhase != .done || testTranscript.isEmpty || testError != nil
+                                    ) {
                                         stopTestHotkeyMonitoring()
-                                        withAnimation {
-                                            currentStep = nextStep(currentStep)
-                                        }
+                                        withAnimation { currentStep = nextStep(currentStep) }
                                     }
-                                    .keyboardShortcut(.defaultAction)
-                                    .disabled(testPhase != .done || testTranscript.isEmpty || testError != nil)
                                 }
                             } else {
-                                Button("Continue") {
-                                    withAnimation {
-                                        currentStep = nextStep(currentStep)
-                                    }
+                                kmContinueButton(label: "Continue", disabled: !canContinueFromCurrentStep) {
+                                    withAnimation { currentStep = nextStep(currentStep) }
                                 }
-                                .keyboardShortcut(.defaultAction)
-                                .disabled(!canContinueFromCurrentStep)
                             }
                         } else {
-                            Button("Get Started") {
-                                onComplete()
-                            }
-                            .keyboardShortcut(.defaultAction)
+                            kmContinueButton(label: "Get Started", disabled: false) { onComplete() }
                         }
                     }
                 }
             }
-            .padding(20)
-            .background(Color(nsColor: .windowBackgroundColor))
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+            .background(KM.bg)
         }
-        .frame(width: 540, height: 700)
+        .background(KM.bg)
+        .frame(width: 520, height: 680)
         .onAppear {
             selectedProvider = appState.activeLLMProvider
             apiKeyInput = appState.apiKey(for: selectedProvider)
@@ -302,8 +308,8 @@ struct SetupView: View {
     var apiKeyStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "key.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Enter Your \(selectedProvider.displayName) API Key")
                 .font(.title)
@@ -362,8 +368,8 @@ struct SetupView: View {
     var micPermissionStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "mic.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Microphone Access")
                 .font(.title)
@@ -392,16 +398,17 @@ struct SetupView: View {
                 }
             }
             .padding(12)
-            .background(Color(nsColor: .controlBackgroundColor))
-            .cornerRadius(8)
+            .background(KM.surfaceHi)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(KM.outline, lineWidth: 1))
         }
     }
 
     var accessibilityStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "hand.raised.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Accessibility Access")
                 .font(.title)
@@ -430,8 +437,9 @@ struct SetupView: View {
                 }
             }
             .padding(12)
-            .background(Color(nsColor: .controlBackgroundColor))
-            .cornerRadius(8)
+            .background(KM.surfaceHi)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(KM.outline, lineWidth: 1))
 
             if !accessibilityGranted {
                 Text("Note: If you rebuilt the app, you may need to\nremove and re-add it in Accessibility settings.")
@@ -447,8 +455,8 @@ struct SetupView: View {
     var screenRecordingStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "camera.viewfinder")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Screen Recording")
                 .font(.title)
@@ -483,8 +491,9 @@ struct SetupView: View {
                 }
             }
             .padding(12)
-            .background(Color(nsColor: .controlBackgroundColor))
-            .cornerRadius(8)
+            .background(KM.surfaceHi)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(KM.outline, lineWidth: 1))
         }
         .onAppear { startScreenRecordingPolling() }
         .onDisappear { screenRecordingTimer?.invalidate() }
@@ -493,8 +502,8 @@ struct SetupView: View {
     var holdShortcutStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "keyboard.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Hold to Talk Shortcut")
                 .font(.title)
@@ -528,8 +537,8 @@ struct SetupView: View {
     var toggleShortcutStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "switch.2")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Tap to Toggle Shortcut")
                 .font(.title)
@@ -563,8 +572,8 @@ struct SetupView: View {
     var snippetsStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "text.badge.plus")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Quick Snippets")
                 .font(.title)
@@ -621,8 +630,8 @@ struct SetupView: View {
     var vocabularyStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "text.book.closed.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Custom Vocabulary")
                 .font(.title)
@@ -655,8 +664,8 @@ struct SetupView: View {
     var launchAtLoginStep: some View {
         VStack(spacing: 20) {
             Image(systemName: "sunrise.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.blue)
+                .font(.system(size: 52))
+                .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
 
             Text("Launch at Login")
                 .font(.title)
@@ -674,8 +683,9 @@ struct SetupView: View {
                 Toggle("Launch FlowKeys at login", isOn: $appState.launchAtLogin)
             }
             .padding(12)
-            .background(Color(nsColor: .controlBackgroundColor))
-            .cornerRadius(8)
+            .background(KM.surfaceHi)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(KM.outline, lineWidth: 1))
         }
     }
 
@@ -848,48 +858,53 @@ struct SetupView: View {
     }
 
     var stepIndicator: some View {
-        HStack(spacing: 8) {
-            ForEach(totalSteps, id: \.rawValue) { step in
-                Circle()
-                    .fill(step == currentStep ? Color.blue : Color.gray.opacity(0.3))
-                    .frame(width: 8, height: 8)
-            }
-        }
+        // Hidden — step progress is shown as pill dots at top
+        EmptyView()
     }
 
-    @ViewBuilder
     private func providerCard(_ provider: TranscriptionProvider) -> some View {
-        Button {
+        let isActive = selectedProvider == provider
+        return Button {
             selectedProvider = provider
             apiKeyInput = appState.apiKey(for: provider)
             keyValidationError = nil
         } label: {
-            HStack(alignment: .top, spacing: 12) {
-                Image(systemName: selectedProvider == provider ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(selectedProvider == provider ? .blue : .secondary)
-                    .font(.system(size: 18, weight: .semibold))
+            HStack(alignment: .center, spacing: 12) {
+                // Check indicator
+                ZStack {
+                    Circle()
+                        .stroke(isActive ? KM.accent : KM.outline, lineWidth: 1.5)
+                        .frame(width: 22, height: 22)
+                    if isActive {
+                        Circle().fill(KM.accent).frame(width: 22, height: 22)
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 9, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(provider.displayName)
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundColor(isActive ? KM.onSurface : KM.onSurface.opacity(0.6))
                     Text(provider.shortDescription)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 11))
+                        .foregroundColor(KM.muted)
                         .multilineTextAlignment(.leading)
                 }
 
                 Spacer(minLength: 0)
             }
-            .padding(12)
-            .background(selectedProvider == provider ? Color.blue.opacity(0.12) : Color(nsColor: .controlBackgroundColor))
-            .cornerRadius(10)
+            .padding(14)
+            .background(isActive ? KM.accent.opacity(0.1) : KM.surfaceHi)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(selectedProvider == provider ? Color.blue : Color.clear, lineWidth: 1.5)
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(isActive ? KM.accent : KM.outline, lineWidth: isActive ? 1.5 : 1)
             )
         }
         .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.15), value: isActive)
     }
 
     private var canContinueFromCurrentStep: Bool {
@@ -982,6 +997,29 @@ struct SetupView: View {
         withAnimation {
             currentStep = nextStep(currentStep)
         }
+    }
+
+    @ViewBuilder
+    private func kmContinueButton(label: String, disabled: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.white)
+                .padding(.horizontal, 22)
+                .padding(.vertical, 9)
+                .background(Group {
+                    if disabled {
+                        KM.surfaceHi
+                    } else {
+                        LinearGradient(colors: [KM.accent, KM.accent.opacity(0.8)],
+                                       startPoint: .leading, endPoint: .trailing)
+                    }
+                })
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+        .disabled(disabled)
+        .keyboardShortcut(.defaultAction)
     }
 
     private func previousStep(_ step: SetupStep) -> SetupStep {

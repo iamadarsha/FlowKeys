@@ -13,9 +13,10 @@ struct SmartModesSettingsView: View {
                     Text("Smart Modes")
                         .font(.title)
                         .fontWeight(.semibold)
+                        .foregroundColor(KM.onSurface)
                     Text("FlowKeys automatically adjusts dictation behavior based on context or manual selection.")
                         .font(.body)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(KM.muted)
                 }
                 .padding(.horizontal)
                 
@@ -33,20 +34,24 @@ struct SmartModesSettingsView: View {
                     }
                 }
                 .padding()
-                .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
-                .cornerRadius(10)
+                .background(KM.surfaceHi)
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(KM.outline, lineWidth: 1))
                 .padding(.horizontal)
                 
                 // Mode List
                 VStack(spacing: 12) {
-                    ForEach(appState.dictationModeStore.modes) { mode in
+                    ForEach(Array(appState.dictationModeStore.modes.enumerated()), id: \.element.id) { index, mode in
                         ModeRow(mode: mode)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                            .animation(.spring(response: 0.35, dampingFraction: 0.82).delay(Double(index) * 0.05), value: appState.dictationModeStore.modes.count)
                     }
                 }
                 .padding(.horizontal)
             }
             .padding(.vertical, 20)
         }
+        .background(KM.bg)
     }
 }
 
@@ -70,9 +75,9 @@ private struct ModeRow: View {
                             .font(.system(size: 9, weight: .bold))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
-                            .background(Color.blue.opacity(0.2))
-                            .foregroundColor(.blue)
-                            .clipShape(RoundedRectangle(cornerRadius: 4))
+                            .background(KM.accent.opacity(0.15))
+                            .foregroundColor(KM.accent)
+                            .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
                     }
                 }
                 
@@ -91,12 +96,9 @@ private struct ModeRow: View {
             .disabled(mode.isBuiltIn) // Temporarily disable built-in editing
         }
         .padding()
-        .background(Color(nsColor: .controlBackgroundColor).opacity(0.5))
-        .cornerRadius(10)
-        .overlay(
-            RoundedRectangle(cornerRadius: 10)
-                .stroke(Color.primary.opacity(0.06), lineWidth: 1)
-        )
+        .background(KM.surfaceHi)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(KM.outline, lineWidth: 1))
     }
 }
 
@@ -116,9 +118,10 @@ struct SnippetsSettingsView: View {
                     Text("Quick Snippets")
                         .font(.title)
                         .fontWeight(.semibold)
+                        .foregroundColor(KM.onSurface)
                     Text("Expand short phrases into full text (e.g. say \"my sign\" → types \"Best regards, Adarsha\").")
                         .font(.body)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(KM.muted)
                 }
                 Spacer()
                 Button {
@@ -127,8 +130,14 @@ struct SnippetsSettingsView: View {
                     showingAddPopover = true
                 } label: {
                     Label("Add Snippet", systemImage: "plus")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .background(LinearGradient(colors: [KM.accent, KM.accent.opacity(0.8)], startPoint: .leading, endPoint: .trailing))
+                        .clipShape(Capsule())
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.plain)
                 .popover(isPresented: $showingAddPopover, arrowEdge: .bottom) {
                     addSnippetForm
                 }
@@ -153,22 +162,30 @@ struct SnippetsSettingsView: View {
                     }
                 }
                 .listStyle(.inset)
+                .background(KM.bg)
+                .scrollContentBackground(.hidden)
             }
         }
+        .background(KM.bg)
     }
-    
+
     private var emptySnippetsState: some View {
         VStack(spacing: 16) {
             Spacer()
-            Image(systemName: "text.badge.plus")
-                .font(.system(size: 40))
-                .foregroundColor(.secondary)
+            ZStack {
+                Circle()
+                    .fill(KM.surfaceHi)
+                    .frame(width: 72, height: 72)
+                Image(systemName: "text.badge.plus")
+                    .font(.system(size: 30, weight: .medium))
+                    .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
+            }
             Text("No Snippets Found")
-                .font(.headline)
-                .foregroundColor(.secondary)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(KM.onSurface)
             Text("Add terms like 'my intro' or 'my upi id' to instantly expand them while dictating.")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(KM.muted)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 300)
             Button("Add Suggested") {
@@ -177,9 +194,17 @@ struct SnippetsSettingsView: View {
                     appState.snippetEngine.addSnippet(snippet)
                 }
             }
-            .buttonStyle(.bordered)
+            .font(.system(size: 12, weight: .semibold))
+            .foregroundColor(KM.accent)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 8)
+            .background(KM.accent.opacity(0.12))
+            .clipShape(Capsule())
+            .buttonStyle(.plain)
             Spacer()
         }
+        .frame(maxWidth: .infinity)
+        .background(KM.bg)
     }
     
     private var addSnippetForm: some View {
@@ -203,9 +228,9 @@ struct SnippetsSettingsView: View {
                     .frame(height: 80)
                     .font(.body)
                     .padding(4)
-                    .background(Color(nsColor: .textBackgroundColor))
-                    .cornerRadius(6)
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.2)))
+                    .background(KM.surfaceHi)
+                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous).stroke(KM.outline, lineWidth: 1))
             }
             
             HStack {
@@ -278,9 +303,10 @@ struct DictionarySettingsView: View {
                     Text("Personal Vocabulary")
                         .font(.title)
                         .fontWeight(.semibold)
+                        .foregroundColor(KM.onSurface)
                     Text("FlowKeys automatically learns proper nouns and complex words you use often.")
                         .font(.body)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(KM.muted)
                 }
                 Spacer()
             }
@@ -297,10 +323,16 @@ struct DictionarySettingsView: View {
                     Image(systemName: "plus")
                 }
                 .disabled(newTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                .buttonStyle(.bordered)
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(KM.accent)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .background(KM.accent.opacity(0.12))
+                .clipShape(Capsule())
+                .buttonStyle(.plain)
             }
             .padding()
-            .background(Color(nsColor: .controlBackgroundColor).opacity(0.3))
+            .background(KM.surface)
             
             Divider()
             
@@ -321,10 +353,13 @@ struct DictionarySettingsView: View {
                     }
                 }
                 .listStyle(.inset)
+                .background(KM.bg)
+                .scrollContentBackground(.hidden)
             }
         }
+        .background(KM.bg)
     }
-    
+
     private func addTerm() {
         appState.personalDictionary.addTerm(newTerm)
         newTerm = ""
@@ -333,19 +368,26 @@ struct DictionarySettingsView: View {
     private var emptyDictionaryState: some View {
         VStack(spacing: 16) {
             Spacer()
-            Image(systemName: "character.book.closed")
-                .font(.system(size: 40))
-                .foregroundColor(.secondary)
+            ZStack {
+                Circle()
+                    .fill(KM.surfaceHi)
+                    .frame(width: 72, height: 72)
+                Image(systemName: "character.book.closed")
+                    .font(.system(size: 30, weight: .medium))
+                    .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
+            }
             Text("Dictionary is Learning")
-                .font(.headline)
-                .foregroundColor(.secondary)
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(KM.onSurface)
             Text("Speak naturally! FlowKeys will automatically identify and learn uncommon names and terms you use 3 or more times.")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(KM.muted)
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: 300)
             Spacer()
         }
+        .frame(maxWidth: .infinity)
+        .background(KM.bg)
     }
 }
 
@@ -396,37 +438,9 @@ private struct DictionaryRow: View {
     
     private var sourceColor: Color {
         switch entry.source {
-        case .manual: return .blue
-        case .autoLearned: return .green
-        case .suggested: return .purple
+        case .manual:     return KM.accent
+        case .autoLearned: return KM.green
+        case .suggested:  return KM.salmon
         }
-    }
-}
-
-// Extension to support hex colors
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let a, r, g, b: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (a, r, g, b) = (1, 1, 1, 0)
-        }
-
-        self.init(
-            .sRGB,
-            red: Double(r) / 255,
-            green: Double(g) / 255,
-            blue:  Double(b) / 255,
-            opacity: Double(a) / 255
-        )
     }
 }

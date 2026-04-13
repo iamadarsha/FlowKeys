@@ -63,7 +63,10 @@ struct PipelineDebugContentView: View {
     private func debugRow(title: String, value: String, copyText: String? = nil) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
-                .font(.body.bold())
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundColor(KM.muted)
+                .textCase(.uppercase)
+                .tracking(0.8)
             ScrollView {
                 Text(value)
                     .textSelection(.enabled)
@@ -72,8 +75,9 @@ struct PipelineDebugContentView: View {
             }
             .frame(maxHeight: 160)
             .padding(10)
-            .background(Color(nsColor: .textBackgroundColor))
-            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.2)))
+            .background(KM.surface)
+            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+            .overlay(RoundedRectangle(cornerRadius: 8, style: .continuous).stroke(KM.outline, lineWidth: 1))
 
             if let copyText {
                 Button("Copy \(title)") {
@@ -103,8 +107,8 @@ struct PipelineDebugContentView: View {
                         .padding(10)
                 }
                 .frame(maxHeight: 320)
-                .background(Color(nsColor: .textBackgroundColor))
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.2)))
+                .background(KM.surface)
+                .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous).stroke(KM.outline, lineWidth: 1))
                 if let payloadBytes = screenshotPayloadBytes(dataURL: dataURL) {
                     Text("Screenshot payload: \(payloadBytes / 1024) KB (Base64)")
                         .font(.caption2)
@@ -130,8 +134,8 @@ struct PipelineDebugContentView: View {
                         .padding(10)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(nsColor: .textBackgroundColor))
-                .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.2)))
+                .background(KM.surface)
+                .overlay(RoundedRectangle(cornerRadius: 6, style: .continuous).stroke(KM.outline, lineWidth: 1))
             }
         }
     }

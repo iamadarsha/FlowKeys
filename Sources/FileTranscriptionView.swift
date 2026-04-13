@@ -13,52 +13,68 @@ struct FileTranscriptionView: View {
         VStack(spacing: 20) {
             // Header
             VStack(spacing: 8) {
-                Image(systemName: "waveform.and.person.filled")
-                    .font(.system(size: 40))
-                    .foregroundColor(Color(nsColor: .controlAccentColor))
+                ZStack {
+                    Circle()
+                        .fill(KM.accent.opacity(0.15))
+                        .frame(width: 60, height: 60)
+                    Image(systemName: "waveform.and.person.filled")
+                        .font(.system(size: 26, weight: .semibold))
+                        .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
+                }
                 Text("File Transcription")
-                    .font(.title)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(KM.onSurface)
                 Text("Process existing audio or video files.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .font(.system(size: 12))
+                    .foregroundColor(KM.muted)
             }
             .padding(.top, 20)
-            
+
             // File Selection
             VStack(spacing: 12) {
                 if let url = selectedFileURL {
-                    HStack {
-                        Image(systemName: "doc.fill")
-                            .foregroundColor(.blue)
+                    HStack(spacing: 10) {
+                        ZStack {
+                            Circle().fill(KM.accent.opacity(0.15)).frame(width: 32, height: 32)
+                            Image(systemName: "doc.fill")
+                                .font(.system(size: 14))
+                                .foregroundColor(KM.accent)
+                        }
                         Text(url.lastPathComponent)
-                            .font(.headline)
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(KM.onSurface)
                         Spacer()
                         Button(action: { selectedFileURL = nil }) {
                             Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
+                                .font(.system(size: 16))
+                                .foregroundColor(KM.muted)
                         }
                         .buttonStyle(.plain)
                     }
-                    .padding()
-                    .background(Color(nsColor: .controlBackgroundColor))
-                    .cornerRadius(8)
+                    .padding(12)
+                    .background(KM.surfaceHi)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(KM.outline, lineWidth: 1))
                 } else {
                     Button(action: selectFile) {
                         VStack(spacing: 10) {
                             Image(systemName: "arrow.up.doc")
-                                .font(.system(size: 30))
+                                .font(.system(size: 28, weight: .semibold))
+                                .foregroundColor(KM.muted)
                             Text("Select Audio/Video File")
-                                .font(.headline)
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(KM.onSurface.opacity(0.7))
                             Text("MP3, M4A, WAV, MP4, MOV")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                                .font(.system(size: 11))
+                                .foregroundColor(KM.muted)
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 30)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(Color.secondary.opacity(0.3), style: StrokeStyle(lineWidth: 2, dash: [6]))
+                        .padding(.vertical, 28)
+                        .background(KM.surfaceHi)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .stroke(KM.muted.opacity(0.3), style: StrokeStyle(lineWidth: 1.5, dash: [6]))
                         )
                     }
                     .buttonStyle(.plain)
@@ -85,46 +101,93 @@ struct FileTranscriptionView: View {
                             .controlSize(.small)
                         Text(progressText)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(KM.muted)
                     }
+                    .transition(.opacity.combined(with: .scale(scale: 0.95)))
                 } else if !transcriptResult.isEmpty {
                     ScrollView {
                         Text(transcriptResult)
-                            .font(.body)
+                            .font(.system(size: 12, design: .monospaced))
+                            .foregroundColor(KM.onSurface)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding()
+                            .padding(12)
                     }
-                    .background(Color(nsColor: .textBackgroundColor))
-                    .cornerRadius(8)
+                    .background(KM.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(KM.outline, lineWidth: 1))
                     .frame(maxHeight: 200)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                     
-                    HStack {
+                    HStack(spacing: 8) {
                         Button("Copy to Clipboard") {
                             let pb = NSPasteboard.general
                             pb.clearContents()
                             pb.setString(transcriptResult, forType: .string)
                         }
-                        .buttonStyle(.bordered)
-                        
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(KM.accent)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .background(KM.accent.opacity(0.12))
+                        .clipShape(Capsule())
+                        .buttonStyle(.plain)
+
                         Button("Clear") {
-                            transcriptResult = ""
-                            selectedFileURL = nil
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                transcriptResult = ""
+                                selectedFileURL = nil
+                            }
                         }
-                        .buttonStyle(.bordered)
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(KM.muted)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 7)
+                        .background(KM.surfaceHi)
+                        .clipShape(Capsule())
+                        .buttonStyle(.plain)
                     }
+                    .transition(.opacity)
                 }
                 
-                Button("Transcribe File") {
+                Button {
                     Task { await transcribeSelectedFile() }
+                } label: {
+                    HStack(spacing: 8) {
+                        if isTranscribing {
+                            ProgressView().controlSize(.small).tint(.white)
+                                .transition(.opacity)
+                        } else {
+                            Image(systemName: "waveform")
+                                .font(.system(size: 13, weight: .semibold))
+                                .transition(.opacity)
+                        }
+                        Text(isTranscribing ? "Transcribing…" : "Transcribe File")
+                            .font(.system(size: 13, weight: .semibold))
+                            .animation(.easeOut(duration: 0.18), value: isTranscribing)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+                    .background(Group {
+                        if selectedFileURL == nil || isTranscribing {
+                            KM.surfaceHi
+                        } else {
+                            LinearGradient(colors: [KM.accent, KM.accent.opacity(0.8)], startPoint: .leading, endPoint: .trailing)
+                        }
+                    })
+                    .animation(.spring(response: 0.28, dampingFraction: 0.8), value: isTranscribing)
+                    .clipShape(Capsule())
                 }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                .buttonStyle(.plain)
                 .disabled(selectedFileURL == nil || isTranscribing)
             }
             .padding(.horizontal)
             .padding(.bottom, 20)
+            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: isTranscribing)
+            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: transcriptResult.isEmpty)
         }
         .frame(width: 480)
+        .background(KM.bg)
     }
     
     private func selectFile() {

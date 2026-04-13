@@ -17,18 +17,24 @@ private struct SettingsCard<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label(title, systemImage: icon)
-                .font(.headline)
-                .foregroundColor(Color.white)
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(KM.accent)
+                Text(title)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(KM.onSurface)
+            }
             content
+                .foregroundColor(KM.onSurface)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(red: 32/255, green: 32/255, blue: 31/255)) // #20201F
-        .cornerRadius(12)
+        .background(KM.surfaceHi)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.white.opacity(0.05), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(KM.outline, lineWidth: 1)
         )
     }
 }
@@ -46,55 +52,127 @@ struct SettingsView: View {
 
     var body: some View {
         HStack(spacing: 0) {
+            // Sidebar
             VStack(alignment: .leading, spacing: 2) {
+                // Logo block
+                HStack(spacing: 8) {
+                    ZStack {
+                        LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing)
+                            .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                        Image(systemName: "waveform")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 32, height: 32)
+
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("FlowKeys")
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundColor(KM.onSurface)
+                        Text("Settings")
+                            .font(.system(size: 10))
+                            .foregroundColor(KM.muted)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+
+                Divider().background(KM.outline)
+
+                // Nav items
                 ForEach(SettingsTab.allCases) { tab in
+                    let isActive = appState.selectedSettingsTab == tab
                     Button {
-                        appState.selectedSettingsTab = tab
+                        withAnimation(.spring(response: 0.28, dampingFraction: 0.8)) {
+                            appState.selectedSettingsTab = tab
+                        }
                     } label: {
-                        Label(tab.title, systemImage: tab.icon)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 8)
-                                    .fill(appState.selectedSettingsTab == tab
-                                          ? Color(red: 255/255, green: 107/255, blue: 53/255).opacity(0.15) // #FF6B35
-                                          : Color.clear)
-                            )
-                            .foregroundColor(appState.selectedSettingsTab == tab ? Color(red: 255/255, green: 107/255, blue: 53/255) : Color.white.opacity(0.7))
+                        HStack(spacing: 8) {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 13))
+                                .foregroundColor(isActive ? KM.salmon : KM.muted)
+                                .frame(width: 18)
+                            Text(tab.title)
+                                .font(.system(size: 12, weight: isActive ? .semibold : .regular))
+                                .foregroundColor(isActive ? KM.salmon : KM.muted)
+                            Spacer()
+                        }
+                        .padding(.vertical, 7)
+                        .padding(.horizontal, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                .fill(isActive ? KM.surface : Color.clear)
+                        )
+                        .shadow(color: isActive ? .black.opacity(0.3) : .clear, radius: 4, x: 0, y: 2)
+                        .animation(.spring(response: 0.28, dampingFraction: 0.8), value: isActive)
                     }
                     .buttonStyle(.plain)
+                    .padding(.horizontal, 8)
                 }
+
                 Spacer()
             }
-            .padding(16)
-            .frame(width: 220)
-            .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
+            .frame(width: 200)
+            .background(KM.bg)
 
-            Divider().background(Color.white.opacity(0.05))
+            // Divider
+            Rectangle()
+                .fill(KM.outline)
+                .frame(width: 1)
 
+            // Content
             Group {
                 switch appState.selectedSettingsTab {
                 case .general, .none:
                     GeneralSettingsView()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 case .modes:
                     SmartModesSettingsView()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 case .snippets:
                     SnippetsSettingsView()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 case .dictionary:
                     DictionarySettingsView()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 case .prompts:
                     PromptsSettingsView()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 case .macros:
                     VoiceMacrosSettingsView()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 case .runLog:
                     RunLogView()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(red: 19/255, green: 19/255, blue: 19/255)) // #131313
+            .background(KM.bg)
+            .animation(.spring(response: 0.32, dampingFraction: 0.85), value: appState.selectedSettingsTab)
         }
-        .preferredColorScheme(.dark)
+        .background(KM.bg)
     }
 }
 
@@ -124,14 +202,16 @@ struct GeneralSettingsView: View {
                     Image(nsImage: NSApp.applicationIconImage)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: 64, height: 64)
+                        .frame(width: 72, height: 72)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                     Text("FlowKeys")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .foregroundColor(KM.onSurface)
 
                     Text("v\(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0")")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(KM.muted)
 
                     // GitHub card
                     VStack(spacing: 10) {
@@ -269,6 +349,7 @@ struct GeneralSettingsView: View {
             }
             .padding(24)
         }
+        .background(KM.bg)
         .onAppear {
             customVocabularyInput = appState.customVocabulary
             checkMicPermission()

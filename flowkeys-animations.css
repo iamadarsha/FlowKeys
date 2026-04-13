@@ -1,0 +1,456 @@
+/* ============================================================
+   FlowKeys — Animation System
+   Standalone CSS: add before </body> in every HTML mockup
+   DO NOT modify colors, layout, spacing, fonts, or structure
+   ============================================================ */
+
+/* ----------------------------------------------------------
+   0. TOKEN LAYER
+   ---------------------------------------------------------- */
+:root {
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-out:     cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out:  cubic-bezier(0.645, 0.045, 0.355, 1.0);
+  --ease-bounce:  cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
+  --dur-instant:  80ms;
+  --dur-fast:     150ms;
+  --dur-normal:   240ms;
+  --dur-slow:     380ms;
+  --dur-enter:    300ms;
+  --dur-exit:     200ms;
+
+  --accent-r: 255;
+  --accent-g: 107;
+  --accent-b: 53;
+}
+
+/* ----------------------------------------------------------
+   1. REDUCED MOTION — kill everything
+   ---------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:   0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:  0.01ms !important;
+  }
+}
+
+/* ----------------------------------------------------------
+   2. SHARED @KEYFRAMES
+   ---------------------------------------------------------- */
+
+/* Popover / panel */
+@keyframes popover-enter {
+  from { opacity: 0; transform: scale(0.92) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+@keyframes popover-exit {
+  from { opacity: 1; transform: scale(1)    translateY(0);    }
+  to   { opacity: 0; transform: scale(0.92) translateY(-8px); }
+}
+
+/* Cards / rows entering from below */
+@keyframes card-enter {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* Fade + scale (generic) */
+@keyframes fade-scale-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+/* Panel sliding up from bottom */
+@keyframes panel-rise {
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+@keyframes panel-close {
+  from { opacity: 1; transform: translateY(0)    scale(1);    }
+  to   { opacity: 0; transform: translateY(24px) scale(0.97); }
+}
+
+/* Row insert / remove */
+@keyframes row-insert {
+  from { opacity: 0; transform: translateX(-10px); max-height: 0;   }
+  to   { opacity: 1; transform: translateX(0);     max-height: 80px; }
+}
+@keyframes row-remove {
+  from { opacity: 1; transform: translateX(0);    max-height: 80px; }
+  to   { opacity: 0; transform: translateX(10px); max-height: 0;    }
+}
+
+/* Onboarding step transitions */
+@keyframes step-exit-left {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-24px); }
+}
+@keyframes step-enter-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes step-exit-right {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(24px); }
+}
+@keyframes step-enter-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Recording pill */
+@keyframes pill-dismiss {
+  from { opacity: 1; transform: scale(1)    translateY(0);  }
+  to   { opacity: 0; transform: scale(0.88) translateY(8px); }
+}
+
+/* Error shake */
+@keyframes error-wobble {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX( 6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX( 4px); }
+}
+
+/* Done checkmark */
+@keyframes check-bounce {
+  0%   { transform: scale(0)   rotate(-12deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(  4deg); opacity: 1; }
+  80%  { transform: scale(0.9) rotate( -2deg); }
+  100% { transform: scale(1)   rotate(  0deg); opacity: 1; }
+}
+@keyframes done-ring {
+  0%   { box-shadow: 0 0  0   0   rgba(83, 225, 111, 0.7); }
+  50%  { box-shadow: 0 0  0   8px rgba(83, 225, 111, 0.2); }
+  100% { box-shadow: 0 0  0  14px rgba(83, 225, 111, 0);   }
+}
+
+/* Waveform bars */
+@keyframes waveform-dance {
+  0%, 100% { transform: scaleY(0.25); }
+  50%       { transform: scaleY(1);   }
+}
+@keyframes bars-to-flat {
+  to { transform: scaleY(0.15); }
+}
+@keyframes waveform-idle {
+  0%, 100% { transform: scaleY(0.3); }
+  50%       { transform: scaleY(0.6); }
+}
+
+/* Tone grid */
+@keyframes tone-select {
+  0%   { transform: scale(1);    }
+  40%  { transform: scale(0.93); }
+  70%  { transform: scale(1.04); }
+  100% { transform: scale(1);    }
+}
+
+/* Dropdown open */
+@keyframes dropdown-open {
+  from { opacity: 0; transform: translateY(-6px) scaleY(0.92); }
+  to   { opacity: 1; transform: translateY(0)    scaleY(1);    }
+}
+
+/* Input validation spinner */
+@keyframes input-validating {
+  to { transform: rotate(360deg); }
+}
+
+/* Drop zone breathe */
+@keyframes dashed-breathe {
+  0%, 100% { border-color: rgba(255,107,53,0.3); }
+  50%       { border-color: rgba(255,107,53,0.7); }
+}
+@keyframes dropzone-breathe {
+  0%, 100% { box-shadow: 0 0  0   0   rgba(255,107,53,0); }
+  50%       { box-shadow: 0 0  0  10px rgba(255,107,53,0.12); }
+}
+
+/* Log line appear */
+@keyframes log-line-appear {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Badge pop */
+@keyframes badge-pop {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.22); }
+  65%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+/* Shortcut capture pulse */
+@keyframes shortcut-capture-pulse {
+  0%, 100% { box-shadow: 0 0  0  0   rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.6); }
+  50%       { box-shadow: 0 0  0  8px rgba(var(--accent-r),var(--accent-g),var(--accent-b),0);   }
+}
+
+/* Logo breathe (ambient recording indicator) */
+@keyframes logo-breathe {
+  0%, 100% { opacity: 1;    transform: scale(1);    }
+  50%       { opacity: 0.65; transform: scale(0.97); }
+}
+
+/* Orb drift (background ambient) */
+@keyframes orb-drift {
+  0%   { transform: translate(0, 0)         scale(1);    }
+  33%  { transform: translate(18px, -12px)  scale(1.04); }
+  66%  { transform: translate(-10px, 16px)  scale(0.97); }
+  100% { transform: translate(0, 0)         scale(1);    }
+}
+
+/* Badge recording pulse */
+@keyframes badge-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* Top bar slide in */
+@keyframes top-bar-scale-in {
+  from { opacity: 0; transform: translateY(-100%); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------------------------------------------------
+   3. COMPONENT ANIMATION CLASSES
+   ---------------------------------------------------------- */
+
+/* Popover */
+.fk-popover-enter {
+  animation: popover-enter var(--dur-enter) var(--ease-spring) both;
+  transform-origin: top center;
+}
+.fk-popover-exit {
+  animation: popover-exit var(--dur-exit) var(--ease-out) both;
+  transform-origin: top center;
+}
+
+/* Generic panel (bottom-to-top) */
+.fk-panel-enter {
+  animation: panel-rise var(--dur-enter) var(--ease-spring) both;
+  transform-origin: bottom center;
+}
+.fk-panel-exit {
+  animation: panel-close var(--dur-exit) var(--ease-out) both;
+  transform-origin: bottom center;
+}
+
+/* Card stagger */
+.fk-card-enter {
+  animation: card-enter var(--dur-normal) var(--ease-spring) both;
+  transform-origin: bottom;
+}
+
+/* Row insert/remove */
+.fk-row-insert {
+  animation: row-insert var(--dur-normal) var(--ease-spring) both;
+  overflow: hidden;
+}
+.fk-row-remove {
+  animation: row-remove var(--dur-fast) var(--ease-out) both;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Onboarding steps */
+.fk-step-exit-left  { animation: step-exit-left  var(--dur-fast)   var(--ease-out) both; }
+.fk-step-exit-right { animation: step-exit-right var(--dur-fast)   var(--ease-out) both; }
+.fk-step-enter-right{ animation: step-enter-right var(--dur-normal) var(--ease-spring) both; }
+.fk-step-enter-left { animation: step-enter-left  var(--dur-normal) var(--ease-spring) both; }
+
+/* Pill */
+.fk-pill-dismiss {
+  animation: pill-dismiss var(--dur-fast) var(--ease-out) both;
+  transform-origin: bottom center;
+}
+.fk-error-wobble {
+  animation: error-wobble 400ms var(--ease-out);
+}
+
+/* Done state */
+.fk-check-bounce {
+  animation: check-bounce 500ms var(--ease-spring) both;
+}
+.fk-done-ring {
+  animation: done-ring 600ms var(--ease-out) both;
+}
+
+/* Waveform */
+.fk-waveform-active .fk-bar {
+  animation: waveform-dance 900ms var(--ease-in-out) infinite;
+}
+.fk-waveform-active .fk-bar:nth-child(2) { animation-delay:  80ms; }
+.fk-waveform-active .fk-bar:nth-child(3) { animation-delay: 160ms; }
+.fk-waveform-active .fk-bar:nth-child(4) { animation-delay: 240ms; }
+.fk-waveform-active .fk-bar:nth-child(5) { animation-delay: 320ms; }
+
+.fk-waveform-idle .fk-bar {
+  animation: waveform-idle 1800ms var(--ease-in-out) infinite;
+}
+.fk-waveform-idle .fk-bar:nth-child(2) { animation-delay: 200ms; }
+.fk-waveform-idle .fk-bar:nth-child(3) { animation-delay: 400ms; }
+.fk-waveform-idle .fk-bar:nth-child(4) { animation-delay: 200ms; }
+.fk-waveform-idle .fk-bar:nth-child(5) { animation-delay:   0ms; }
+
+.fk-waveform-flat .fk-bar {
+  animation: bars-to-flat var(--dur-fast) var(--ease-out) both;
+}
+
+/* Tone select */
+.fk-tone-select {
+  animation: tone-select 320ms var(--ease-spring);
+}
+
+/* Dropdown */
+.fk-dropdown-open {
+  animation: dropdown-open var(--dur-fast) var(--ease-spring) both;
+  transform-origin: top left;
+}
+
+/* Input validating spinner (border element) */
+.fk-validating {
+  animation: input-validating 700ms linear infinite;
+}
+
+/* Drop zone active */
+.fk-dropzone-active {
+  animation: dashed-breathe 1.4s ease-in-out infinite,
+             dropzone-breathe 1.4s ease-in-out infinite;
+}
+
+/* Log line */
+.fk-log-line-appear {
+  animation: log-line-appear var(--dur-fast) var(--ease-out) both;
+}
+
+/* Badge pop */
+.fk-badge-pop {
+  animation: badge-pop 350ms var(--ease-spring);
+}
+
+/* Shortcut capture ring */
+.fk-capture-pulse {
+  animation: shortcut-capture-pulse 1s ease-in-out infinite;
+}
+
+/* Logo breathing (recording indicator) */
+.fk-logo-breathing {
+  animation: logo-breathe 1.6s ease-in-out infinite;
+}
+
+/* Orb ambient drift */
+.fk-orb-drift {
+  animation: orb-drift 14s ease-in-out infinite;
+}
+.fk-orb-drift:nth-child(2) { animation-delay: -5s; }
+.fk-orb-drift:nth-child(3) { animation-delay: -9s; }
+
+/* Badge recording dot pulse */
+.fk-badge-recording {
+  animation: badge-pulse 1.2s ease-in-out infinite;
+}
+
+/* Top bar entrance */
+.fk-top-bar-enter {
+  animation: top-bar-scale-in var(--dur-normal) var(--ease-spring) both;
+}
+
+/* ----------------------------------------------------------
+   4. TRANSITION-BASED STATES
+   ---------------------------------------------------------- */
+
+/* Toggle switch track */
+.fk-toggle {
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+.fk-toggle .fk-toggle-thumb {
+  transition: transform var(--dur-fast) var(--ease-spring),
+              background-color var(--dur-fast) var(--ease-out);
+}
+.fk-toggle.toggle-on .fk-toggle-thumb {
+  transform: translateX(18px);
+}
+
+/* Lang indicator underline slide */
+.fk-lang-indicator {
+  transition: left var(--dur-normal) var(--ease-spring),
+              width var(--dur-normal) var(--ease-spring);
+}
+
+/* Accordion max-height (always use explicit px, never auto) */
+.fk-accordion {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height var(--dur-slow) var(--ease-out),
+              opacity     var(--dur-normal) var(--ease-out);
+  opacity: 0;
+}
+.fk-accordion.accordion-open {
+  max-height: 400px;
+  opacity: 1;
+}
+
+/* Progress dots */
+.fk-progress-dot {
+  transition: width      var(--dur-normal) var(--ease-spring),
+              background-color var(--dur-fast) var(--ease-out);
+}
+.fk-progress-dot.dot-active  { width: 20px; }
+.fk-progress-dot.dot-default { width:  6px; }
+
+/* Provider card selection ring */
+.fk-provider-card {
+  transition: border-color     var(--dur-fast)   var(--ease-out),
+              background-color var(--dur-fast)   var(--ease-out),
+              transform        var(--dur-normal) var(--ease-spring),
+              box-shadow       var(--dur-normal) var(--ease-out);
+}
+.fk-provider-card:hover {
+  transform: translateY(-1px);
+}
+.fk-provider-card.card-selected {
+  transform: scale(1.01);
+}
+
+/* Filter pills */
+.fk-filter-pill {
+  transition: background-color var(--dur-fast) var(--ease-out),
+              color             var(--dur-fast) var(--ease-out),
+              border-color      var(--dur-fast) var(--ease-out),
+              transform         var(--dur-fast) var(--ease-spring);
+}
+.fk-filter-pill:active {
+  transform: scale(0.94);
+}
+
+/* Progress fill bar */
+.fk-progress-fill {
+  transition: width var(--dur-slow) var(--ease-out);
+}
+
+/* Sidebar nav indicator bar */
+.fk-nav-indicator {
+  transition: top    var(--dur-normal) var(--ease-spring),
+              height var(--dur-normal) var(--ease-spring),
+              opacity var(--dur-fast)  var(--ease-out);
+}
+
+/* Input focus glow */
+.fk-input {
+  transition: border-color var(--dur-fast) var(--ease-out),
+              box-shadow   var(--dur-fast) var(--ease-out);
+}
+.fk-input:focus {
+  box-shadow: 0 0 0 3px rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.25);
+}
+
+/* Shortcut confirm flash */
+.fk-shortcut-confirm {
+  transition: background-color var(--dur-fast) var(--ease-out),
+              color             var(--dur-fast) var(--ease-out);
+}
