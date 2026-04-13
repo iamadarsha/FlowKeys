@@ -9,10 +9,12 @@ struct FlowKeysApp: App {
         MenuBarExtra(isInserted: $showMenuBarIcon) {
             MenuBarView()
                 .environmentObject(appDelegate.appState)
+                .preferredColorScheme(.dark)
         } label: {
             MenuBarLabel()
                 .environmentObject(appDelegate.appState)
         }
+        .menuBarExtraStyle(.window)
     }
 }
 

@@ -11,41 +11,27 @@ struct MenuBarView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            VStack(spacing: 0) {
-                headerSection
-                kmDivider
-                languageSection
-                kmDivider
-                toneGridSection
-                kmDivider
-                recentSection
+        VStack(spacing: 0) {
+            headerSection
+            kmDivider
+            languageSection
+            kmDivider
+            toneGridSection
+            kmDivider
+            recentSection
 
-                if updateManager.updateAvailable {
-                    kmDivider
-                        .transition(.opacity)
-                    updateBanner
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                }
-
-                ctaSection
-                footerSection
+            if updateManager.updateAvailable {
+                kmDivider
+                    .transition(.opacity)
+                updateBanner
+                    .transition(.move(edge: .top).combined(with: .opacity))
             }
-            .frame(width: 300)
-            .background(KM.bg)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(KM.outline, lineWidth: 1)
-            )
 
-            // Bottom gradient line decoration
-            LinearGradient(
-                colors: [KM.accent.opacity(0), KM.accent.opacity(0.2), KM.accent.opacity(0)],
-                startPoint: .leading, endPoint: .trailing
-            )
-            .frame(height: 1)
+            ctaSection
+            footerSection
         }
+        .frame(width: 300)
+        .background(KM.bg)
     }
 
     // MARK: Divider
