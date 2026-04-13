@@ -19,6 +19,16 @@ enum TranscriptionProvider: String, CaseIterable, Codable, Identifiable {
         }
     }
 
+    var shortName: String {
+        switch self {
+        case .groq:   return "Groq"
+        case .openai: return "OpenAI"
+        case .gemini: return "Gemini"
+        case .grok:   return "Grok"
+        case .claude: return "Claude"
+        }
+    }
+
     var shortDescription: String {
         switch self {
         case .groq:

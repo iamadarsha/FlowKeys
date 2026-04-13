@@ -127,11 +127,11 @@ struct MenuBarView: View {
 
     private var providerBadge: some View {
         HStack(spacing: 3) {
-            Text(appState.activeTranscriptionProvider.displayName)
-                .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(KM.accent)
             Image(systemName: "bolt.fill")
-                .font(.system(size: 8))
+                .font(.system(size: 7))
+                .foregroundColor(KM.accent)
+            Text(appState.activeTranscriptionProvider.shortName)
+                .font(.system(size: 10, weight: .semibold))
                 .foregroundColor(KM.accent)
         }
         .padding(.horizontal, 7)
