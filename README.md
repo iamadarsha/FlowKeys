@@ -19,6 +19,17 @@
 
 ---
 
+## Recruiter Quick Scan
+
+| Signal | Details |
+|---|---|
+| Product | Native macOS dictation app for Hindi, English, and Hinglish |
+| What it demonstrates | Swift/macOS engineering, product UX, audio capture, AI provider orchestration, privacy-aware credential handling |
+| Differentiator | India-aware dictation layer with snippets, personal vocabulary, context prompts, and multi-provider BYO-key support |
+| Stack | Swift, SwiftUI, AppKit, AVFoundation, Keychain, Groq, OpenAI, Gemini, Claude, Grok |
+
+---
+
 ## ⚡ One-line install
 
 Open **Terminal** on your Mac and paste:
