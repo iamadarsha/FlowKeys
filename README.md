@@ -43,6 +43,22 @@ It's the dictation app Apple should have shipped for India: code-switches natura
 
 ---
 
+## 🧩 Product Snapshot
+
+| Product surface | What it does | Why it matters |
+|---|---|---|
+| **Menubar-first UX** | Lives quietly in macOS with a compact popover, recording pill, settings, and provider controls. | Feels native instead of like another browser tab to babysit. |
+| **Smart dictation pipeline** | Captures audio, normalizes it, transcribes through your selected provider, then post-processes for the active app. | Turns raw speech into usable writing instead of dumping messy transcripts. |
+| **India-aware language layer** | Ships Hindi, English, Hinglish, personal vocabulary, snippets, and Indian context prompts. | Handles the code-switching and proper nouns that generic dictation often mangles. |
+
+## 🏗️ Build Highlights
+
+- Native Swift/macOS app with AppKit, SwiftUI, global hotkeys, menubar state, and permission-aware onboarding.
+- BYO-key architecture across Groq, OpenAI, Gemini, Grok, and Claude, with API keys stored in macOS Keychain.
+- File transcription, personal dictionary, snippet expansion, debug history, and smart mode settings built as first-class workflows.
+
+---
+
 ## ✨ Features
 
 | | |
