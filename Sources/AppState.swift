@@ -998,6 +998,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
         statusText = "Command Mode — speak the edit"
         shortcutSessionController.beginManual(mode: .toggle)
         startRecording(triggerMode: .toggle)
+        overlayManager.showCommandListening(selection: selection)
     }
 
     private func clearCommandMode() {

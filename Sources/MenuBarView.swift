@@ -10,6 +10,17 @@ struct MenuBarView: View {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 
+    private var routeStatus: (label: String, color: Color) {
+        if appState.localAI.settings.isEnabled {
+            switch appState.localAI.settings.route {
+            case .local:         return ("On-device", KM.green)
+            case .hybrid:        return ("Hybrid", KM.accent)
+            case .existingCloud: return (appState.activeTranscriptionProvider.shortName, KM.accent)
+            }
+        }
+        return (appState.activeTranscriptionProvider.shortName, KM.accent)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             headerSection
@@ -56,9 +67,25 @@ struct MenuBarView: View {
                 Text("FlowKeys")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundColor(KM.onSurface)
+                Text("v\(appVersion)")
+                    .font(.system(size: 8, weight: .semibold))
+                    .foregroundColor(KM.textMuted)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 1.5)
+                    .background(KM.surfaceHi)
+                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
             }
 
             Spacer()
+
+            // Engine status
+            HStack(spacing: 4) {
+                Circle().fill(routeStatus.color).frame(width: 5, height: 5)
+                Text(appState.isRecording ? "REC" : (appState.isTranscribing ? "BUSY" : "READY"))
+                    .font(.system(size: 8, weight: .bold))
+                    .tracking(0.6)
+                    .foregroundColor(KM.textMuted)
+            }
 
             // Hotkey badge
             hotkeyBadge
@@ -113,16 +140,16 @@ struct MenuBarView: View {
 
     private var providerBadge: some View {
         HStack(spacing: 3) {
-            Image(systemName: "bolt.fill")
+            Image(systemName: routeStatus.label == "On-device" ? "lock.fill" : "bolt.fill")
                 .font(.system(size: 7))
-                .foregroundColor(KM.accent)
-            Text(appState.activeTranscriptionProvider.shortName)
+                .foregroundColor(routeStatus.color)
+            Text(routeStatus.label)
                 .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(KM.accent)
+                .foregroundColor(routeStatus.color)
         }
         .padding(.horizontal, 7)
         .padding(.vertical, 3)
-        .background(KM.accent.opacity(0.12))
+        .background(routeStatus.color.opacity(0.12))
         .clipShape(Capsule())
     }
 
@@ -159,14 +186,20 @@ struct MenuBarView: View {
                 appState.languageMode = mode
             }
         } label: {
-            Text(languagePillText(mode))
-                .font(.system(size: 11, weight: isActive ? .semibold : .regular))
-                .foregroundColor(isActive ? KM.onSurface : KM.muted)
-                .padding(.horizontal, 10)
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(mode.accentColor)
+                    .frame(width: 5, height: 5)
+                    .opacity(isActive ? 1 : 0.35)
+                Text(languagePillText(mode))
+                    .font(.system(size: 11, weight: isActive ? .semibold : .regular))
+                    .foregroundColor(isActive ? KM.onSurface : KM.muted)
+            }
+                .padding(.horizontal, 9)
                 .padding(.vertical, 4)
                 .background(
                     isActive
-                        ? KM.accent.opacity(0.25)
+                        ? mode.accentColor.opacity(0.22)
                         : Color.clear
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))

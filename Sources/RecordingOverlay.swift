@@ -20,6 +20,10 @@ final class RecordingOverlayState: ObservableObject {
     /// Offline model provisioning: (name, percent 0–100). Empty name = inactive.
     @Published var downloadModelName: String = ""
     @Published var downloadPercent: Int = 0
+    /// Command Mode ("rewrite selection by voice") — shows the selection preview
+    /// instead of the timer while the instruction is being spoken.
+    @Published var commandModeActive: Bool = false
+    @Published var commandSelectionPreview: String = ""
 }
 
 enum OverlayPhase {
@@ -89,6 +93,7 @@ final class RecordingOverlayManager {
     private var currentPillWidth: CGFloat {
         switch overlayState.phase {
         case .error, .micPermission: return wideWidth
+        case .recording where overlayState.commandModeActive: return wideWidth
         default:                     return normalWidth
         }
     }
@@ -108,6 +113,21 @@ final class RecordingOverlayManager {
             self.overlayState.audioLevel = 0
             self.overlayState.interimText = ""
             self.overlayState.recordingStartDate = nil
+            self.showPill(animated: true)
+        }
+    }
+
+    /// Command Mode listening — capturing a spoken edit for the given selection.
+    func showCommandListening(selection: String, mode: RecordingTriggerMode = .toggle) {
+        DispatchQueue.main.async {
+            self.overlayState.commandModeActive = true
+            self.overlayState.commandSelectionPreview = String(selection.prefix(120))
+            self.overlayState.recordingTriggerMode = mode
+            self.overlayState.phase = .recording
+            self.overlayState.audioLevel = 0
+            if self.overlayState.recordingStartDate == nil {
+                self.overlayState.recordingStartDate = Date()
+            }
             self.showPill(animated: true)
         }
     }
@@ -254,6 +274,8 @@ final class RecordingOverlayManager {
             self.overlayState.interimText = ""
             self.overlayState.whisperGainActive = false
             self.overlayState.downloadModelName = ""
+            self.overlayState.commandModeActive = false
+            self.overlayState.commandSelectionPreview = ""
             self.dismissPill()
         }
     }
@@ -456,8 +478,48 @@ struct PillOverlayView: View {
         case .error:            errorContent
         case .micPermission:    micPermissionContent
         case .downloadingModel: downloadContent
+        case .recording where state.commandModeActive: commandListeningContent
         default:                recordingContent
         }
+    }
+
+    // MARK: Command Mode — listening for the spoken edit
+
+    private var commandListeningContent: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "wand.and.stars")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(LinearGradient(colors: [accentColor, Color(red: 1, green: 0.71, blue: 0.62)],
+                                                startPoint: .topLeading, endPoint: .bottomTrailing))
+
+            VStack(alignment: .leading, spacing: 1) {
+                Text("EDITING SELECTION")
+                    .font(.system(size: 8, weight: .bold))
+                    .tracking(0.9)
+                    .foregroundColor(.white.opacity(0.4))
+                Text(state.commandSelectionPreview)
+                    .font(.system(size: 11))
+                    .italic()
+                    .foregroundColor(.white.opacity(0.7))
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            PillWaveformView(audioLevel: state.audioLevel, tint: dialectColor)
+                .frame(width: 48)
+
+            KMLangBadge(mode: state.languageMode)
+
+            if state.recordingTriggerMode == .toggle {
+                Button(action: onStopButtonPressed) {
+                    Circle().fill(Color.red.opacity(0.9)).frame(width: 26, height: 26)
+                        .overlay(RoundedRectangle(cornerRadius: 2).fill(.white).frame(width: 8, height: 8))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .animation(Motion.snappy, value: state.phase)
     }
 
     // MARK: Recording / Initializing / Paused / Transcribing / Cleaning
@@ -686,13 +748,19 @@ struct PillOverlayView: View {
 }
 
 // MARK: - Waveform (24 bars, thermal gradient, dialect-tinted)
+//
+// Per Design a2_speaking_waveform_deep_visual_study: exactly 24 bars, 2px wide,
+// 3px gap, 1px squircle, 3px min / 26px max. Asymmetric ballistic envelope —
+// 60ms attack (fast ease-out), 220ms release (fluid ease-in) — with ±1-bar
+// Gaussian neighbour smoothing so the field flows like water. Rendered on a
+// Canvas driven by TimelineView(.animation) for a jank-free 60fps.
 
 struct PillWaveformView: View {
     let audioLevel: Float
     /// Optional dialect tint. `nil` keeps the default accent→salmon thermal gradient.
     var tint: Color? = nil
 
-    private static let barCount = 24
+    static let barCount = 24
     private let barWidth: CGFloat   = 2
     private let barSpacing: CGFloat = 3
     private let minHeight: CGFloat  = 3
@@ -701,48 +769,76 @@ struct PillWaveformView: View {
     private let accent = Color(red: 1.0, green: 0.42, blue: 0.21)   // #FF6B35
     private let salmon = Color(red: 1.0, green: 0.71, blue: 0.62)   // #FFB59D
 
-    // Stable per-bar phase offsets so the field reads as organic, not uniform.
-    private static let phase: [CGFloat] = (0..<barCount).map { i in
-        CGFloat((sin(Double(i) * 12.9898) * 43758.5453).truncatingRemainder(dividingBy: 1))
-    }
-    // Envelope shape — centre bars reach higher.
+    // Centre-weighted envelope — middle bars reach higher.
     private static let envelope: [CGFloat] = (0..<barCount).map { i in
         let x = CGFloat(i) / CGFloat(barCount - 1)
-        return 0.35 + 0.65 * sin(x * .pi)
+        return 0.4 + 0.6 * sin(x * .pi)
+    }
+    // Stable per-bar random phase so the field reads organic, not uniform.
+    private static let phase: [CGFloat] = (0..<barCount).map { i in
+        let v = sin(Double(i) * 12.9898 + 4.1) * 43758.5453
+        return CGFloat(abs(v.truncatingRemainder(dividingBy: 1))) * 6.2831853
     }
 
-    @State private var tick: CGFloat = 0
-    private let timer = Timer.publish(every: 1.0 / 30.0, on: .main, in: .common).autoconnect()
+    /// Bar physics live in a plain class so the Canvas draw closure can advance
+    /// them in place without mutating SwiftUI state during a view update.
+    private final class Field {
+        var heights = [CGFloat](repeating: 0.06, count: PillWaveformView.barCount)
+        var lastTime: Double = 0
 
-    var body: some View {
-        HStack(alignment: .center, spacing: barSpacing) {
-            ForEach(0..<Self.barCount, id: \.self) { i in
-                Capsule(style: .continuous)
-                    .fill(fill)
-                    .frame(width: barWidth, height: barHeight(for: i))
-                    .animation(Motion.wave(rising: audioLevel > 0.15), value: audioLevel)
-                    .animation(.linear(duration: 1.0 / 30.0), value: tick)
+        func step(dt: Double, t: Double, level: CGFloat) {
+            let attackK  = CGFloat(1 - exp(-dt / Motion.attackDuration))
+            let releaseK = CGFloat(1 - exp(-dt / Motion.releaseDuration))
+            let n = PillWaveformView.barCount
+
+            var target = [CGFloat](repeating: 0, count: n)
+            for i in 0..<n {
+                let idle = 0.05 + 0.04 * (0.5 + 0.5 * sin(t * 2.1 + PillWaveformView.phase[i]))
+                let drive = level * PillWaveformView.envelope[i]
+                    * (0.7 + 0.4 * sin(t * 6.0 + PillWaveformView.phase[i] * 2.0))
+                target[i] = max(idle, min(1.0, drive))
+            }
+            var smoothed = target
+            for i in 0..<n {
+                let l = target[max(0, i - 1)]
+                let r = target[min(n - 1, i + 1)]
+                smoothed[i] = 0.25 * l + 0.5 * target[i] + 0.25 * r
+            }
+            for i in 0..<n {
+                let k = smoothed[i] > heights[i] ? attackK : releaseK
+                heights[i] += (smoothed[i] - heights[i]) * k
             }
         }
-        .frame(height: maxHeight)
-        .onReceive(timer) { _ in tick += 0.14 }
     }
 
-    private var fill: LinearGradient {
-        let top = tint ?? accent
-        let bottom = tint?.opacity(0.55) ?? salmon
-        return LinearGradient(colors: [top, bottom], startPoint: .top, endPoint: .bottom)
-    }
+    @State private var field = Field()
 
-    private func barHeight(for i: Int) -> CGFloat {
-        let level = CGFloat(max(0, min(1, audioLevel)))
-        // idle shimmer so the field never flat-lines while mic is open
-        let idle = 0.06 + 0.05 * (0.5 + 0.5 * sin(tick + Self.phase[i] * 6.28))
-        let drive = level * Self.envelope[i]
-        // ±1 neighbour smoothing approximation via envelope; jitter keeps it alive
-        let jitter = 0.12 * level * sin(tick * 1.7 + Self.phase[i] * 9.0)
-        let amp = max(idle, min(1.0, drive + jitter))
-        return minHeight + (maxHeight - minHeight) * amp
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { timeline in
+            Canvas { ctx, size in
+                let now = timeline.date.timeIntervalSinceReferenceDate
+                var dt = now - field.lastTime
+                if dt <= 0 || dt > 0.1 { dt = 1.0 / 60.0 }
+                field.lastTime = now
+                field.step(dt: dt, t: now, level: CGFloat(max(0, min(1, audioLevel))))
+
+                let topColor = tint ?? accent
+                let botColor = tint.map { $0.opacity(0.55) } ?? salmon
+                let totalW = CGFloat(Self.barCount) * barWidth + CGFloat(Self.barCount - 1) * barSpacing
+                var x = (size.width - totalW) / 2
+                for i in 0..<Self.barCount {
+                    let h = minHeight + (maxHeight - minHeight) * field.heights[i]
+                    let rect = CGRect(x: x, y: (size.height - h) / 2, width: barWidth, height: h)
+                    let path = Path(roundedRect: rect, cornerRadius: 1, style: .continuous)
+                    ctx.fill(path, with: .linearGradient(
+                        Gradient(colors: [topColor, botColor]),
+                        startPoint: CGPoint(x: rect.midX, y: rect.minY),
+                        endPoint: CGPoint(x: rect.midX, y: rect.maxY)))
+                    x += barWidth + barSpacing
+                }
+            }
+        }
+        .frame(width: CGFloat(Self.barCount) * (barWidth + barSpacing), height: maxHeight)
     }
 }
 
