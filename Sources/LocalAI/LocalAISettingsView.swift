@@ -48,6 +48,7 @@ private struct LocalAISettingsContent: View {
                     processingCard
                     speechModelCard
                     speechIntelligenceCard
+                    if controller.isBuiltWithLocalAI { cleanupCard }
                     performanceCard
                 }
 
@@ -195,6 +196,43 @@ private struct LocalAISettingsContent: View {
         }
     }
 
+    private var cleanupCard: some View {
+        KMCard {
+            VStack(alignment: .leading, spacing: 10) {
+                KMSectionHeader(title: "Writing cleanup", icon: "text.badge.checkmark")
+                Text("The filler / pause / punctuation pass always runs on-device. "
+                     + "The final polish normally uses your cloud provider (Groq/Gemini — free, fast, better). "
+                     + "You can run it on-device too for a fully-offline flow.")
+                    .font(.system(size: 11)).foregroundColor(KM.muted)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if let llm = LocalModelManifest.models(of: .cleanupLLM).first {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(llm.displayName).font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(KM.onSurface)
+                            Text("~\(ByteCountFormatter.string(fromByteCount: llm.expectedByteSize, countStyle: .file)) · slower, less capable than cloud")
+                                .font(.system(size: 10)).foregroundColor(KM.muted)
+                        }
+                        Spacer()
+                        modelAction(llm, models.status(llm.id))
+                    }
+
+                    if case .installed = models.status(llm.id) {
+                        Toggle(isOn: Binding(
+                            get: { settings.useLocalCleanup },
+                            set: { v in controller.update { $0.useLocalCleanup = v } }
+                        )) {
+                            Text("Use on-device cleanup (experimental)")
+                                .font(.system(size: 11)).foregroundColor(KM.muted)
+                        }
+                        .toggleStyle(.checkbox)
+                    }
+                }
+            }
+        }
+    }
+
     private var performanceCard: some View {
         KMCard {
             VStack(alignment: .leading, spacing: 10) {
@@ -298,6 +336,7 @@ private struct LocalAISettingsContent: View {
                 ? (controller.isOperational ? "Ready — dictation runs on this Mac." : "Enabled — download a speech model below.")
                 : "Off — using your cloud provider."
         case .transcribing: return "Transcribing on-device…"
+        case .cleaning: return "Cleaning up on-device…"
         case .unavailable(let reason): return reason
         }
     }

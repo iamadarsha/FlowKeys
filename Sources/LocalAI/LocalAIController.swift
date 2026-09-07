@@ -20,6 +20,7 @@ private let localAILog = OSLog(subsystem: "com.flowkeys.app", category: "LocalAI
 enum LocalAIState: Equatable, Sendable {
     case idle
     case transcribing
+    case cleaning
     case unavailable(reason: String)
 }
 
@@ -56,6 +57,7 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
 
     let modelManager: LocalModelManager
     private let engine: LocalWhisperEngine
+    private let llmEngine: LocalLLMEngine
     private let store: LocalAISettingsStore
 
     init(store: LocalAISettingsStore = LocalAISettingsStore(),
@@ -64,6 +66,7 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
         self.settings = store.load()
         self.modelManager = modelManager
         self.engine = LocalWhisperEngine()
+        self.llmEngine = LocalLLMEngine()
         os_log(.info, log: localAILog,
                "LocalAIController init — enabled=%{public}d route=%{public}@ builtWithLocalAI=%{public}d",
                settings.isEnabled, settings.route.rawValue, isBuiltWithLocalAI ? 1 : 0)
@@ -218,10 +221,52 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
         return false
     }
 
+    // MARK: - Local cleanup (Phase 4b)
+
+    /// True when an on-device cleanup model is installed and this build supports it.
+    var hasLocalCleanup: Bool {
+        #if FLK_LOCAL_LLM
+        return LocalModelManifest.models(of: .cleanupLLM).contains {
+            modelManager.isInstalled($0) && $0.isActivatable
+        }
+        #else
+        return false
+        #endif
+    }
+
+    /// Whether a given run should be cleaned up on-device rather than in the cloud.
+    /// Requires: local route active, a cleanup model installed, and EITHER the
+    /// user explicitly opted into local cleanup OR there is no usable cloud key.
+    func shouldCleanupLocally(hasUsableCloudKey: Bool) -> Bool {
+        guard settings.localPathActive, hasLocalCleanup else { return false }
+        return settings.useLocalCleanup || !hasUsableCloudKey
+    }
+
+    func cleanupLocally(transcript: String,
+                        contextSummary: String,
+                        customVocabulary: [String],
+                        customSystemPrompt: String,
+                        languageMode: UserLanguageMode) async throws -> String {
+        let service = LocalTextProcessingService(engine: llmEngine,
+                                                 modelManager: modelManager,
+                                                 settings: settings)
+        publish { self.state = .cleaning }
+        defer { publish { self.state = .idle } }
+        let result = try await service.cleanup(
+            transcript: transcript,
+            contextSummary: contextSummary,
+            customVocabulary: customVocabulary,
+            customSystemPrompt: customSystemPrompt,
+            languageMode: languageMode
+        )
+        return result.text
+    }
+
     // MARK: - Lifecycle
 
     func releaseAllModels() {
         Task { await engine.unload() }
+        Task { await llmEngine.unload() }
         publish { self.state = .idle }
     }
 

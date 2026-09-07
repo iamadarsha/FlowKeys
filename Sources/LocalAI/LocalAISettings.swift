@@ -97,6 +97,11 @@ struct LocalAISettings: Codable, Equatable, Sendable {
     /// Chosen local cleanup-LLM model id. nil → deterministic cleanup only.
     var cleanupModelID: String? = nil
 
+    /// Opt-in: use the on-device LLM for the final cleanup instead of the cloud.
+    /// Off by default — it is slower and less capable than Groq/Gemini. The
+    /// deterministic filler/pause pass always runs regardless.
+    var useLocalCleanup: Bool = false
+
     /// Chosen local VAD model id. nil → VAD disabled.
     var vadModelID: String? = nil
 

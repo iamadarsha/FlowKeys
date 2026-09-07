@@ -1402,6 +1402,28 @@ final class AppState: ObservableObject, @unchecked Sendable {
             .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
             .joined(separator: ", ")
 
+        // On-device cleanup when the local route + cleanup model + (strictly
+        // local OR no cloud key). Otherwise the existing cloud path is unchanged.
+        let hasCloudKey = !currentLLMAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        if localAI.shouldCleanupLocally(hasUsableCloudKey: hasCloudKey) {
+            do {
+                let cleaned = try await localAI.cleanupLocally(
+                    transcript: expandedTranscript,
+                    contextSummary: context.contextSummary,
+                    customVocabulary: combinedVocab.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespaces) },
+                    customSystemPrompt: finalPrompt,
+                    languageMode: languageMode
+                )
+                let final = cleaned.isEmpty ? expandedTranscript : cleaned
+                let wordCount = final.split(whereSeparator: \.isWhitespace).count
+                if wordCount >= 3 { _ = personalDictionary.processTranscript(final) }
+                return (final, "Cleaned on-device", "")
+            } catch {
+                os_log(.error, log: recordingLog, "Local cleanup failed, falling back: %{public}@", error.localizedDescription)
+                // fall through to cloud / raw
+            }
+        }
+
         do {
             let result = try await postProcessingService.postProcess(
                 transcript: expandedTranscript,
@@ -1409,12 +1431,12 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 customVocabulary: combinedVocab,
                 customSystemPrompt: finalPrompt
             )
-            
+
             let wordCount = result.transcript.split(whereSeparator: \.isWhitespace).count
             if wordCount >= 3 {
                 let _ = personalDictionary.processTranscript(result.transcript)
             }
-            
+
             return (result.transcript, "Post-processing succeeded", result.prompt)
         } catch {
             os_log(.error, log: recordingLog, "Post-processing failed: %{public}@", error.localizedDescription)

@@ -6,5 +6,9 @@
     <true/>
     <key>com.apple.security.network.client</key>
     <true/>
+    <!-- Allow the bundled llama.cpp dylibs (Contents/Frameworks) to load under
+         the hardened runtime with ad-hoc signing. -->
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
 </dict>
 </plist>
