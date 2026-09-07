@@ -387,6 +387,26 @@ struct MenuBarView: View {
             }
             .buttonStyle(.plain)
             .disabled(appState.isTranscribing)
+
+            Button {
+                appState.startCommandMode()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "wand.and.stars")
+                        .font(.system(size: 11, weight: .semibold))
+                    Text("Rewrite selection by voice")
+                        .font(.system(size: 11, weight: .medium))
+                }
+                .foregroundColor(KM.muted)
+                .frame(maxWidth: .infinity)
+                .frame(height: 30)
+                .background(KM.surfaceHi)
+                .clipShape(Capsule())
+                .overlay(Capsule().stroke(KM.outline, lineWidth: 1))
+            }
+            .buttonStyle(.plain)
+            .disabled(appState.isRecording || appState.isTranscribing)
+            .help("Select text in any app, then speak an edit — 'make it shorter', 'translate to Bengali', 'fix grammar'.")
         }
         .padding(.horizontal, 14)
         .padding(.bottom, 10)

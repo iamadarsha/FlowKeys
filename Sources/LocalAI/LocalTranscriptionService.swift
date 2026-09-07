@@ -63,7 +63,8 @@ final class LocalTranscriptionService {
 
     func transcribe(fileURL: URL,
                     selection: LanguageSelection,
-                    initialPrompt: String?) async throws -> LocalTranscriptionOutcome {
+                    initialPrompt: String?,
+                    onProgress: (@Sendable (Int) -> Void)? = nil) async throws -> LocalTranscriptionOutcome {
 
         guard let descriptor = resolvedModel(for: selection) else {
             throw LocalWhisperError.openFailed("no local speech model installed")
@@ -86,7 +87,8 @@ final class LocalTranscriptionService {
             initialPrompt: initialPrompt,
             modelPath: modelPath,
             vadModelPath: vadPath,
-            keepWarmSeconds: settings.effectiveUnloadAfterSeconds
+            keepWarmSeconds: settings.effectiveUnloadAfterSeconds,
+            onProgress: onProgress
         )
 
         let analysis = SpeechAnalysisService.analyze(

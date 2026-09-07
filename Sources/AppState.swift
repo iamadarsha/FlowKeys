@@ -282,6 +282,10 @@ final class AppState: ObservableObject, @unchecked Sendable {
     @Published var lastContextSummary = ""
     @Published var lastPostProcessingStatus = ""
     @Published var lastTranscriptionRouteLabel = "Cloud"
+
+    /// Command Mode: rewrite the current text selection by voice.
+    @Published private(set) var commandModeArmed = false
+    private var commandModeSelection: String?
     @Published var lastContextScreenshotDataURL: String? = nil
     @Published var lastContextScreenshotStatus = "No screenshot"
     @Published var hasScreenRecordingPermission = false
@@ -302,6 +306,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     let overlayManager = RecordingOverlayManager()
     private var accessibilityTimer: Timer?
     private var audioLevelCancellable: AnyCancellable?
+    private var localProgressCancellable: AnyCancellable?
     private var debugOverlayTimer: Timer?
     private var transcribingIndicatorTask: Task<Void, Never>?
     private var contextService: AppContextService
@@ -435,6 +440,12 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 self?.retryAfterOverlayError()
             }
         }
+
+        localProgressCancellable = localAI.$transcriptionProgress
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] pct in
+                self?.overlayManager.setTranscribeProgress(pct)
+            }
 
         rebuildContextService()
     }
@@ -966,6 +977,114 @@ final class AppState: ObservableObject, @unchecked Sendable {
         }
     }
 
+    // MARK: - Command Mode
+
+    /// Read the frontmost app's text selection and start recording an instruction.
+    /// Stop from the overlay's stop button (this uses the toggle recording path).
+    func startCommandMode() {
+        guard !isRecording && !isTranscribing else { return }
+        guard let selection = CommandModeSelection.currentSelectedText(), !selection.isEmpty else {
+            errorMessage = CommandModeError.noSelection.localizedDescription
+            statusText = "Select text first"
+            overlayManager.showError(message: CommandModeError.noSelection.localizedDescription)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.2) {
+                self.overlayManager.dismiss()
+                if self.statusText == "Select text first" { self.statusText = "Ready" }
+            }
+            return
+        }
+        commandModeSelection = selection
+        commandModeArmed = true
+        statusText = "Command Mode — speak the edit"
+        shortcutSessionController.beginManual(mode: .toggle)
+        startRecording(triggerMode: .toggle)
+    }
+
+    private func clearCommandMode() {
+        commandModeArmed = false
+        commandModeSelection = nil
+    }
+
+    private func stopAndRunCommandMode() {
+        cancelPendingShortcutStart()
+        shortcutSessionController.reset()
+        activeRecordingTriggerMode = nil
+        audioLevelCancellable?.cancel()
+        audioLevelCancellable = nil
+
+        guard let fileURL = audioRecorder.stopRecording(),
+              let selection = commandModeSelection else {
+            audioRecorder.cleanup()
+            clearCommandMode()
+            isRecording = false
+            statusText = "Error"
+            overlayManager.dismiss()
+            return
+        }
+
+        isRecording = false
+        isTranscribing = true
+        statusText = "Rewriting..."
+        debugStatusMessage = "Command Mode: transcribing instruction"
+        AudioFeedbackManager.shared.playStopRecording(volume: soundVolume)
+        overlayManager.slideUpToNotch { }
+        overlayManager.showTranscribing()
+
+        let transcriptionService = TranscriptionService(
+            provider: activeTranscriptionProvider,
+            keyStore: apiKeyStore,
+            forceHTTP2: forceHTTP2Transcription,
+            languageMode: languageMode
+        )
+        let commandService = CommandModeService(provider: activeLLMProvider, keyStore: apiKeyStore)
+
+        Task {
+            do {
+                let routed = try await transcribeRawWithRoute(
+                    fileURL: fileURL, cloudService: transcriptionService
+                )
+                let instruction = routed.raw.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !instruction.isEmpty else { throw CommandModeError.emptyInstruction }
+
+                await MainActor.run { self.debugStatusMessage = "Command Mode: rewriting selection" }
+                let rewritten = try await commandService.rewrite(
+                    selectedText: selection, instruction: instruction
+                )
+
+                await MainActor.run {
+                    self.lastRawTranscript = instruction
+                    self.lastPostProcessedTranscript = rewritten
+                    self.lastPostProcessingStatus = "Command Mode rewrite"
+                    self.lastTranscript = rewritten
+                    self.isTranscribing = false
+                    self.clearCommandMode()
+                    self.statusText = "Selection rewritten!"
+                    self.debugStatusMessage = "Done"
+                    self.audioRecorder.cleanup()
+                    self.overlayManager.showDone()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { self.overlayManager.dismiss() }
+
+                    let pending = self.writeTranscriptToPasteboard(rewritten)
+                    self.pasteAtCursorWhenShortcutReleased {
+                        self.restoreClipboardIfNeeded(pending)
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        if self.statusText == "Selection rewritten!" { self.statusText = "Ready" }
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    self.isTranscribing = false
+                    self.clearCommandMode()
+                    self.errorMessage = error.localizedDescription
+                    self.statusText = "Error"
+                    self.audioRecorder.cleanup()
+                    self.overlayManager.showError(message: error.localizedDescription)
+                }
+            }
+        }
+    }
+
     private func handleOverlayStopButtonPressed() {
         guard isRecording, activeRecordingTriggerMode == .toggle else { return }
         stopAndTranscribe()
@@ -1304,6 +1423,10 @@ final class AppState: ObservableObject, @unchecked Sendable {
     }
 
     private func stopAndTranscribe() {
+        if commandModeArmed {
+            stopAndRunCommandMode()
+            return
+        }
         cancelPendingShortcutStart()
         shortcutSessionController.reset()
         activeRecordingTriggerMode = nil

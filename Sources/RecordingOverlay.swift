@@ -12,6 +12,7 @@ final class RecordingOverlayState: ObservableObject {
     @Published var activeModeName: String = ""
     @Published var activeModeIcon: String = ""
     @Published var recordingStartDate: Date? = nil
+    @Published var transcribeProgress: Int = -1
 }
 
 enum OverlayPhase {
@@ -145,6 +146,11 @@ final class RecordingOverlayManager {
             self.overlayState.recordingStartDate = nil
             self.updatePillInteractivity()
         }
+    }
+
+    /// Local-transcription progress (0–100), or -1 to clear. No-op for cloud runs.
+    func setTranscribeProgress(_ percent: Int) {
+        DispatchQueue.main.async { self.overlayState.transcribeProgress = percent }
     }
 
     func slideUpToNotch(completion: @escaping () -> Void) {
@@ -384,9 +390,12 @@ struct PillOverlayView: View {
                 RecordingTimerView(startDate: state.recordingStartDate ?? Date())
                     .foregroundColor(.white.opacity(0.8))
             } else {
-                Text("Processing")
+                Text(state.transcribeProgress > 0 && state.transcribeProgress < 100
+                     ? "Transcribing \(state.transcribeProgress)%"
+                     : "Processing")
                     .font(.system(size: 11, weight: .medium))
                     .foregroundColor(.white.opacity(0.5))
+                    .monospacedDigit()
             }
 
             // Mode tag

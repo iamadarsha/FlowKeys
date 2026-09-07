@@ -38,6 +38,12 @@ enum LocalWhisperError: LocalizedError {
     }
 }
 
+/// Box so a Swift progress closure can be reached from the C callback thread.
+private final class ProgressBox: @unchecked Sendable {
+    let cb: @Sendable (Int) -> Void
+    init(cb: @escaping @Sendable (Int) -> Void) { self.cb = cb }
+}
+
 /// Serializes access to the whisper context (not thread-safe in whisper.cpp).
 actor LocalWhisperEngine {
 
@@ -88,7 +94,8 @@ actor LocalWhisperEngine {
                     initialPrompt: String?,
                     modelPath: String? = nil,
                     vadModelPath: String? = nil,
-                    keepWarmSeconds: Int = 0) async throws -> LocalWhisperResult {
+                    keepWarmSeconds: Int = 0,
+                    onProgress: (@Sendable (Int) -> Void)? = nil) async throws -> LocalWhisperResult {
         #if !FLK_LOCAL_AI
         throw LocalWhisperError.notBuiltWithLocalAI
         #else
@@ -124,16 +131,24 @@ actor LocalWhisperEngine {
         }
 
         let t1 = DispatchTime.now()
+        let progressBox = onProgress.map { ProgressBox(cb: $0) }
         let raw: UnsafeMutablePointer<CChar>? = samples.withUnsafeBufferPointer { buf in
             Self.withOptionalCString(lang) { cLang in
                 Self.withOptionalCString(prompt) { cPrompt in
                     Self.withOptionalCString(vad) { cVad in
-                        flk_whisper_transcribe(handle, buf.baseAddress, Int32(buf.count),
-                                               cLang, cPrompt, 0, cVad)
+                        let ud = progressBox.map { Unmanaged.passUnretained($0).toOpaque() }
+                        let fn: flk_progress_fn? = progressBox == nil ? nil : { pct, userData in
+                            guard let userData else { return }
+                            Unmanaged<ProgressBox>.fromOpaque(userData)
+                                .takeUnretainedValue().cb(Int(pct))
+                        }
+                        return flk_whisper_transcribe(handle, buf.baseAddress, Int32(buf.count),
+                                                      cLang, cPrompt, 0, cVad, fn, ud)
                     }
                 }
             }
         }
+        _ = progressBox   // keep alive across the call
         let txMs = Int(Double(DispatchTime.now().uptimeNanoseconds - t1.uptimeNanoseconds) / 1_000_000)
 
         guard let raw else {

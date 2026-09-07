@@ -19,6 +19,9 @@ extern "C" {
 
 typedef struct flk_whisper_ctx flk_whisper_ctx;
 
+/// Progress callback: `percent` in 0..100, called from whisper's compute thread.
+typedef void (*flk_progress_fn)(int percent, void *user_data);
+
 /// Load a ggml Whisper model from disk. Returns NULL on failure
 /// (call flk_whisper_last_error() for a message). `n_threads <= 0` → auto.
 flk_whisper_ctx *flk_whisper_open(const char *model_path, int n_threads);
@@ -37,7 +40,9 @@ char *flk_whisper_transcribe(flk_whisper_ctx *ctx,
                              const char *language,
                              const char *initial_prompt,
                              int translate,
-                             const char *vad_model_path);
+                             const char *vad_model_path,
+                             flk_progress_fn on_progress,
+                             void *progress_user_data);
 
 /// Auto-detected language of the last transcription ("" if none / unknown).
 const char *flk_whisper_detected_language(flk_whisper_ctx *ctx);

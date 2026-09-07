@@ -75,13 +75,28 @@ flk_whisper_ctx *flk_whisper_open(const char *model_path, int n_threads) {
     return ctx;
 }
 
+namespace {
+struct ProgressBridge {
+    flk_progress_fn fn;
+    void *user_data;
+};
+void progress_trampoline(struct whisper_context * /*ctx*/,
+                         struct whisper_state * /*state*/,
+                         int progress, void *user_data) {
+    auto *pb = static_cast<ProgressBridge *>(user_data);
+    if (pb && pb->fn) pb->fn(progress, pb->user_data);
+}
+} // namespace
+
 char *flk_whisper_transcribe(flk_whisper_ctx *ctx,
                              const float *samples,
                              int n_samples,
                              const char *language,
                              const char *initial_prompt,
                              int translate,
-                             const char *vad_model_path) {
+                             const char *vad_model_path,
+                             flk_progress_fn on_progress,
+                             void *progress_user_data) {
     g_last_error.clear();
     if (!ctx || !ctx->wctx) { set_error("null context"); return nullptr; }
     if (!samples || n_samples <= 0) { set_error("no audio samples"); return nullptr; }
@@ -109,6 +124,12 @@ char *flk_whisper_transcribe(flk_whisper_ctx *ctx,
 
     if (initial_prompt && initial_prompt[0] != '\0') {
         wparams.initial_prompt = initial_prompt;
+    }
+
+    ProgressBridge pbridge{on_progress, progress_user_data};
+    if (on_progress) {
+        wparams.progress_callback           = progress_trampoline;
+        wparams.progress_callback_user_data = &pbridge;
     }
 
     if (vad_model_path && vad_model_path[0] != '\0') {

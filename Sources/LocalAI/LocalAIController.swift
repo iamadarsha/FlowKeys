@@ -51,6 +51,8 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
     @Published private(set) var state: LocalAIState = .idle
     @Published private(set) var settings: LocalAISettings
     @Published private(set) var isOperational: Bool = false
+    /// 0–100 during a local transcription; -1 when not transcribing.
+    @Published private(set) var transcriptionProgress: Int = -1
 
     let modelManager: LocalModelManager
     private let engine: LocalWhisperEngine
@@ -146,13 +148,18 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
         let service = LocalTranscriptionService(engine: engine,
                                                 modelManager: modelManager,
                                                 settings: settings)
-        publish { self.state = .transcribing }
-        defer { publish { self.state = .idle } }
+        publish { self.state = .transcribing; self.transcriptionProgress = 0 }
+        defer { publish { self.state = .idle; self.transcriptionProgress = -1 } }
+
+        let progress: @Sendable (Int) -> Void = { [weak self] pct in
+            self?.publish { self?.transcriptionProgress = pct }
+        }
 
         do {
             let outcome = try await service.transcribe(fileURL: fileURL,
                                                        selection: selection,
-                                                       initialPrompt: initialPrompt)
+                                                       initialPrompt: initialPrompt,
+                                                       onProgress: progress)
 
             // Confidence-aware hybrid escalation: if the local result looks
             // unreliable and a sanctioned cloud fallback exists, use it.
