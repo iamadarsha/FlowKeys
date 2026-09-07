@@ -100,6 +100,7 @@ struct LocalAIOnboardingCard: View {
         VStack(alignment: .leading, spacing: 4) {
             if case .downloading(let p, let got, let total) = models.status(d.id) {
                 ProgressView(value: p)
+                    .tint(KM.accent)
                 Text("Downloading \(d.displayName) — "
                      + "\(ByteCountFormatter.string(fromByteCount: got, countStyle: .file)) / "
                      + ByteCountFormatter.string(fromByteCount: total, countStyle: .file))

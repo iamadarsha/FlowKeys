@@ -998,6 +998,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
         statusText = "Command Mode — speak the edit"
         shortcutSessionController.beginManual(mode: .toggle)
         startRecording(triggerMode: .toggle)
+        overlayManager.showCommandListening(selection: selection)
     }
 
     private func clearCommandMode() {
@@ -1543,6 +1544,11 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 }
                 await MainActor.run { [weak self] in
                     self?.debugStatusMessage = "Running post-processing"
+                    if !rawTranscript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        // stop the delayed "transcribing" indicator from racing us back
+                        self?.transcribingIndicatorTask?.cancel()
+                        self?.overlayManager.showCleaning()
+                    }
                 }
                 let (finalTranscript, processingStatus, postProcessingPrompt) = await processTranscript(
                     rawTranscript,

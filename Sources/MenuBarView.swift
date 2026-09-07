@@ -10,6 +10,17 @@ struct MenuBarView: View {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 
+    private var routeStatus: (label: String, color: Color) {
+        if appState.localAI.settings.isEnabled {
+            switch appState.localAI.settings.route {
+            case .local:         return ("On-device", KM.green)
+            case .hybrid:        return ("Hybrid", KM.accent)
+            case .existingCloud: return (appState.activeTranscriptionProvider.shortName, KM.accent)
+            }
+        }
+        return (appState.activeTranscriptionProvider.shortName, KM.accent)
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             headerSection
@@ -58,12 +69,12 @@ struct MenuBarView: View {
                     .foregroundColor(KM.onSurface)
             }
 
-            Spacer()
+            Spacer(minLength: 6)
 
             // Hotkey badge
             hotkeyBadge
 
-            // Provider badge
+            // Provider / route badge — carries a live status dot
             providerBadge
 
             // Settings icon
@@ -102,27 +113,23 @@ struct MenuBarView: View {
             return "—"
         }()
 
-        return Text(shortcutText)
-            .font(.system(size: 10, weight: .semibold, design: .monospaced))
-            .foregroundColor(KM.muted)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(KM.surfaceHi)
-            .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+        return KMKeycap(text: shortcutText)
     }
 
     private var providerBadge: some View {
-        HStack(spacing: 3) {
-            Image(systemName: "bolt.fill")
-                .font(.system(size: 7))
-                .foregroundColor(KM.accent)
-            Text(appState.activeTranscriptionProvider.shortName)
+        HStack(spacing: 4) {
+            Circle()
+                .fill(appState.isRecording ? KM.error
+                      : (appState.isTranscribing ? KM.warning : routeStatus.color))
+                .frame(width: 5, height: 5)
+            Text(routeStatus.label)
                 .font(.system(size: 10, weight: .semibold))
-                .foregroundColor(KM.accent)
+                .foregroundColor(routeStatus.color)
+                .lineLimit(1)
         }
         .padding(.horizontal, 7)
         .padding(.vertical, 3)
-        .background(KM.accent.opacity(0.12))
+        .background(routeStatus.color.opacity(0.12))
         .clipShape(Capsule())
     }
 
@@ -159,14 +166,20 @@ struct MenuBarView: View {
                 appState.languageMode = mode
             }
         } label: {
-            Text(languagePillText(mode))
-                .font(.system(size: 11, weight: isActive ? .semibold : .regular))
-                .foregroundColor(isActive ? KM.onSurface : KM.muted)
-                .padding(.horizontal, 10)
+            HStack(spacing: 4) {
+                Circle()
+                    .fill(mode.accentColor)
+                    .frame(width: 5, height: 5)
+                    .opacity(isActive ? 1 : 0.35)
+                Text(languagePillText(mode))
+                    .font(.system(size: 11, weight: isActive ? .semibold : .regular))
+                    .foregroundColor(isActive ? KM.onSurface : KM.muted)
+            }
+                .padding(.horizontal, 9)
                 .padding(.vertical, 4)
                 .background(
                     isActive
-                        ? KM.accent.opacity(0.25)
+                        ? mode.accentColor.opacity(0.22)
                         : Color.clear
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
@@ -199,10 +212,7 @@ struct MenuBarView: View {
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("TONE")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundColor(KM.muted)
-                    .tracking(1.2)
+                KMEyebrow(text: "Tone")
                 Spacer()
                 Button {
                     appState.selectedSettingsTab = .general
@@ -264,10 +274,7 @@ struct MenuBarView: View {
 
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("RECENT")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundColor(KM.muted)
-                .tracking(1.2)
+            KMEyebrow(text: "Recent")
 
             if !appState.lastTranscript.isEmpty && !appState.isRecording && !appState.isTranscribing {
                 HStack(alignment: .top, spacing: 8) {
@@ -294,10 +301,16 @@ struct MenuBarView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .transition(.move(edge: .top).combined(with: .opacity))
             } else {
-                Text("No recent transcriptions")
-                    .font(.system(size: 11))
-                    .foregroundColor(KM.muted)
-                    .transition(.opacity)
+                HStack(spacing: 6) {
+                    Image(systemName: "waveform")
+                        .font(.system(size: 10))
+                        .foregroundColor(KM.textMuted)
+                    Text("Hold \(appState.holdShortcut.isDisabled ? appState.toggleShortcut.displayName : appState.holdShortcut.displayName) and speak to create your first transcript")
+                        .font(.system(size: 11))
+                        .foregroundColor(KM.textMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .transition(.opacity)
             }
 
             if let error = appState.errorMessage {

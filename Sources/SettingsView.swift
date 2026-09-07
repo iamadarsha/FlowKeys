@@ -91,20 +91,22 @@ struct SettingsView: View {
                         HStack(spacing: 8) {
                             Image(systemName: tab.icon)
                                 .font(.system(size: 13))
-                                .foregroundColor(isActive ? KM.salmon : KM.muted)
+                                .foregroundColor(isActive ? KM.accent : KM.muted)
                                 .frame(width: 18)
                             Text(tab.title)
                                 .font(.system(size: 12, weight: isActive ? .semibold : .regular))
-                                .foregroundColor(isActive ? KM.salmon : KM.muted)
+                                .foregroundColor(isActive ? KM.textPrimary : KM.textSecondary)
                             Spacer()
+                            if isActive {
+                                Circle().fill(KM.accent).frame(width: 5, height: 5)
+                            }
                         }
                         .padding(.vertical, 7)
                         .padding(.horizontal, 10)
                         .background(
-                            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                .fill(isActive ? KM.surface : Color.clear)
+                            RoundedRectangle(cornerRadius: KM.rControl, style: .continuous)
+                                .fill(isActive ? KM.surfaceTop : Color.clear)
                         )
-                        .shadow(color: isActive ? .black.opacity(0.3) : .clear, radius: 4, x: 0, y: 2)
                         .animation(.spring(response: 0.28, dampingFraction: 0.8), value: isActive)
                     }
                     .buttonStyle(.plain)
@@ -1431,13 +1433,13 @@ struct RunLogView: View {
             Divider()
 
             if appState.pipelineHistory.isEmpty {
-                VStack {
-                    Spacer()
-                    Text("No runs yet. Use dictation to populate history.")
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity)
+                KMEmptyState(
+                    icon: "clock.arrow.circlepath",
+                    title: "Your transcripts show up here",
+                    message: "Hold your dictation shortcut anywhere and start talking to create your first run.",
+                    hint: "\(appState.holdShortcut.isDisabled ? appState.toggleShortcut.displayName : appState.holdShortcut.displayName)   ·   Speak naturally"
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView {
                     VStack(spacing: 12) {
