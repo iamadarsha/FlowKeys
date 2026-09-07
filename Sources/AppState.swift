@@ -1360,6 +1360,14 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 let rawTranscript = routedResult.raw
                 await MainActor.run { [weak self] in
                     self?.lastTranscriptionRouteLabel = routedResult.routeLabel
+                    if routedResult.routeLabel != "Cloud" {
+                        var detail = "Transcribed via \(routedResult.routeLabel)"
+                        if let m = routedResult.localModelID { detail += " · \(m)" }
+                        if let load = routedResult.localLoadMs, let tx = routedResult.localTxMs {
+                            detail += " · load \(load)ms · asr \(tx)ms"
+                        }
+                        self?.debugStatusMessage = detail
+                    }
                 }
                 let appContext: AppContext
                 if let sessionContext {

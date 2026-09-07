@@ -51,7 +51,22 @@ else
   BRIDGE_OBJ_x86_64 =
 endif
 
-.PHONY: all build dmg clean clean-all run release help dmg-hdiutil-internal whisper-libs
+.PHONY: all build dmg clean clean-all run release help dmg-hdiutil-internal whisper-libs test-local
+
+# Dependency-free Local AI test harness (see Tests/local_ai_tests.swift)
+TEST_LOCAL_SRCS = Tests/local_ai_tests.swift \
+	Sources/LocalAI/LocalAISettings.swift \
+	Sources/LocalAI/LocalModelManifest.swift \
+	Sources/LocalAI/LanguageRouting.swift \
+	Sources/LocalAI/CryptoKitSHA256.swift \
+	Sources/IndianContextPrompts.swift \
+	Sources/Notification+VoiceToText.swift
+
+test-local:
+	@mkdir -p $(BUILD_DIR)
+	swiftc -O -parse-as-library -sdk $(SDK) -target arm64-apple-macosx13.0 \
+		-o $(BUILD_DIR)/local_ai_tests $(TEST_LOCAL_SRCS)
+	@$(BUILD_DIR)/local_ai_tests
 
 all: build
 

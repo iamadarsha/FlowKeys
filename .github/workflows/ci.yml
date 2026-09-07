@@ -33,8 +33,10 @@ jobs:
           swift --version
           xcrun --show-sdk-path
 
-      - name: Regression smoke (static checks)
-        run: ./Scripts/regression_smoke.sh
+      - name: Regression smoke (static checks + Local AI unit tests)
+        run: |
+          brew list cmake >/dev/null 2>&1 || brew install cmake
+          ./Scripts/regression_smoke.sh
 
       - name: Build universal app + DMG
         run: |

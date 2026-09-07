@@ -77,7 +77,18 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-say "7. Build"
+say "7. Local AI unit tests"
+if xcodebuild -version >/dev/null 2>&1; then
+  if make test-local >/tmp/flk_test_local.log 2>&1; then
+    ok "Local AI test harness passed ($(grep -c '  ok' /tmp/flk_test_local.log) assertions)"
+  else
+    bad "Local AI test harness FAILED"; grep 'FAIL' /tmp/flk_test_local.log | head
+  fi
+else
+  printf '  \033[33m•\033[0m skipped — needs full Xcode\n'
+fi
+
+say "8. Build"
 if ! xcodebuild -version >/dev/null 2>&1; then
   printf '  \033[33m•\033[0m skipped — full Xcode not available (Command Line Tools only,\n'
   printf '     or compiler/SDK mismatch). Install Xcode, then:\n'
