@@ -9,11 +9,11 @@
     <key>CFBundleIdentifier</key>
     <string>com.flowkeys.app</string>
     <key>CFBundleVersion</key>
-    <string>1.2.2</string>
+    <string>2.0.0</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.2.2</string>
+    <string>2.0.0</string>
     <key>FlowKeysBuildTag</key>
-    <string>v1.2.2</string>
+    <string>v2.0.0</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleExecutable</key>

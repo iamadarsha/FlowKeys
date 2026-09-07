@@ -3,10 +3,15 @@
 > **Aapki awaaz, aapke words.** 🇮🇳  
 > AI-powered voice dictation for macOS — built for India.
 
-FlowKeys lets you dictate in **Hindi, English, or Hinglish** into any
-app on your Mac. Hold a hotkey → talk → text appears wherever your
-cursor is. Works with Gmail, WhatsApp Web, Notion, Slack, VS Code,
-Notes — literally everywhere.
+FlowKeys lets you dictate in **English, Hindi, Hinglish, Bengali, or Banglish**
+into any app on your Mac. Hold a hotkey → talk → text appears wherever your
+cursor is, in the script you chose. Works with Gmail, WhatsApp Web, Notion,
+Slack, VS Code, Notes — literally everywhere.
+
+**New in 2.0:** run it **entirely on your Mac** — speech recognition, voice
+detection and cleanup, no internet, no API key. Cloud providers still work
+exactly as before; on-device AI is opt-in. See
+[release notes](requirements/RELEASE_NOTES_2.0.0.md).
 
 ---
 
@@ -25,17 +30,22 @@ That's it. No App Store. No account. No warnings. Takes ~30 seconds.
 ## ✨ Features
 
 - 🎙 **Hold [Fn]** to record, release to paste — or tap **[⌘+Fn]** to toggle
-- 🇮🇳 **Hindi + English + Hinglish** — understands code-switching naturally
+- 🌐 **English · Hindi · Hinglish · Bengali · Banglish** — native code-switching,
+  and text lands in the script you pick (Native / Roman / Auto)
+- 💻 **Run offline** — on-device speech recognition (whisper.cpp), voice
+  detection (Silero), and best-for-Indic ASR (AI4Bharat IndicConformer). Private,
+  free, no key. Opt-in.
+- ✂️ **On-device cleanup** — removes "um / matlab / mane", collapses
+  self-corrections, fixes punctuation, before any LLM touches it
+- ✨ **Command Mode** — select text, speak an edit ("make it shorter",
+  "translate to Bengali"), it's rewritten in place
 - 🧠 **Context-aware** — reads your app and formats text accordingly
-  - Emails → formal tone  
-  - WhatsApp → casual Hinglish  
-  - Terminal → literal, no cleanup
 - ⚡ **7 Dictation Modes** — Casual, Email, Code, Meeting, Social, Literal, Hindi
 - 🔤 **Personal Dictionary** — learns your names, brands, and custom vocab
 - 📋 **Snippet Engine** — say "mera address" → types your full address
 - 📁 **File Transcription** — drag any audio/video file to transcribe it
-- 🔑 **5 AI Providers** — Groq (free), OpenAI, Gemini, Grok, Claude
-- 🔒 **100% Private** — API keys stored in macOS Keychain, no server
+- 🔑 **5 cloud AI providers** — Groq (free), OpenAI, Gemini, Grok, Claude — BYOK
+- 🔒 **100% Private** — API keys in macOS Keychain; local mode never leaves your Mac
 
 ---
 
@@ -64,10 +74,10 @@ Other supported providers: OpenAI, Google Gemini, xAI Grok, Anthropic Claude
 
 ## 💻 System Requirements
 
-- macOS 13.0 (Ventura) or later
-- Apple Silicon (M1/M2/M3/M4) or Intel Mac
-- Internet connection (for AI transcription API calls)
+- macOS 13.4 or later (13.0 for a cloud-only / `LOCAL_INDIC=0` build)
+- Apple Silicon (M1–M4) or Intel Mac — one universal binary
 - Microphone
+- Internet only if you use a cloud provider — local mode works offline
 
 ---
 

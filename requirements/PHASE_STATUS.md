@@ -11,8 +11,15 @@ Each phase: own branch → CI green → manual `REGRESSION_CHECKLIST.md` → ver
 | **4a — Bengali + script + hybrid** | `feature/local-ai-phase-4` | 🟡 CI running | ⬜ manual pending | ⬜ v1.6.0 | `UserLanguageMode` += `pureBengali`/`banglish`; `BengaliContextPrompts` (bKash/Nagad/Pathao/GP/Robi, দাদা/দিদি, punctuation); **hard `OUTPUT_SCRIPT` contract** in post-processing (Devanagari/Bangla/mirror); menu-bar EN·HI·BN·MIX; confidence-aware hybrid escalation. 76 assertions. |
 | **4b — offline local LLM** | `feature/local-ai-phase-4b` | 🟡 CI running | ⬜ manual pending | ⬜ v1.6.x | **llama.cpp v0.4.0** as a universal dylib in Contents/Frameworks/ (ggml 0.23 vs whisper's 0.20 — two-level namespace isolates); Qwen3-0.6B (unsloth GGUF, pinned+verified); `disable-library-validation` entitlement; `LocalLLMEngine` + `LocalTextProcessingService`; **opt-in, experimental** (0.6B quality is marginal — cloud cleanup stays default). |
 | **5a — progress + Command Mode** | `feature/local-ai-phase-5` | ✅ CI green | ⬜ manual pending | ⬜ v2.0.0 | whisper.cpp progress callback → "Transcribing 45%" in overlay; **Command Mode** (menu-bar "Rewrite selection by voice" → AX selection + spoken instruction → in-place rewrite). |
-| **4c — IndicConformer** | — | — | — | ⬜ v1.6.x | sherpa-onnx + AI4Bharat IndicConformer for best-in-class native-script Hindi/Bengali ASR. Whisper base/turbo already do HI/BN natively, just less accurately. Another vendored C++ lib. |
-| **5b — design refresh** | — | — | — | ⬜ v2.0.0 | Implement the Google Stitch screens (Design/STITCH_PROMPTS.md → Design/Screens/) against DesignSystem.swift. Needs the user's Stitch outputs. |
+| **4c — IndicConformer** | `feature/local-ai-phase-4c` | 🟡 CI running | ⬜ manual pending | ⬜ v2.0.0 | sherpa-onnx v1.13.7 vendored, universal static (+ static universal ONNX Runtime). `LocalIndicEngine`, multi-file model support (model.int8.onnx + tokens.txt), auto-routes HI/BN/Banglish. `LOCAL_INDIC=1` default → min macOS **13.4**. E2E: loads 332 ms, 10 s clip in 196 ms, native Devanagari. Binary 44 MB / app 54 MB. |
+| **5b — design refresh** | — | ⬜ user supplied Stitch exports (7 batches in Design/) | — | ⬜ later | Implement the exported screens (Design/stitch_five_phase_task_roadmap*/) against DesignSystem.swift. Post-2.0. |
+
+## v2.0.0 — merge all + tag
+
+`feature/local-ai-phase-4c` is the complete linear branch (phases 1 → 2 → 3 → 4a
+→ 5a → 4b → 4c + design pack + Stitch exports + Info.plist 2.0.0 + release notes).
+Merge to `main`, tag `v2.0.0` → the release workflow builds the universal DMG and
+publishes the GitHub Release.
 
 ## Branch stack (each branches off the previous)
 
