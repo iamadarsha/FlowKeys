@@ -29,7 +29,10 @@ jobs:
       # build from source. Key = sha256(sorted submodule SHAs)[:16].
       - name: Native libs key
         id: nativekey
-        run: echo "sub=$(git submodule status | awk '{gsub(/^[+-]/,\"\",$1); print $1}' | sort | shasum -a 256 | cut -c1-16)" >> "$GITHUB_OUTPUT"
+        run: |
+          key=$(git submodule status | awk '{s=$1; sub(/^[+-]/,"",s); print s}' | sort | shasum -a 256 | cut -c1-16)
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+          echo "native libs key: native-macos-$key"
 
       - name: Restore native builds (cache)
         id: nativecache
@@ -40,31 +43,35 @@ jobs:
             build/llama
             build/sherpa
             build/Frameworks
-          key: native-macos-${{ steps.nativekey.outputs.sub }}
+          key: native-macos-${{ steps.nativekey.outputs.key }}
 
-      - name: Fetch prebuilt native libs (on cache miss)
+      - name: Fetch prebuilt native libs (cache miss)
         id: prebuilt
         if: steps.nativecache.outputs.cache-hit != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="native-libs-${{ steps.nativekey.outputs.sub }}"
-          if gh release download "$tag" --pattern 'native-macos.tar.gz' --dir . 2>/dev/null; then
-            tar xzf native-macos.tar.gz && rm native-macos.tar.gz
-            find build/whisper build/llama build/sherpa build/Frameworks -exec touch {} +
-            sleep 1
-            find build/whisper build/llama build/sherpa build/Frameworks \
-              \( -name '*.a' -o -name '*.dylib' \) -exec touch {} +
+          tag="native-libs-${{ steps.nativekey.outputs.key }}"
+          if gh release download "$tag" --pattern 'native-macos.tar.gz' --clobber; then
+            tar xzf native-macos.tar.gz && rm -f native-macos.tar.gz
             echo "ok=true" >> "$GITHUB_OUTPUT"
-            echo "✅ restored prebuilt native libs from $tag"
+            echo "restored prebuilt native libs from $tag"
           else
             echo "ok=false" >> "$GITHUB_OUTPUT"
-            echo "ℹ️ no prebuilt asset $tag — building from source"
+            echo "no prebuilt asset $tag — will build from source"
           fi
 
-      - name: Build native engines (cache + prebuilt both missed)
+      - name: Build native engines (no cache, no prebuilt)
         if: steps.nativecache.outputs.cache-hit != 'true' && steps.prebuilt.outputs.ok != 'true'
         run: ARCH=universal make whisper-libs llama-libs sherpa-libs
+
+      - name: Normalise restored native-lib mtimes
+        if: steps.nativecache.outputs.cache-hit == 'true' || steps.prebuilt.outputs.ok == 'true'
+        run: |
+          find build/whisper build/llama build/sherpa build/Frameworks -exec touch {} +
+          sleep 2
+          find build/whisper build/llama build/sherpa build/Frameworks \
+            \( -name '*.a' -o -name '*.dylib' \) -exec touch {} +
 
       - name: Save native builds (cache)
         if: always() && steps.nativecache.outputs.cache-hit != 'true'

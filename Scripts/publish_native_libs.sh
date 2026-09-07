@@ -13,7 +13,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-key=$(git submodule status | awk '{gsub(/^[+-]/,"",$1); print $1}' | sort | shasum -a 256 | cut -c1-16)
+key=$(git submodule status | awk '{s=$1; sub(/^[+-]/,"",s); print s}' | sort | shasum -a 256 | cut -c1-16)
 tag="native-libs-${key}"
 tarball="build/native-macos.tar.gz"
 
