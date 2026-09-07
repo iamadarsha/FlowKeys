@@ -129,13 +129,7 @@ struct MenuBarView: View {
             return "—"
         }()
 
-        return Text(shortcutText)
-            .font(.system(size: 10, weight: .semibold, design: .monospaced))
-            .foregroundColor(KM.muted)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(KM.surfaceHi)
-            .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+        return KMKeycap(text: shortcutText)
     }
 
     private var providerBadge: some View {
@@ -327,10 +321,16 @@ struct MenuBarView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .transition(.move(edge: .top).combined(with: .opacity))
             } else {
-                Text("No recent transcriptions")
-                    .font(.system(size: 11))
-                    .foregroundColor(KM.muted)
-                    .transition(.opacity)
+                HStack(spacing: 6) {
+                    Image(systemName: "waveform")
+                        .font(.system(size: 10))
+                        .foregroundColor(KM.textMuted)
+                    Text("Hold \(appState.holdShortcut.isDisabled ? appState.toggleShortcut.displayName : appState.holdShortcut.displayName) and speak to create your first transcript")
+                        .font(.system(size: 11))
+                        .foregroundColor(KM.textMuted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .transition(.opacity)
             }
 
             if let error = appState.errorMessage {

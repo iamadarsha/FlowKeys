@@ -170,38 +170,18 @@ struct SnippetsSettingsView: View {
     }
 
     private var emptySnippetsState: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            ZStack {
-                Circle()
-                    .fill(KM.surfaceHi)
-                    .frame(width: 72, height: 72)
-                Image(systemName: "text.badge.plus")
-                    .font(.system(size: 30, weight: .medium))
-                    .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
-            }
-            Text("No Snippets Found")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(KM.onSurface)
-            Text("Add terms like 'my intro' or 'my upi id' to instantly expand them while dictating.")
-                .font(.subheadline)
-                .foregroundColor(KM.muted)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: 300)
-            Button("Add Suggested") {
+        KMEmptyState(
+            icon: "text.badge.plus",
+            title: "No snippets yet",
+            message: "Great for addresses, email sign-offs, and boilerplate. "
+                + "Add terms like ‘my intro’ or ‘my upi id’ to expand them while dictating."
+        ) {
+            KMGhostButton(label: "Add suggested", icon: "plus") {
                 for suggestion in SnippetEngine.suggestedSnippets {
                     let snippet = VoiceSnippet(trigger: suggestion.trigger, replacement: suggestion.placeholder)
                     appState.snippetEngine.addSnippet(snippet)
                 }
             }
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundColor(KM.accent)
-            .padding(.horizontal, 18)
-            .padding(.vertical, 8)
-            .background(KM.accent.opacity(0.12))
-            .clipShape(Capsule())
-            .buttonStyle(.plain)
-            Spacer()
         }
         .frame(maxWidth: .infinity)
         .background(KM.bg)
@@ -366,26 +346,12 @@ struct DictionarySettingsView: View {
     }
     
     private var emptyDictionaryState: some View {
-        VStack(spacing: 16) {
-            Spacer()
-            ZStack {
-                Circle()
-                    .fill(KM.surfaceHi)
-                    .frame(width: 72, height: 72)
-                Image(systemName: "character.book.closed")
-                    .font(.system(size: 30, weight: .medium))
-                    .foregroundStyle(LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing))
-            }
-            Text("Dictionary is Learning")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(KM.onSurface)
-            Text("Speak naturally! FlowKeys will automatically identify and learn uncommon names and terms you use 3 or more times.")
-                .font(.subheadline)
-                .foregroundColor(KM.muted)
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: 300)
-            Spacer()
-        }
+        KMEmptyState(
+            icon: "character.book.closed",
+            title: "No custom words yet",
+            message: "Add names, brands, and technical terms FlowKeys keeps getting wrong — "
+                + "or just speak naturally and it learns terms you use 3+ times."
+        )
         .frame(maxWidth: .infinity)
         .background(KM.bg)
     }

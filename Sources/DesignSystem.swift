@@ -282,6 +282,83 @@ struct KMLangBadge: View {
     }
 }
 
+// MARK: - Empty State
+//
+// Canonical zero-data template (Design G1). Soft monochrome icon, a clear
+// primary instruction, and — always — an action affordance so the state never
+// dead-ends the operator.
+
+struct KMEmptyState<Action: View>: View {
+    let icon: String
+    let title: String
+    let message: String
+    var hint: String? = nil          // e.g. "⌥Space  ·  Speak naturally"
+    @ViewBuilder var action: () -> Action
+
+    init(icon: String, title: String, message: String, hint: String? = nil,
+         @ViewBuilder action: @escaping () -> Action = { EmptyView() }) {
+        self.icon = icon
+        self.title = title
+        self.message = message
+        self.hint = hint
+        self.action = action
+    }
+
+    var body: some View {
+        VStack(spacing: 14) {
+            Spacer(minLength: 0)
+            ZStack {
+                Circle().fill(KM.surfaceTop).frame(width: 64, height: 64)
+                Image(systemName: icon)
+                    .font(.system(size: 24, weight: .regular))
+                    .foregroundColor(KM.textSecondary)
+            }
+            VStack(spacing: 5) {
+                Text(title)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(KM.textPrimary)
+                Text(message)
+                    .font(.system(size: 12))
+                    .foregroundColor(KM.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 320)
+            }
+            if let hint {
+                Text(hint)
+                    .font(.system(size: 10, weight: .medium, design: .monospaced))
+                    .foregroundColor(KM.textMuted)
+                    .padding(.horizontal, 8).padding(.vertical, 4)
+                    .background(KM.surfaceHi)
+                    .clipShape(RoundedRectangle(cornerRadius: KM.rChip, style: .continuous))
+            }
+            action()
+                .padding(.top, 2)
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+/// Small accent-tinted ghost button used inside empty states.
+struct KMGhostButton: View {
+    let label: String
+    var icon: String? = nil
+    let action: () -> Void
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 6) {
+                if let icon { Image(systemName: icon).font(.system(size: 11, weight: .semibold)) }
+                Text(label).font(.system(size: 12, weight: .semibold))
+            }
+            .foregroundColor(KM.accent)
+            .padding(.horizontal, 16).padding(.vertical, 7)
+            .background(KM.accent.opacity(0.12))
+            .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 // MARK: - Status Chip
 
 struct KMStatusChip: View {

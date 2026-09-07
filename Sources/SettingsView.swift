@@ -1433,13 +1433,13 @@ struct RunLogView: View {
             Divider()
 
             if appState.pipelineHistory.isEmpty {
-                VStack {
-                    Spacer()
-                    Text("No runs yet. Use dictation to populate history.")
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity)
+                KMEmptyState(
+                    icon: "clock.arrow.circlepath",
+                    title: "Your transcripts show up here",
+                    message: "Hold your dictation shortcut anywhere and start talking to create your first run.",
+                    hint: "\(appState.holdShortcut.isDisabled ? appState.toggleShortcut.displayName : appState.holdShortcut.displayName)   ·   Speak naturally"
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 ScrollView {
                     VStack(spacing: 12) {
