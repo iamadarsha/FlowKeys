@@ -89,7 +89,9 @@ else
 fi
 
 say "8. Build"
-if ! xcodebuild -version >/dev/null 2>&1; then
+if [ -n "${CI:-}" ]; then
+  printf '  \033[33m•\033[0m skipped in CI — the dedicated "Build" job does the universal build + DMG.\n'
+elif ! xcodebuild -version >/dev/null 2>&1; then
   printf '  \033[33m•\033[0m skipped — full Xcode not available (Command Line Tools only,\n'
   printf '     or compiler/SDK mismatch). Install Xcode, then:\n'
   printf '       sudo xcode-select -s /Applications/Xcode.app\n'
@@ -100,7 +102,7 @@ else
     make dmg >/dev/null && [ -f build/FlowKeys.dmg ] && ok "dmg built" || bad "dmg failed"
     du -h build/FlowKeys.dmg 2>/dev/null | awk '{print "     dmg size: "$1}'
   else
-    make clean >/dev/null && make -j1 build ARCH=arm64 && ok "arm64 build" || bad "arm64 build failed"
+    make clean >/dev/null && make -j1 build ARCH=arm64 LOCAL_LLM=0 && ok "arm64 build (whisper only)" || bad "arm64 build failed"
   fi
 fi
 
