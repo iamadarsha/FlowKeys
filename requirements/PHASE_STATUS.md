@@ -12,7 +12,53 @@ Each phase: own branch → CI green → manual `REGRESSION_CHECKLIST.md` → ver
 | **4b — offline local LLM** | `feature/local-ai-phase-4b` | 🟡 CI running | ⬜ manual pending | ⬜ v1.6.x | **llama.cpp v0.4.0** as a universal dylib in Contents/Frameworks/ (ggml 0.23 vs whisper's 0.20 — two-level namespace isolates); Qwen3-0.6B (unsloth GGUF, pinned+verified); `disable-library-validation` entitlement; `LocalLLMEngine` + `LocalTextProcessingService`; **opt-in, experimental** (0.6B quality is marginal — cloud cleanup stays default). |
 | **5a — progress + Command Mode** | `feature/local-ai-phase-5` | ✅ CI green | ⬜ manual pending | ⬜ v2.0.0 | whisper.cpp progress callback → "Transcribing 45%" in overlay; **Command Mode** (menu-bar "Rewrite selection by voice" → AX selection + spoken instruction → in-place rewrite). |
 | **4c — IndicConformer** | `feature/local-ai-phase-4c` | 🟡 CI running | ⬜ manual pending | ⬜ v2.0.0 | sherpa-onnx v1.13.7 vendored, universal static (+ static universal ONNX Runtime). `LocalIndicEngine`, multi-file model support (model.int8.onnx + tokens.txt), auto-routes HI/BN/Banglish. `LOCAL_INDIC=1` default → min macOS **13.4**. E2E: loads 332 ms, 10 s clip in 196 ms, native Devanagari. Binary 44 MB / app 54 MB. |
-| **5b — design refresh** | — | ⬜ user supplied Stitch exports (7 batches in Design/) | — | ⬜ later | Implement the exported screens (Design/stitch_five_phase_task_roadmap*/) against DesignSystem.swift. Post-2.0. |
+| **5b — design refresh** | `feature/design-v2.1` | 🟡 in progress | ⬜ manual pending | ⬜ v2.1.0 | "Kinetic Precision" evolution of the KM system. See below. |
+
+## v2.0.0 — shipped (2026-09-07)
+
+`v2.0.0` tag → the CI universal-DMG build hung 80+ min on a cold native
+cache (whisper.cpp + llama.cpp + sherpa-onnx incl. ONNX Runtime, ×2 arches).
+Built the universal DMG locally from the tag (native libs cached → 48s),
+verified (universal, codesigned, minos 13.4, 80 assertions), and published
+the GitHub Release manually. `release.yml` since hardened: split cache
+restore/save + `workflow_dispatch` warm-up so future tag builds hit a warm
+cache.
+
+## 5b — design v2.1 (`feature/design-v2.1`)
+
+Kinetic Precision = an *evolution* of the v1.2 "Kinetic Monolith" tokens, not
+a rewrite. Settings-tab order and onboarding-step order are LOCKED by
+`REGRESSION_CHECKLIST.md` §B/§C, so the split-settings / new-hub-window Stitch
+screens land as visual polish inside the existing structure, not a restructure.
+
+Done:
+- `DesignSystem.swift` — warning + dialect (EN/HI/BN/MIX) colours, radii scale,
+  `Motion` (attack/release curves), elevation modifiers (`kmFloatingShadow`,
+  `kmHUDShadow`, `kmAudioGlow`), components: `KMKeycap`, `KMLangBadge`,
+  `KMStatusChip`, `KMEyebrow`, `KMEmptyState`, `KMGhostButton`. All prior
+  `KM.*` symbols preserved.
+- `RecordingOverlay.swift` — Canvas/`TimelineView` 20-bar waveform with
+  ballistic attack/release + ±1 Gaussian neighbour smoothing + dialect-tinted
+  thermal gradient; live language badge; ambient audio glow; new phases
+  `.paused` (VAD flat-line), `.cleaning` (sparkle sweep), `.downloadingModel`
+  (ring), `.micPermission`. Manager API backward-compatible.
+- Command Mode "Editing selection" listening treatment (selection preview +
+  waveform + badge), wired from `AppState.startCommandMode`.
+- `AppState` surfaces `.cleaning` during post-processing.
+- Menu bar — version pill, engine-status dot, route-aware badge, dialect-
+  coloured language segments, `KMKeycap` hotkey, better recent-empty copy.
+- Settings sidebar — Kinetic Precision list-row active state.
+- Empty states — Snippets / Dictionary / Run Log now use `KMEmptyState`.
+- Verified: full universal build 0 err / 0 warn, 80 assertions, `SMOKE PASS`,
+  headless render harness (`scratchpad/shot`) for all 15 Flow Bar states.
+
+Deferred (interaction-model changes / net-new surfaces — need product sign-off):
+- Command Mode diff-review gate (State C — original vs rewritten, explicit
+  Replace) — today's flow auto-pastes like normal dictation.
+- Dedicated Hub window / Home dashboard / History inspector / Style-tone
+  screens (C0–C6) — net-new features, not refinements.
+- Split settings tabs (E1–E5) / 9-step onboarding re-flow (F1) — blocked by
+  the regression lock.
 
 ## v2.0.0 — merge all + tag
 
