@@ -40,13 +40,19 @@ jobs:
           brew list create-dmg >/dev/null 2>&1 || brew install create-dmg
           brew list fileicon    >/dev/null 2>&1 || brew install fileicon
 
-      # Same key + restore/save split as release.yml, so a workflow_dispatch
-      # warm-up run (or any successful build) primes the cache for both.
-      - name: Native cache key
+      # Native engines (whisper.cpp + llama.cpp + sherpa-onnx, the last of which
+      # compiles ONNX Runtime from source, ~90 min). Three-tier restore:
+      #   1. GitHub Actions cache (fast, 7-day eviction)
+      #   2. prebuilt tarball from the `native-libs-<key>` pre-release
+      #      (published by Scripts/publish_native_libs.sh after a submodule bump)
+      #   3. build from source (fallback; also re-populates tiers 1 & 2 material)
+      # Key = first 16 hex of sha256(sorted submodule SHAs) — the libs depend
+      # only on the vendored engine versions.
+      - name: Native libs key
         id: nativekey
-        run: echo "key=native-macos-${{ hashFiles('.gitmodules', 'Makefile', 'Sources/LocalAI/C*/**', 'vendor/**/CMakeLists.txt') }}" >> "$GITHUB_OUTPUT"
+        run: echo "sub=$(git submodule status | awk '{gsub(/^[+-]/,\"\",$1); print $1}' | sort | shasum -a 256 | cut -c1-16)" >> "$GITHUB_OUTPUT"
 
-      - name: Restore native builds (whisper.cpp / llama.cpp / sherpa-onnx)
+      - name: Restore native builds (cache)
         id: nativecache
         uses: actions/cache/restore@v4
         with:
@@ -55,13 +61,30 @@ jobs:
             build/llama
             build/sherpa
             build/Frameworks
-          key: ${{ steps.nativekey.outputs.key }}
+          key: native-macos-${{ steps.nativekey.outputs.sub }}
 
-      - name: Build native engines (if cache missed)
+      - name: Fetch prebuilt native libs (on cache miss)
+        id: prebuilt
         if: steps.nativecache.outputs.cache-hit != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="native-libs-${{ steps.nativekey.outputs.sub }}"
+          if gh release download "$tag" --pattern 'native-macos.tar.gz' --dir . 2>/dev/null; then
+            tar xzf native-macos.tar.gz && rm native-macos.tar.gz
+            find build/whisper build/llama build/sherpa build/Frameworks -exec touch {} +
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+            echo "✅ restored prebuilt native libs from $tag"
+          else
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ no prebuilt asset $tag — building from source"
+          fi
+
+      - name: Build native engines (cache + prebuilt both missed)
+        if: steps.nativecache.outputs.cache-hit != 'true' && steps.prebuilt.outputs.ok != 'true'
         run: ARCH=universal make whisper-libs llama-libs sherpa-libs
 
-      - name: Save native builds
+      - name: Save native builds (cache)
         if: always() && steps.nativecache.outputs.cache-hit != 'true'
         uses: actions/cache/save@v4
         with:
@@ -70,7 +93,7 @@ jobs:
             build/llama
             build/sherpa
             build/Frameworks
-          key: ${{ steps.nativekey.outputs.key }}
+          key: native-macos-${{ steps.nativekey.outputs.sub }}
 
       - name: Regression smoke (static checks + Local AI unit tests)
         run: ./Scripts/regression_smoke.sh
