@@ -13,11 +13,9 @@ enum KM {
     static let surfaceHi   = Color(hex: "#20201F")   // L2 — cards, list rows, pickers
     static let surfaceTop  = Color(hex: "#2A2A2A")   // L3 — popovers, keycaps, active selection
     static let outline     = Color.white.opacity(0.07) // structural hairline
-    static let outlineSoft = Color.white.opacity(0.05) // elevated-module hairline
 
     // Accent & feedback
     static let accent      = Color(hex: "#FF6B35")   // active / record / primary trigger
-    static let accentPress  = Color(hex: "#E55A27")  // pressed primary
     static let salmon      = Color(hex: "#FFB59D")   // soft highlight, glow falloff
     static let green       = Color(hex: "#53E16F")   // signal confirmation, engine ready
     static let warning     = Color(hex: "#FFC24B")   // clipping, fallback, network jitter
@@ -38,7 +36,6 @@ enum KM {
     static let langMIX     = Color(hex: "#FF6B35")   // inherits primary warmth
 
     // Corner radii (continuous squircle)
-    static let rPanel: CGFloat   = 16   // panels & main windows
     static let rCard: CGFloat    = 12   // cards, inner sections, dialogs
     static let rControl: CGFloat = 8    // controls, dropdowns, inputs
     static let rChip: CGFloat    = 6    // keycaps, tags, mini pills
@@ -49,33 +46,16 @@ enum KM {
 /// Micro-interaction timing. Snappy 100–180ms curves; audio-reactive attack/release
 /// tuned for organic, water-ripple fluidity per the A2 waveform spec.
 enum Motion {
-    static let microDuration: Double   = 0.14   // state chrome, hovers
     static let attackDuration: Double  = 0.06   // waveform bar rise (fast ease-out)
     static let releaseDuration: Double = 0.22   // waveform bar fall (fluid ease-in)
 
-    static let micro   = Animation.easeOut(duration: microDuration)
-    static let snappy   = Animation.spring(response: 0.28, dampingFraction: 0.78)
-    static let settle   = Animation.spring(response: 0.35, dampingFraction: 0.82)
-    static let bounce   = Animation.spring(response: 0.30, dampingFraction: 0.70)
-
-    /// Waveform bar animation — asymmetric ballistic envelope.
-    static func wave(rising: Bool) -> Animation {
-        rising
-            ? .timingCurve(0.2, 0.9, 0.3, 1.0, duration: attackDuration)
-            : .timingCurve(0.4, 0.0, 0.2, 1.0, duration: releaseDuration)
-    }
+    static let micro  = Animation.easeOut(duration: 0.14)   // state chrome, hovers
+    static let snappy = Animation.spring(response: 0.28, dampingFraction: 0.78)
 }
 
 // MARK: - Elevation
 
 extension View {
-    /// L1 — floating dialog ambient dual-stage shadow.
-    func kmFloatingShadow() -> some View {
-        self
-            .shadow(color: .black.opacity(0.75), radius: 18, x: 0, y: 16)
-            .shadow(color: .black.opacity(0.40), radius: 6, x: 0, y: 4)
-    }
-
     /// L3 — floating capsule HUD dispersion.
     func kmHUDShadow() -> some View {
         self
@@ -127,14 +107,6 @@ extension UserLanguageMode {
         case .pureHindi:              return KM.langHI
         case .pureBengali, .banglish: return KM.langBN
         case .hinglish:               return KM.langMIX
-        }
-    }
-
-    /// Two-stop gradient for borders / glow rings.
-    var accentGradient: [Color] {
-        switch self {
-        case .hinglish: return [KM.accent, KM.salmon]
-        default:        return [accentColor, accentColor.opacity(0.65)]
         }
     }
 
@@ -356,25 +328,5 @@ struct KMGhostButton: View {
             .clipShape(Capsule())
         }
         .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Status Chip
-
-struct KMStatusChip: View {
-    let text: String
-    var color: Color = KM.green
-    var body: some View {
-        HStack(spacing: 5) {
-            Circle().fill(color).frame(width: 6, height: 6)
-            Text(text.uppercased())
-                .font(.system(size: 9, weight: .semibold))
-                .tracking(0.8)
-                .foregroundColor(KM.textSecondary)
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 3)
-        .background(Color.white.opacity(0.04))
-        .clipShape(Capsule())
     }
 }

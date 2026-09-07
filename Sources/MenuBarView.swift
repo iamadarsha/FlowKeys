@@ -212,10 +212,7 @@ struct MenuBarView: View {
 
         return VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("TONE")
-                    .font(.system(size: 9, weight: .bold))
-                    .foregroundColor(KM.muted)
-                    .tracking(1.2)
+                KMEyebrow(text: "Tone")
                 Spacer()
                 Button {
                     appState.selectedSettingsTab = .general
@@ -277,10 +274,7 @@ struct MenuBarView: View {
 
     private var recentSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("RECENT")
-                .font(.system(size: 9, weight: .bold))
-                .foregroundColor(KM.muted)
-                .tracking(1.2)
+            KMEyebrow(text: "Recent")
 
             if !appState.lastTranscript.isEmpty && !appState.isRecording && !appState.isTranscribing {
                 HStack(alignment: .top, spacing: 8) {
