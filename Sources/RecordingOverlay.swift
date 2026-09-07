@@ -13,12 +13,23 @@ final class RecordingOverlayState: ObservableObject {
     @Published var activeModeIcon: String = ""
     @Published var recordingStartDate: Date? = nil
     @Published var transcribeProgress: Int = -1
+    /// Live interim hypothesis shown in the pill's centre zone (optional).
+    @Published var interimText: String = ""
+    /// Whisper-Mode low-decibel gain is boosting the signal.
+    @Published var whisperGainActive: Bool = false
+    /// Offline model provisioning: (name, percent 0–100). Empty name = inactive.
+    @Published var downloadModelName: String = ""
+    @Published var downloadPercent: Int = 0
 }
 
 enum OverlayPhase {
     case initializing
     case recording
+    case paused          // VAD detected a silence — audio eased to a flat line
     case transcribing
+    case cleaning        // post-process / LLM polish sweep
+    case downloadingModel
+    case micPermission
     case done
     case error
 }
@@ -64,23 +75,28 @@ final class RecordingOverlayManager {
     private var pillWindow: NSPanel?
     private let overlayState = RecordingOverlayState()
 
-    // Error pill is wider
-    private let normalWidth: CGFloat  = 260
-    private let errorWidth: CGFloat   = 340
+    // Error / permission pills are wider
+    private let normalWidth: CGFloat  = 264
+    private let wideWidth: CGFloat    = 344
     private let pillHeight: CGFloat   = 52
     private let pillCornerRadius: CGFloat = 26
     private let bottomOffset: CGFloat = 40
 
     var onStopButtonPressed: (() -> Void)?
     var onRetryButtonPressed: (() -> Void)?
+    var onEnableMicPressed: (() -> Void)?
 
     private var currentPillWidth: CGFloat {
-        overlayState.phase == .error ? errorWidth : normalWidth
+        switch overlayState.phase {
+        case .error, .micPermission: return wideWidth
+        default:                     return normalWidth
+        }
     }
 
     private var overlayAcceptsMouseEvents: Bool {
         (overlayState.phase == .recording && overlayState.recordingTriggerMode == .toggle)
             || overlayState.phase == .error
+            || overlayState.phase == .micPermission
     }
 
     // MARK: Public API
@@ -90,6 +106,7 @@ final class RecordingOverlayManager {
             self.overlayState.recordingTriggerMode = mode
             self.overlayState.phase = .initializing
             self.overlayState.audioLevel = 0
+            self.overlayState.interimText = ""
             self.overlayState.recordingStartDate = nil
             self.showPill(animated: true)
         }
@@ -126,7 +143,13 @@ final class RecordingOverlayManager {
     }
 
     func updateAudioLevel(_ level: Float) {
-        DispatchQueue.main.async { self.overlayState.audioLevel = level }
+        DispatchQueue.main.async {
+            self.overlayState.audioLevel = level
+            // Auto-recover from a VAD pause when the speaker resumes.
+            if self.overlayState.phase == .paused && level > 0.08 {
+                self.overlayState.phase = .recording
+            }
+        }
     }
 
     func updateLanguageMode(_ mode: UserLanguageMode) {
@@ -140,11 +163,60 @@ final class RecordingOverlayManager {
         }
     }
 
+    /// Live interim hypothesis (streaming preview). Pass "" to clear.
+    func updateInterim(_ text: String) {
+        DispatchQueue.main.async { self.overlayState.interimText = text }
+    }
+
+    func setWhisperGain(_ active: Bool) {
+        DispatchQueue.main.async { self.overlayState.whisperGainActive = active }
+    }
+
+    /// VAD detected a sustained silence.
+    func showPaused() {
+        DispatchQueue.main.async {
+            guard self.overlayState.phase == .recording else { return }
+            self.overlayState.phase = .paused
+            self.updatePillInteractivity()
+        }
+    }
+
     func showTranscribing() {
         DispatchQueue.main.async {
             self.overlayState.phase = .transcribing
             self.overlayState.recordingStartDate = nil
             self.updatePillInteractivity()
+        }
+    }
+
+    /// Post-process / LLM cleanup sweep.
+    func showCleaning() {
+        DispatchQueue.main.async {
+            self.overlayState.phase = .cleaning
+            self.overlayState.recordingStartDate = nil
+            self.updatePillInteractivity()
+        }
+    }
+
+    /// Offline model provisioning progress (0–100). Pass percent < 0 to leave.
+    func showModelDownload(name: String, percent: Int) {
+        DispatchQueue.main.async {
+            if percent < 0 {
+                if self.overlayState.phase == .downloadingModel { self.dismissPill() }
+                return
+            }
+            self.overlayState.downloadModelName = name
+            self.overlayState.downloadPercent = max(0, min(100, percent))
+            self.overlayState.phase = .downloadingModel
+            self.showPill(animated: true)
+        }
+    }
+
+    func showMicPermission() {
+        DispatchQueue.main.async {
+            self.overlayState.phase = .micPermission
+            self.overlayState.recordingStartDate = nil
+            self.showPill(animated: true)
         }
     }
 
@@ -178,7 +250,12 @@ final class RecordingOverlayManager {
     }
 
     func dismiss() {
-        DispatchQueue.main.async { self.dismissPill() }
+        DispatchQueue.main.async {
+            self.overlayState.interimText = ""
+            self.overlayState.whisperGainActive = false
+            self.overlayState.downloadModelName = ""
+            self.dismissPill()
+        }
     }
 
     // MARK: Private — Window Management
@@ -285,7 +362,8 @@ final class RecordingOverlayManager {
             state: overlayState,
             cornerRadius: pillCornerRadius,
             onStopButtonPressed: { [weak self] in self?.onStopButtonPressed?() },
-            onRetryButtonPressed: { [weak self] in self?.onRetryButtonPressed?() }
+            onRetryButtonPressed: { [weak self] in self?.onRetryButtonPressed?() },
+            onEnableMicPressed:  { [weak self] in self?.onEnableMicPressed?() }
         )
         .frame(width: width, height: pillHeight)
 
@@ -303,16 +381,25 @@ struct PillOverlayView: View {
     let cornerRadius: CGFloat
     let onStopButtonPressed: () -> Void
     let onRetryButtonPressed: () -> Void
+    var onEnableMicPressed: () -> Void = {}
 
     private let accentColor  = Color(red: 1.0,   green: 0.42,  blue: 0.21)   // #FF6B35
     private let greenColor   = Color(red: 0.325, green: 0.882, blue: 0.435)  // #53E16F
     private let bgColor      = Color(red: 0.051, green: 0.051, blue: 0.059)
+
+    private var dialectColor: Color { state.languageMode.accentColor }
+
+    private var isLive: Bool { state.phase == .recording || state.phase == .paused }
 
     var body: some View {
         ZStack {
             // Glass background
             Capsule()
                 .fill(bgColor.opacity(0.92))
+                .overlay(
+                    Capsule().stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        .blendMode(.plusLighter).opacity(0.5)
+                )
 
             // Border
             Capsule()
@@ -325,103 +412,175 @@ struct PillOverlayView: View {
             contentView
                 .padding(.horizontal, 14)
         }
-        .shadow(color: .black.opacity(0.5), radius: 20, x: 0, y: 8)
+        .kmHUDShadow()
+        .kmAudioGlow(state.phase == .recording, color: state.languageMode == .hinglish ? accentColor : dialectColor)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
     }
 
     private var borderColors: [Color] {
         switch state.phase {
-        case .done:  return [greenColor, greenColor.opacity(0.6)]
-        case .error: return [Color(red: 1, green: 0.706, blue: 0.671), Color(red: 1, green: 0.706, blue: 0.671).opacity(0.6)]
-        default:     return OverlayTheme.borderGradient(for: state.languageMode)
+        case .done:            return [greenColor, greenColor.opacity(0.6)]
+        case .error:           return [Color(red: 1, green: 0.706, blue: 0.671), Color(red: 1, green: 0.706, blue: 0.671).opacity(0.6)]
+        case .micPermission:   return [Color(red: 1, green: 0.76, blue: 0.29), Color(red: 1, green: 0.76, blue: 0.29).opacity(0.5)]
+        case .downloadingModel: return [accentColor, accentColor.opacity(0.5)]
+        default:               return OverlayTheme.borderGradient(for: state.languageMode)
         }
     }
 
     private var borderWidth: CGFloat {
-        state.phase == .done || state.phase == .error ? 1.5 : 1.0
+        switch state.phase {
+        case .done, .error, .micPermission: return 1.5
+        default: return 1.0
+        }
     }
 
     private var accessibilityDescription: String {
         switch state.phase {
-        case .initializing: return "FlowKeys: preparing to record"
-        case .recording:    return "FlowKeys: recording audio"
-        case .transcribing: return "FlowKeys: transcribing your speech"
-        case .done:         return "FlowKeys: transcription complete"
-        case .error:        return "FlowKeys: error — \(state.errorMessage)"
+        case .initializing:     return "FlowKeys: preparing to record"
+        case .recording:        return "FlowKeys: recording audio"
+        case .paused:           return "FlowKeys: paused — waiting for speech"
+        case .transcribing:     return "FlowKeys: transcribing your speech"
+        case .cleaning:         return "FlowKeys: cleaning up the transcript"
+        case .downloadingModel: return "FlowKeys: downloading \(state.downloadModelName), \(state.downloadPercent) percent"
+        case .micPermission:    return "FlowKeys: microphone access needed"
+        case .done:             return "FlowKeys: transcription complete"
+        case .error:            return "FlowKeys: error — \(state.errorMessage)"
         }
     }
 
     @ViewBuilder
     private var contentView: some View {
         switch state.phase {
-        case .done:
-            doneContent
-        case .error:
-            errorContent
-        default:
-            recordingContent
+        case .done:             doneContent
+        case .error:            errorContent
+        case .micPermission:    micPermissionContent
+        case .downloadingModel: downloadContent
+        default:                recordingContent
         }
     }
 
-    // MARK: Recording / Initializing / Transcribing
+    // MARK: Recording / Initializing / Paused / Transcribing / Cleaning
 
     private var recordingContent: some View {
         HStack(spacing: 10) {
-            // Mic icon with gradient
-            Image(systemName: state.phase == .transcribing ? "waveform" : "mic.fill")
+            // Leading glyph
+            Image(systemName: leadingGlyph)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(
                     LinearGradient(colors: [accentColor, Color(red: 1, green: 0.71, blue: 0.62)],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
+                .symbolEffectPulseIfAvailable(active: state.phase == .initializing)
 
-            // Waveform bars
-            if state.phase == .transcribing || state.phase == .initializing {
-                ProcessingDotsView()
-                    .frame(width: 44)
-            } else {
-                PillWaveformView(audioLevel: state.audioLevel)
-                    .frame(width: 54)
+            // Visualiser
+            Group {
+                switch state.phase {
+                case .transcribing, .initializing:
+                    ProcessingDotsView().frame(width: 44)
+                case .cleaning:
+                    CleaningSweepView().frame(width: 54)
+                case .paused:
+                    PausedLineView().frame(width: 54)
+                default:
+                    PillWaveformView(audioLevel: state.audioLevel, tint: state.languageMode == .hinglish ? nil : dialectColor)
+                        .frame(width: 62)
+                }
             }
 
-            // Timer or "Processing"
-            if state.phase == .recording {
-                RecordingTimerView(startDate: state.recordingStartDate ?? Date())
-                    .foregroundColor(.white.opacity(0.8))
-            } else {
-                Text(state.transcribeProgress > 0 && state.transcribeProgress < 100
-                     ? "Transcribing \(state.transcribeProgress)%"
-                     : "Processing")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundColor(.white.opacity(0.5))
-                    .monospacedDigit()
+            // Centre text
+            centreText
+
+            // Trailing zone
+            Spacer(minLength: 0)
+
+            if state.whisperGainActive && isLive {
+                whisperGainChip
             }
 
-            // Mode tag
-            if !state.activeModeName.isEmpty && state.phase == .recording {
+            if isLive && !state.activeModeName.isEmpty && state.interimText.isEmpty {
                 modeTag
             }
 
-            Spacer(minLength: 0)
+            if isLive {
+                KMLangBadge(mode: state.languageMode)
+            }
 
             // Stop button (toggle mode)
             if state.phase == .recording && state.recordingTriggerMode == .toggle {
                 Button(action: onStopButtonPressed) {
                     Circle()
-                        .fill(Color.red.opacity(0.85))
-                        .frame(width: 28, height: 28)
+                        .fill(Color.red.opacity(0.9))
+                        .frame(width: 26, height: 26)
                         .overlay(
-                            Image(systemName: "stop.fill")
-                                .font(.system(size: 9, weight: .bold))
-                                .foregroundColor(.white)
+                            RoundedRectangle(cornerRadius: 2)
+                                .fill(Color.white)
+                                .frame(width: 8, height: 8)
                         )
                 }
                 .buttonStyle(.plain)
             }
         }
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.phase)
-        .animation(.spring(response: 0.3, dampingFraction: 0.8), value: state.recordingTriggerMode)
+        .animation(Motion.snappy, value: state.phase)
+        .animation(Motion.snappy, value: state.recordingTriggerMode)
+        .animation(Motion.micro, value: state.whisperGainActive)
+    }
+
+    private var leadingGlyph: String {
+        switch state.phase {
+        case .transcribing: return "waveform"
+        case .cleaning:     return "sparkles"
+        case .paused:       return "pause.fill"
+        default:            return "mic.fill"
+        }
+    }
+
+    @ViewBuilder
+    private var centreText: some View {
+        switch state.phase {
+        case .recording:
+            if !state.interimText.isEmpty {
+                Text(state.interimText)
+                    .font(.system(size: 11))
+                    .foregroundColor(.white.opacity(0.75))
+                    .lineLimit(1)
+                    .truncationMode(.head)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                RecordingTimerView(startDate: state.recordingStartDate ?? Date())
+                    .foregroundColor(.white.opacity(0.8))
+            }
+        case .paused:
+            Text("PAUSED")
+                .font(.system(size: 10, weight: .semibold))
+                .tracking(1.2)
+                .foregroundColor(.white.opacity(0.5))
+        case .cleaning:
+            Text("Cleaning syntax & fillers…")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(.white.opacity(0.6))
+                .lineLimit(1)
+        default:
+            Text(state.transcribeProgress > 0 && state.transcribeProgress < 100
+                 ? "Transcribing \(state.transcribeProgress)%"
+                 : "Processing")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(.white.opacity(0.5))
+                .monospacedDigit()
+        }
+    }
+
+    private var whisperGainChip: some View {
+        HStack(spacing: 3) {
+            Image(systemName: "waveform.badge.mic").font(.system(size: 8))
+            Text("Whisper Gain").font(.system(size: 9, weight: .medium))
+        }
+        .foregroundColor(greenColor)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(greenColor.opacity(0.14))
+        .clipShape(Capsule())
+        .fixedSize()
     }
 
     private var modeTag: some View {
@@ -453,8 +612,8 @@ struct PillOverlayView: View {
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(.black)
                 )
-            Text("Done")
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
+            Text("Pasted to cursor")
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
         }
         .frame(maxWidth: .infinity, alignment: .center)
@@ -480,45 +639,164 @@ struct PillOverlayView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(
-                        Capsule().fill(accentColor.opacity(0.85))
-                    )
+                    .background(Capsule().fill(accentColor.opacity(0.9)))
             }
             .buttonStyle(.plain)
         }
     }
+
+    // MARK: Mic permission
+
+    private var micPermissionContent: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "mic.slash.fill")
+                .font(.system(size: 13))
+                .foregroundColor(Color(red: 1, green: 0.76, blue: 0.29))
+
+            Text("Microphone access needed")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundColor(.white.opacity(0.85))
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button(action: onEnableMicPressed) {
+                Text("Enable")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Capsule().fill(Color(red: 1, green: 0.76, blue: 0.29)))
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    // MARK: Model download
+
+    private var downloadContent: some View {
+        HStack(spacing: 10) {
+            DownloadRingView(percent: state.downloadPercent)
+                .frame(width: 22, height: 22)
+            Text("\(state.downloadModelName): \(state.downloadPercent)%")
+                .font(.system(size: 12, weight: .medium))
+                .foregroundColor(.white.opacity(0.85))
+                .monospacedDigit()
+            Spacer(minLength: 0)
+        }
+    }
 }
 
-// MARK: - Waveform (5 bars, orange accent)
+// MARK: - Waveform (24 bars, thermal gradient, dialect-tinted)
 
 struct PillWaveformView: View {
     let audioLevel: Float
+    /// Optional dialect tint. `nil` keeps the default accent→salmon thermal gradient.
+    var tint: Color? = nil
 
-    private static let barCount     = 5
-    private static let multipliers: [CGFloat] = [0.5, 0.75, 1.0, 0.75, 0.5]
-    private let barWidth: CGFloat   = 3
+    private static let barCount = 24
+    private let barWidth: CGFloat   = 2
     private let barSpacing: CGFloat = 3
-    private let minHeight: CGFloat  = 6
+    private let minHeight: CGFloat  = 3
     private let maxHeight: CGFloat  = 26
 
-    private let accentColor = Color(red: 1.0, green: 0.42, blue: 0.21)
+    private let accent = Color(red: 1.0, green: 0.42, blue: 0.21)   // #FF6B35
+    private let salmon = Color(red: 1.0, green: 0.71, blue: 0.62)   // #FFB59D
+
+    // Stable per-bar phase offsets so the field reads as organic, not uniform.
+    private static let phase: [CGFloat] = (0..<barCount).map { i in
+        CGFloat((sin(Double(i) * 12.9898) * 43758.5453).truncatingRemainder(dividingBy: 1))
+    }
+    // Envelope shape — centre bars reach higher.
+    private static let envelope: [CGFloat] = (0..<barCount).map { i in
+        let x = CGFloat(i) / CGFloat(barCount - 1)
+        return 0.35 + 0.65 * sin(x * .pi)
+    }
+
+    @State private var tick: CGFloat = 0
+    private let timer = Timer.publish(every: 1.0 / 30.0, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        HStack(spacing: barSpacing) {
+        HStack(alignment: .center, spacing: barSpacing) {
             ForEach(0..<Self.barCount, id: \.self) { i in
-                RoundedRectangle(cornerRadius: 2, style: .continuous)
-                    .fill(accentColor)
+                Capsule(style: .continuous)
+                    .fill(fill)
                     .frame(width: barWidth, height: barHeight(for: i))
-                    .animation(.interpolatingSpring(stiffness: 480, damping: 22), value: audioLevel)
+                    .animation(Motion.wave(rising: audioLevel > 0.15), value: audioLevel)
+                    .animation(.linear(duration: 1.0 / 30.0), value: tick)
             }
         }
         .frame(height: maxHeight)
+        .onReceive(timer) { _ in tick += 0.14 }
+    }
+
+    private var fill: LinearGradient {
+        let top = tint ?? accent
+        let bottom = tint?.opacity(0.55) ?? salmon
+        return LinearGradient(colors: [top, bottom], startPoint: .top, endPoint: .bottom)
     }
 
     private func barHeight(for i: Int) -> CGFloat {
-        let level = CGFloat(audioLevel)
-        let amplitude = min(level * Self.multipliers[i], 1.0)
-        return minHeight + (maxHeight - minHeight) * amplitude
+        let level = CGFloat(max(0, min(1, audioLevel)))
+        // idle shimmer so the field never flat-lines while mic is open
+        let idle = 0.06 + 0.05 * (0.5 + 0.5 * sin(tick + Self.phase[i] * 6.28))
+        let drive = level * Self.envelope[i]
+        // ±1 neighbour smoothing approximation via envelope; jitter keeps it alive
+        let jitter = 0.12 * level * sin(tick * 1.7 + Self.phase[i] * 9.0)
+        let amp = max(idle, min(1.0, drive + jitter))
+        return minHeight + (maxHeight - minHeight) * amp
+    }
+}
+
+// MARK: - Paused flat line (VAD silence)
+
+struct PausedLineView: View {
+    @State private var wobble: CGFloat = 0
+    private let timer = Timer.publish(every: 1.0 / 20.0, on: .main, in: .common).autoconnect()
+    var body: some View {
+        Capsule()
+            .fill(Color.white.opacity(0.25))
+            .frame(height: 3)
+            .scaleEffect(x: 1, y: 1 + 0.4 * sin(wobble), anchor: .center)
+            .onReceive(timer) { _ in wobble += 0.18 }
+    }
+}
+
+// MARK: - Cleaning sweep (sparkle glint across a stream line)
+
+struct CleaningSweepView: View {
+    @State private var x: CGFloat = -1
+    private let timer = Timer.publish(every: 1.0 / 30.0, on: .main, in: .common).autoconnect()
+    var body: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                Capsule().fill(Color.white.opacity(0.14)).frame(height: 3)
+                Capsule()
+                    .fill(Color(red: 1.0, green: 0.42, blue: 0.21))
+                    .frame(width: 14, height: 3)
+                    .offset(x: x * geo.size.width)
+            }
+            .frame(maxHeight: .infinity, alignment: .center)
+        }
+        .onReceive(timer) { _ in
+            x += 0.04
+            if x > 1.1 { x = -0.2 }
+        }
+    }
+}
+
+// MARK: - Download ring
+
+struct DownloadRingView: View {
+    let percent: Int
+    var body: some View {
+        ZStack {
+            Circle().stroke(Color.white.opacity(0.15), lineWidth: 2.5)
+            Circle()
+                .trim(from: 0, to: CGFloat(max(0, min(100, percent))) / 100)
+                .stroke(Color(red: 1.0, green: 0.42, blue: 0.21),
+                        style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+                .animation(.easeOut(duration: 0.3), value: percent)
+        }
     }
 }
 
@@ -578,6 +856,19 @@ struct RecordingTimerView: View {
     private var formattedTime: String {
         let s = Int(elapsed)
         return String(format: "%d:%02d", s / 60, s % 60)
+    }
+}
+
+// MARK: - Symbol effect shim
+
+private extension View {
+    @ViewBuilder
+    func symbolEffectPulseIfAvailable(active: Bool) -> some View {
+        if #available(macOS 14.0, *), active {
+            self.symbolEffect(.pulse, options: .repeating)
+        } else {
+            self
+        }
     }
 }
 

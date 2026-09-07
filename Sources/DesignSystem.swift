@@ -1,19 +1,94 @@
 import SwiftUI
 
-// MARK: - Kinetic Monolith Design Tokens
+// MARK: - Kinetic Precision Design Tokens
+//
+// Evolution of the v1.2 "Kinetic Monolith" system. Same obsidian base + thermal
+// orange accent, refined per Design/stitch_five_phase_task_roadmap*/kinetic_precision.
+// All existing `KM.*` symbols are preserved for source compatibility.
 
 enum KM {
-    static let bg          = Color(hex: "#0F0F11")
-    static let surface     = Color(hex: "#131313")
-    static let surfaceHi   = Color(hex: "#20201F")
-    static let surfaceTop  = Color(hex: "#2A2A2A")
-    static let outline     = Color.white.opacity(0.07)
-    static let accent      = Color(hex: "#FF6B35")
-    static let salmon      = Color(hex: "#FFB59D")
-    static let green       = Color(hex: "#53E16F")
-    static let error       = Color(hex: "#FFB4AB")
-    static let onSurface   = Color.white.opacity(0.87)
+    // Canvas & surface hierarchy (luminance stepping)
+    static let bg          = Color(hex: "#0F0F11")   // L0 — canvas / inactive base
+    static let surface     = Color(hex: "#131313")   // L1 — window containers
+    static let surfaceHi   = Color(hex: "#20201F")   // L2 — cards, list rows, pickers
+    static let surfaceTop  = Color(hex: "#2A2A2A")   // L3 — popovers, keycaps, active selection
+    static let outline     = Color.white.opacity(0.07) // structural hairline
+    static let outlineSoft = Color.white.opacity(0.05) // elevated-module hairline
+
+    // Accent & feedback
+    static let accent      = Color(hex: "#FF6B35")   // active / record / primary trigger
+    static let accentPress  = Color(hex: "#E55A27")  // pressed primary
+    static let salmon      = Color(hex: "#FFB59D")   // soft highlight, glow falloff
+    static let green       = Color(hex: "#53E16F")   // signal confirmation, engine ready
+    static let warning     = Color(hex: "#FFC24B")   // clipping, fallback, network jitter
+    static let error       = Color(hex: "#FFB4AB")   // mic disconnect, permission lock
+
+    // Typographic contrast
+    static let textPrimary   = Color.white.opacity(0.90)
+    static let textSecondary = Color.white.opacity(0.62)
+    static let textMuted     = Color.white.opacity(0.40)
+    // Legacy aliases
+    static let onSurface   = Color.white.opacity(0.90)
     static let muted       = Color.white.opacity(0.40)
+
+    // Language / dialect indicators
+    static let langEN      = Color(hex: "#4A90E2")   // cerulean
+    static let langHI      = Color(hex: "#138808")   // saffron/emerald flag node
+    static let langBN      = Color(hex: "#0B7345")   // forest green
+    static let langMIX     = Color(hex: "#FF6B35")   // inherits primary warmth
+
+    // Corner radii (continuous squircle)
+    static let rPanel: CGFloat   = 16   // panels & main windows
+    static let rCard: CGFloat    = 12   // cards, inner sections, dialogs
+    static let rControl: CGFloat = 8    // controls, dropdowns, inputs
+    static let rChip: CGFloat    = 6    // keycaps, tags, mini pills
+}
+
+// MARK: - Motion
+
+/// Micro-interaction timing. Snappy 100–180ms curves; audio-reactive attack/release
+/// tuned for organic, water-ripple fluidity per the A2 waveform spec.
+enum Motion {
+    static let microDuration: Double   = 0.14   // state chrome, hovers
+    static let attackDuration: Double  = 0.06   // waveform bar rise (fast ease-out)
+    static let releaseDuration: Double = 0.22   // waveform bar fall (fluid ease-in)
+
+    static let micro   = Animation.easeOut(duration: microDuration)
+    static let snappy   = Animation.spring(response: 0.28, dampingFraction: 0.78)
+    static let settle   = Animation.spring(response: 0.35, dampingFraction: 0.82)
+    static let bounce   = Animation.spring(response: 0.30, dampingFraction: 0.70)
+
+    /// Waveform bar animation — asymmetric ballistic envelope.
+    static func wave(rising: Bool) -> Animation {
+        rising
+            ? .timingCurve(0.2, 0.9, 0.3, 1.0, duration: attackDuration)
+            : .timingCurve(0.4, 0.0, 0.2, 1.0, duration: releaseDuration)
+    }
+}
+
+// MARK: - Elevation
+
+extension View {
+    /// L1 — floating dialog ambient dual-stage shadow.
+    func kmFloatingShadow() -> some View {
+        self
+            .shadow(color: .black.opacity(0.75), radius: 18, x: 0, y: 16)
+            .shadow(color: .black.opacity(0.40), radius: 6, x: 0, y: 4)
+    }
+
+    /// L3 — floating capsule HUD dispersion.
+    func kmHUDShadow() -> some View {
+        self
+            .shadow(color: .black.opacity(0.85), radius: 24, x: 0, y: 20)
+            .shadow(color: .black.opacity(0.50), radius: 8, x: 0, y: 8)
+    }
+
+    /// L4 — active recording accent aura beneath the HUD.
+    func kmAudioGlow(_ active: Bool, color: Color = KM.accent) -> some View {
+        self
+            .shadow(color: active ? color.opacity(0.35) : .clear, radius: 1, x: 0, y: 0)
+            .shadow(color: active ? color.opacity(0.20) : .clear, radius: 14, x: 0, y: 8)
+    }
 }
 
 // MARK: - Color(hex:) Extension
@@ -42,20 +117,57 @@ extension Color {
     }
 }
 
+// MARK: - Language accent mapping
+
+extension UserLanguageMode {
+    /// Dialect indicator colour used by the Flow Bar, menu-bar segment, badges.
+    var accentColor: Color {
+        switch self {
+        case .pureEnglish:            return KM.langEN
+        case .pureHindi:              return KM.langHI
+        case .pureBengali, .banglish: return KM.langBN
+        case .hinglish:               return KM.langMIX
+        }
+    }
+
+    /// Two-stop gradient for borders / glow rings.
+    var accentGradient: [Color] {
+        switch self {
+        case .hinglish: return [KM.accent, KM.salmon]
+        default:        return [accentColor, accentColor.opacity(0.65)]
+        }
+    }
+
+    /// Compact badge label.
+    var badgeCode: String {
+        switch self {
+        case .hinglish:   return "MIX"
+        case .pureHindi:  return "HI"
+        case .pureEnglish: return "EN"
+        case .pureBengali: return "BN"
+        case .banglish:   return "BN·EN"
+        }
+    }
+}
+
 // MARK: - Shared Card Component
 
 struct KMCard<Content: View>: View {
+    var padding: CGFloat = 16
     let content: Content
-    init(@ViewBuilder content: () -> Content) { self.content = content() }
+    init(padding: CGFloat = 16, @ViewBuilder content: () -> Content) {
+        self.padding = padding
+        self.content = content()
+    }
 
     var body: some View {
         content
-            .padding(16)
+            .padding(padding)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(KM.surfaceHi)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: KM.rCard, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: KM.rCard, style: .continuous)
                     .stroke(KM.outline, lineWidth: 1)
             )
     }
@@ -75,6 +187,17 @@ struct KMSectionHeader: View {
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(KM.onSurface)
         }
+    }
+}
+
+/// Uppercase micro eyebrow label with tracking, per Kinetic Precision `label-sm`.
+struct KMEyebrow: View {
+    let text: String
+    var body: some View {
+        Text(text.uppercased())
+            .font(.system(size: 9, weight: .bold))
+            .tracking(1.2)
+            .foregroundColor(KM.textMuted)
     }
 }
 
@@ -109,5 +232,72 @@ struct KMPillButton: View {
             .shadow(color: (isDestructive ? Color.red : KM.accent).opacity(0.3), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Keycap
+
+/// Inset shortcut glyph, e.g. `⌥ Space`. Renders on surfaceTop with a 0.12 hairline.
+struct KMKeycap: View {
+    let text: String
+    var body: some View {
+        Text(text)
+            .font(.system(size: 10, weight: .medium, design: .monospaced))
+            .tracking(0.4)
+            .foregroundColor(KM.textSecondary)
+            .padding(.horizontal, 5)
+            .padding(.vertical, 2)
+            .frame(minWidth: 18)
+            .background(KM.surfaceTop)
+            .clipShape(RoundedRectangle(cornerRadius: 5, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 5, style: .continuous)
+                    .stroke(Color.white.opacity(0.12), lineWidth: 1)
+            )
+    }
+}
+
+// MARK: - Language Badge
+
+/// 20pt pill with a 6pt saturated dialect dot.
+struct KMLangBadge: View {
+    let mode: UserLanguageMode
+    var showDot = true
+    var body: some View {
+        HStack(spacing: 4) {
+            if showDot {
+                Circle()
+                    .fill(mode.accentColor)
+                    .frame(width: 6, height: 6)
+            }
+            Text(mode.badgeCode)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(mode.accentColor)
+        }
+        .padding(.horizontal, 7)
+        .padding(.vertical, 3)
+        .background(Color.white.opacity(0.04))
+        .clipShape(Capsule())
+        .overlay(Capsule().stroke(KM.outline, lineWidth: 1))
+    }
+}
+
+// MARK: - Status Chip
+
+struct KMStatusChip: View {
+    let text: String
+    var color: Color = KM.green
+    var body: some View {
+        HStack(spacing: 5) {
+            Circle().fill(color).frame(width: 6, height: 6)
+            Text(text.uppercased())
+                .font(.system(size: 9, weight: .semibold))
+                .tracking(0.8)
+                .foregroundColor(KM.textSecondary)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .background(Color.white.opacity(0.04))
+        .clipShape(Capsule())
     }
 }

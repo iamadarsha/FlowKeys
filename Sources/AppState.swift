@@ -1543,6 +1543,9 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 }
                 await MainActor.run { [weak self] in
                     self?.debugStatusMessage = "Running post-processing"
+                    if !rawTranscript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        self?.overlayManager.showCleaning()
+                    }
                 }
                 let (finalTranscript, processingStatus, postProcessingPrompt) = await processTranscript(
                     rawTranscript,
