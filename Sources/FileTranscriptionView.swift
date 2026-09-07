@@ -225,9 +225,28 @@ struct FileTranscriptionView: View {
                 keyStore: APIKeyStore(),
                 languageMode: appState.languageMode
             )
-            
-            // Step 1: Whisper Transcription
-            let rawText = try await service.transcribe(fileURL: url)
+
+            // Step 1: Transcription — local engine when Local AI is on, else cloud.
+            let rawText: String
+            switch appState.localAI.routeDecision() {
+            case .useExistingCloud:
+                rawText = try await service.transcribe(fileURL: url)
+            case .useLocal, .useHybrid:
+                progressText = "Transcribing on-device..."
+                let fallback: (() async throws -> String)?
+                if case .useHybrid(let cf) = appState.localAI.routeDecision(), cf {
+                    fallback = { try await service.transcribe(fileURL: url) }
+                } else {
+                    fallback = nil
+                }
+                rawText = try await appState.localAI.transcribe(
+                    fileURL: url,
+                    languageMode: appState.languageMode,
+                    languageOverride: nil,
+                    initialPrompt: appState.languageMode.whisperPrompt(),
+                    cloudFallback: fallback
+                ).text
+            }
             
             if !useSmartModes {
                 transcriptResult = rawText

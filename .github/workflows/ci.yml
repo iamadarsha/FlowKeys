@@ -44,7 +44,7 @@ jobs:
           brew list create-dmg >/dev/null 2>&1 || brew install create-dmg
           brew list fileicon    >/dev/null 2>&1 || brew install fileicon
           make clean-all
-          make -j1
+          make -j1 build
           make dmg
 
       - name: Report DMG size

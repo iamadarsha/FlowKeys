@@ -854,6 +854,12 @@ struct SetupView: View {
                 HowToRow(icon: "doc.on.clipboard", text: "Text is typed at your cursor & copied")
             }
             .padding(.top, 10)
+
+            LocalAIOnboardingCard(
+                controller: appState.localAI,
+                models: appState.localAI.modelManager
+            )
+            .padding(.top, 6)
         }
     }
 

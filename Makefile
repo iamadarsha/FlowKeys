@@ -53,6 +53,8 @@ endif
 
 .PHONY: all build dmg clean clean-all run release help dmg-hdiutil-internal whisper-libs test-local
 
+all: build
+
 # Dependency-free Local AI test harness (see Tests/local_ai_tests.swift)
 TEST_LOCAL_SRCS = Tests/local_ai_tests.swift \
 	Sources/LocalAI/LocalAISettings.swift \
@@ -61,14 +63,6 @@ TEST_LOCAL_SRCS = Tests/local_ai_tests.swift \
 	Sources/LocalAI/CryptoKitSHA256.swift \
 	Sources/IndianContextPrompts.swift \
 	Sources/Notification+VoiceToText.swift
-
-test-local:
-	@mkdir -p $(BUILD_DIR)
-	swiftc -O -parse-as-library -sdk $(SDK) -target arm64-apple-macosx13.0 \
-		-o $(BUILD_DIR)/local_ai_tests $(TEST_LOCAL_SRCS)
-	@$(BUILD_DIR)/local_ai_tests
-
-all: build
 
 help:
 	@echo "FlowKeys Build System"
@@ -199,6 +193,12 @@ dmg-hdiutil-internal:
 	fi
 	@rm -f "$(BUILD_DIR)/$(APP_NAME).dmg"
 	@hdiutil create -volname "$(APP_NAME)" -srcfolder "$(BUILD_DIR)/dmg-staging" -ov -format UDZO -fs HFS+ "$(BUILD_DIR)/$(APP_NAME).dmg"
+
+test-local:
+	@mkdir -p $(BUILD_DIR)
+	swiftc -O -parse-as-library -sdk $(SDK) -target arm64-apple-macosx13.0 \
+		-o $(BUILD_DIR)/local_ai_tests $(TEST_LOCAL_SRCS)
+	@$(BUILD_DIR)/local_ai_tests
 
 clean:
 	rm -rf $(APP_BUNDLE) $(BUILD_DIR)/dmg-staging $(BRIDGE_OBJDIR) "$(BUILD_DIR)/$(APP_NAME).dmg"

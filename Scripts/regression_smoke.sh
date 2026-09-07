@@ -96,11 +96,11 @@ if ! xcodebuild -version >/dev/null 2>&1; then
   printf '     Build verification runs in GitHub Actions (.github/workflows/ci.yml).\n'
 else
   if [ "${FULL:-0}" = "1" ]; then
-    make clean >/dev/null && make -j1 && ok "universal build" || bad "universal build failed"
+    make clean >/dev/null && make -j1 build && ok "universal build" || bad "universal build failed"
     make dmg >/dev/null && [ -f build/FlowKeys.dmg ] && ok "dmg built" || bad "dmg failed"
     du -h build/FlowKeys.dmg 2>/dev/null | awk '{print "     dmg size: "$1}'
   else
-    make clean >/dev/null && make -j1 ARCH=arm64 && ok "arm64 build" || bad "arm64 build failed"
+    make clean >/dev/null && make -j1 build ARCH=arm64 && ok "arm64 build" || bad "arm64 build failed"
   fi
 fi
 
