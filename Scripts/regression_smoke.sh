@@ -60,6 +60,13 @@ grep -q 'allowedHosts' Sources/LocalAI/LocalModelManifest.swift \
   && ok "download host allow-list present" || bad "no host allow-list"
 if grep -qE 'url: URL\(string: "http://' Sources/LocalAI/LocalModelManifest.swift; then
   bad "non-HTTPS model URL"; else ok "all model URLs HTTPS"; fi
+if [ -f vendor/whisper.cpp/CMakeLists.txt ]; then
+  ok "vendored whisper.cpp submodule present"
+else
+  bad "vendor/whisper.cpp missing — run: git submodule update --init --recursive"
+fi
+grep -q 'verified: true' Sources/LocalAI/LocalModelManifest.swift \
+  && ok "at least one model checksum pinned" || bad "no pinned model checksum"
 
 # ---------------------------------------------------------------------------
 say "6. No force-unwraps in new Local AI code"

@@ -14,6 +14,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install CMake (for vendored whisper.cpp)
+        run: brew list cmake >/dev/null 2>&1 || brew install cmake
 
       - name: Cache Homebrew packages
         uses: actions/cache@v4

@@ -28,6 +28,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     case prompts
     case macros
     case runLog
+    case localAI
 
     var id: String { rawValue }
 
@@ -40,6 +41,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .prompts: return "Prompts"
         case .macros: return "Voice Macros"
         case .runLog: return "Run Log"
+        case .localAI: return "Local AI"
         }
     }
 
@@ -52,6 +54,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .prompts: return "text.bubble"
         case .macros: return "music.mic"
         case .runLog: return "clock.arrow.circlepath"
+        case .localAI: return "cpu"
         }
     }
 }
@@ -278,6 +281,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     @Published var lastPostProcessingPrompt = ""
     @Published var lastContextSummary = ""
     @Published var lastPostProcessingStatus = ""
+    @Published var lastTranscriptionRouteLabel = "Cloud"
     @Published var lastContextScreenshotDataURL: String? = nil
     @Published var lastContextScreenshotStatus = "No screenshot"
     @Published var hasScreenRecordingPermission = false
@@ -657,7 +661,11 @@ final class AppState: ObservableObject, @unchecked Sendable {
 
         Task {
             do {
-                let rawTranscript = try await transcriptionService.transcribe(fileURL: audioURL)
+                let routed = try await transcribeRawWithRoute(
+                    fileURL: audioURL,
+                    cloudService: transcriptionService
+                )
+                let rawTranscript = routed.raw
 
                 let finalTranscript: String
                 let processingStatus: String
@@ -1198,6 +1206,36 @@ final class AppState: ObservableObject, @unchecked Sendable {
         }?.original
     }
 
+    /// Raw transcription with local/cloud routing.
+    /// When Local AI is disabled (the default), this is exactly
+    /// `cloudService.transcribe(fileURL:)` — no behavior change.
+    private func transcribeRawWithRoute(
+        fileURL: URL,
+        cloudService: TranscriptionService
+    ) async throws -> (raw: String, routeLabel: String, localModelID: String?, localLoadMs: Int?, localTxMs: Int?) {
+        switch localAI.routeDecision() {
+        case .useExistingCloud:
+            let raw = try await cloudService.transcribe(fileURL: fileURL)
+            return (raw, "Cloud", nil, nil, nil)
+
+        case .useLocal, .useHybrid:
+            let hybrid: (() async throws -> String)?
+            if case .useHybrid(let fallback) = localAI.routeDecision(), fallback {
+                hybrid = { try await cloudService.transcribe(fileURL: fileURL) }
+            } else {
+                hybrid = nil
+            }
+            let report = try await localAI.transcribe(
+                fileURL: fileURL,
+                languageMode: languageMode,
+                languageOverride: nil,
+                initialPrompt: languageMode.whisperPrompt(),
+                cloudFallback: hybrid
+            )
+            return (report.text, report.routeLabel, report.modelID, report.loadMs, report.transcribeMs)
+        }
+    }
+
     func processTranscript(
         _ rawTranscript: String,
         context: AppContext,
@@ -1314,8 +1352,15 @@ final class AppState: ObservableObject, @unchecked Sendable {
 
         Task {
             do {
-                async let transcript = transcriptionService.transcribe(fileURL: transcriptionFileURL)
-                let rawTranscript = try await transcript
+                async let routed = transcribeRawWithRoute(
+                    fileURL: transcriptionFileURL,
+                    cloudService: transcriptionService
+                )
+                let routedResult = try await routed
+                let rawTranscript = routedResult.raw
+                await MainActor.run { [weak self] in
+                    self?.lastTranscriptionRouteLabel = routedResult.routeLabel
+                }
                 let appContext: AppContext
                 if let sessionContext {
                     appContext = sessionContext

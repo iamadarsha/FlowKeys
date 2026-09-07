@@ -166,6 +166,12 @@ struct SettingsView: View {
                             insertion: .move(edge: .trailing).combined(with: .opacity),
                             removal: .move(edge: .leading).combined(with: .opacity)
                         ))
+                case .localAI:
+                    LocalAISettingsView()
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .trailing).combined(with: .opacity),
+                            removal: .move(edge: .leading).combined(with: .opacity)
+                        ))
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

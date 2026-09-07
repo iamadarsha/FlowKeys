@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Show toolchain
         run: |
@@ -36,9 +38,10 @@ jobs:
 
       - name: Build universal app + DMG
         run: |
+          brew list cmake      >/dev/null 2>&1 || brew install cmake
           brew list create-dmg >/dev/null 2>&1 || brew install create-dmg
           brew list fileicon    >/dev/null 2>&1 || brew install fileicon
-          make clean
+          make clean-all
           make -j1
           make dmg
 
