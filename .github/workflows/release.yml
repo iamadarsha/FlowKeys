@@ -4,11 +4,17 @@ on:
   push:
     tags:
       - 'v*'
+  # Pre-warm the native-engine cache before tagging a release so the tag
+  # build never has to compile whisper.cpp + llama.cpp + sherpa-onnx cold.
+  workflow_dispatch:
+
+env:
+  NATIVE_CACHE_KEY_PREFIX: native-macos
 
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     permissions:
       contents: write
 
@@ -21,15 +27,37 @@ jobs:
       - name: Install CMake (for the vendored native engines)
         run: brew list cmake >/dev/null 2>&1 || brew install cmake
 
-      - name: Cache native builds (whisper.cpp / llama.cpp / sherpa-onnx)
-        uses: actions/cache@v4
+      - name: Native cache key
+        id: nativekey
+        run: echo "key=${NATIVE_CACHE_KEY_PREFIX}-${{ hashFiles('.gitmodules', 'Makefile', 'Sources/LocalAI/C*/**', 'vendor/**/CMakeLists.txt') }}" >> "$GITHUB_OUTPUT"
+
+      # Restore + save are split so a cold build that later fails (or a
+      # workflow_dispatch warm-up run) still persists the compiled engines.
+      - name: Restore native builds (whisper.cpp / llama.cpp / sherpa-onnx)
+        id: nativecache
+        uses: actions/cache/restore@v4
         with:
           path: |
             build/whisper
             build/llama
             build/sherpa
             build/Frameworks
-          key: native-${{ runner.os }}-${{ hashFiles('.gitmodules', 'Makefile', 'Sources/LocalAI/C*/**') }}-${{ hashFiles('vendor/**/CMakeLists.txt') }}
+          key: ${{ steps.nativekey.outputs.key }}
+
+      - name: Build native engines (if cache missed)
+        if: steps.nativecache.outputs.cache-hit != 'true'
+        run: ARCH=universal make whisper-libs llama-libs sherpa-libs
+
+      - name: Save native builds
+        if: always() && steps.nativecache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            build/whisper
+            build/llama
+            build/sherpa
+            build/Frameworks
+          key: ${{ steps.nativekey.outputs.key }}
 
       - name: Cache Homebrew packages
         uses: actions/cache@v4
@@ -69,6 +97,7 @@ jobs:
           echo "✅ AppIcon.icns generated: $(ls -lh Resources/AppIcon.icns)"
 
       - name: Build universal DMG
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           ARCH=universal make dmg
         env:
@@ -77,6 +106,7 @@ jobs:
           CODESIGN_IDENTITY: "-"
 
       - name: Verify DMG
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
           ls -lh build/FlowKeys.dmg
           hdiutil verify build/FlowKeys.dmg
@@ -98,9 +128,11 @@ jobs:
 
       - name: Get version from tag
         id: version
+        if: startsWith(github.ref, 'refs/tags/v')
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release and upload DMG
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           name: "FlowKeys ${{ steps.version.outputs.VERSION }}"
