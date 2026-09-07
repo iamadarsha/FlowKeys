@@ -1,0 +1,55 @@
+name: CI Build Check
+
+# Non-release build verification for feature branches and PRs.
+# The release workflow (release.yml) still runs only on v* tags.
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'feature/**'
+      - 'design/**'
+  pull_request:
+    branches:
+      - 'main'
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          xcode-select -p
+          swift --version
+          xcrun --show-sdk-path
+
+      - name: Regression smoke (static checks)
+        run: ./Scripts/regression_smoke.sh
+
+      - name: Build universal app + DMG
+        run: |
+          brew list create-dmg >/dev/null 2>&1 || brew install create-dmg
+          brew list fileicon    >/dev/null 2>&1 || brew install fileicon
+          make clean
+          make -j1
+          make dmg
+
+      - name: Report DMG size
+        run: |
+          ls -lh build/FlowKeys.dmg
+          echo "DMG_SIZE=$(du -h build/FlowKeys.dmg | cut -f1)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlowKeys-${{ github.sha }}
+          path: build/FlowKeys.dmg
+          retention-days: 14

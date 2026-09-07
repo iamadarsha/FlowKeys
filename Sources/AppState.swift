@@ -316,6 +316,10 @@ final class AppState: ObservableObject, @unchecked Sendable {
     let snippetEngine = SnippetEngine()
     let personalDictionary = PersonalDictionary()
 
+    /// Optional on-device AI subsystem. Inert until the user enables it in
+    /// Settings → Local AI (Phase 1: always inert, zero behavior change).
+    let localAI = LocalAIController()
+
     init() {
         let hasCompletedSetup = UserDefaults.standard.bool(forKey: "hasCompletedSetup")
         let legacyGroqKey = Self.loadLegacyGroqAPIKey(account: "groq_api_key")

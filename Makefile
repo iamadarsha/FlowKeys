@@ -10,7 +10,9 @@ CONTENTS = $(APP_BUNDLE)/Contents
 MACOS_DIR = $(CONTENTS)/MacOS
 RESOURCES = $(CONTENTS)/Resources
 ICON_ICNS = Resources/AppIcon.icns
-SOURCES = $(wildcard Sources/*.swift)
+# Recurse into Sources/ subdirectories (e.g. Sources/LocalAI/) so the additive
+# Local AI subsystem compiles alongside the flat Sources/*.swift files.
+SOURCES = $(shell find Sources -name '*.swift' | sort)
 
 # Architecture: 'universal', 'arm64', or 'x86_64'
 ARCH ?= universal
