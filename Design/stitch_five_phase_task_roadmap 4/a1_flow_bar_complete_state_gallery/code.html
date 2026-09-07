@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#00531c","surface-dim":"#131315","on-surface":"#e5e1e4","error":"#ffb4ab","on-secondary-container":"#efa790","primary":"#ffb59d","inverse-surface":"#e5e1e4","surface-container-highest":"#353437","tertiary":"#53e16f","on-background":"#e5e1e4","on-secondary-fixed":"#360f03","surface-variant":"#353437","on-secondary":"#512313","on-tertiary":"#003911","inverse-primary":"#ab3500","on-primary-fixed-variant":"#832600","background":"#131315","surface-bright":"#39393b","primary-fixed-dim":"#ffb59d","surface-container":"#201f21","primary-fixed":"#ffdbd0","on-tertiary-fixed":"#002107","on-error":"#690005","inverse-on-surface":"#303032","secondary-fixed-dim":"#ffb59d","tertiary-fixed-dim":"#53e16f","surface":"#131315","secondary":"#ffb59d","secondary-container":"#6f3b29","on-tertiary-container":"#003a11","on-primary-container":"#5f1900","surface-container-lowest":"#0e0e10","on-surface-variant":"#e1bfb5","on-primary-fixed":"#390c00","surface-container-high":"#2a2a2c","on-secondary-fixed-variant":"#6c3927","primary-container":"#ff6b35","surface-tint":"#ffb59d","secondary-fixed":"#ffdbd0","on-error-container":"#ffdad6","tertiary-fixed":"#72fe88","error-container":"#93000a","surface-container-low":"#1b1b1d","tertiary-container":"#06b146","outline":"#a98a80","on-primary":"#5d1900","outline-variant":"#594139"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-base":"0.75rem","space-xs":"0.25rem","space-sm":"0.375rem","space-2xs":"0.125rem","panel-padding-modal":"1.25rem","space-md":"0.5rem","space-3xl":"2rem","space-xl":"1.25rem","space-lg":"1rem","space-2xl":"1.5rem","panel-padding-compact":"0.5rem","panel-padding-standard":"0.75rem"},fontFamily:{"label-sm":["Geist"],"label-md":["Geist"],"headline-md":["Geist"],"mono-keycap":["JetBrains Mono"],"headline-lg":["Geist"],display:["Geist"],"mono-metric":["JetBrains Mono"],"body-lg":["Geist"],"body-default":["Geist"],"body-compact":["Geist"]},fontSize:{"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"500"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-md":["15px",{lineHeight:"20px",letterSpacing:"-0.015em",fontWeight:"500"}],"mono-keycap":["10px",{lineHeight:"12px",letterSpacing:"0.04em",fontWeight:"500"}],"headline-lg":["18px",{lineHeight:"24px",letterSpacing:"-0.02em",fontWeight:"600"}],display:["24px",{lineHeight:"32px",letterSpacing:"-0.025em",fontWeight:"600"}],"mono-metric":["12px",{lineHeight:"16px",letterSpacing:"-0.02em",fontWeight:"500"}],"body-lg":["14px",{lineHeight:"20px",letterSpacing:"-0.01em",fontWeight:"400"}],"body-default":["13px",{lineHeight:"18px",letterSpacing:"-0.005em",fontWeight:"400"}],"body-compact":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}}</script></head><body class="bg-surface-container-lowest text-on-surface font-body-default text-body-default min-h-screen selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-52 bg-surface-dim z-50 flex flex-col justify-between select-none shadow-[1px_0_0_rgba(255,255,255,0.07)]"><div class="flex flex-col"><div class="px-space-lg pt-space-lg pb-space-md flex items-center gap-space-sm"><div class="w-3 h-3 rounded-full bg-[#FF5F56] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#27C93F] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div></div><div class="px-space-lg py-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="FlowKeys Icon" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">FlowKeys</span></div><span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">v2.0</span></div><nav class="mt-space-sm px-space-sm flex flex-col gap-space-2xs" data-active-classes="bg-surface-container-high text-on-surface font-semibold"><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[18px]">home</span><span class="font-body-compact text-body-compact">Home</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="history" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span class="font-body-compact text-body-compact">History</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="dictionary" href="#"><span class="material-symbols-outlined text-[18px]">menu_book</span><span class="font-body-compact text-body-compact">Dictionary</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="snippets" href="#"><span class="material-symbols-outlined text-[18px]">post_add</span><span class="font-body-compact text-body-compact">Snippets</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="smart-modes" href="#"><span class="material-symbols-outlined text-[18px]">motion_mode</span><span class="font-body-compact text-body-compact">Smart Modes</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="style" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-compact text-body-compact">Style</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="voice-macros" href="#"><span class="material-symbols-outlined text-[18px]">mic</span><span class="font-body-compact text-body-compact">Voice Macros</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="local-ai" href="#"><span class="material-symbols-outlined text-[18px]">memory</span><span class="font-body-compact text-body-compact">Local AI</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg transition-colors bg-surface-container-high text-on-surface font-semibold" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div><div class="p-space-base m-space-sm rounded-xl bg-surface-container shadow-[0_16px_36px_-8px_rgba(0,0,0,0.75)]"><div class="flex items-center gap-space-xs text-primary-container"><span class="material-symbols-outlined text-[16px]">local_fire_department</span><span class="font-label-md text-label-md font-semibold">12-day streak</span></div><div class="mt-space-2xs flex items-center justify-between text-on-surface-variant"><span class="font-body-compact text-body-compact">Today</span><span class="font-mono-metric text-mono-metric text-on-surface font-medium">1,204 words</span></div></div></aside><div class="pl-52 min-h-screen flex flex-col"><header class="fixed top-0 left-52 right-0 h-14 bg-surface-dim/85 backdrop-blur-xl z-40 flex items-center justify-between px-space-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><img alt="FlowKeys Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-surface-container shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase tracking-wider">Engine Ready</span></div></div><div class="flex items-center gap-space-base"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-lg bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">keyboard_command_key</span><span class="font-mono-keycap text-mono-keycap">⌥ Space</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-14 flex-1 bg-surface-container-lowest w-full px-space-xl py-space-lg"><div class="flex flex-col w-full">
+<!-- Subtle Ambient Glow Orbs -->
+<div class="relative w-full overflow-hidden pb-space-3xl">
+<div class="absolute -top-24 right-1/4 w-96 h-96 rounded-full bg-primary-container/10 blur-[100px] pointer-events-none"></div>
+<div class="absolute top-1/2 left-10 w-80 h-80 rounded-full bg-tertiary/5 blur-[120px] pointer-events-none"></div>
+<!-- Header & Hero Metric Bar -->
+<div class="flex flex-col gap-space-md mb-space-2xl">
+<div class="flex items-center gap-space-sm text-primary-container">
+<span class="material-symbols-outlined text-[18px]">widgets</span>
+<span class="font-mono-keycap text-mono-keycap uppercase tracking-widest text-primary-container">Design Matrix // Architecture Spec</span>
+</div>
+<div class="flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
+<div>
+<h1 class="font-display text-display text-on-surface tracking-tight">Flow Bar // Complete State Set (A1)</h1>
+<p class="font-body-default text-body-default text-on-surface-variant max-w-2xl mt-space-xs">
+            The floating always-on-top capsule across all 18 lifecycle states and drag/context gestures. Engineered for latency-free macOS desktop integration with reactive dual-stage shadows and dynamic micro-pill morphology.
+          </p>
+</div>
+<!-- Filter & HUD Stats Pill -->
+<div class="flex items-center gap-space-xs p-space-xs rounded-xl bg-surface-container shadow-md self-start lg:self-auto">
+<div class="px-space-sm py-space-xs rounded-lg bg-surface-container-high flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-primary-container animate-pulse"></span>
+<span class="font-mono-metric text-mono-metric text-on-surface">18 Core States</span>
+</div>
+<div class="px-space-sm py-space-xs rounded-lg text-on-surface-variant flex items-center gap-space-xs">
+<span class="font-mono-metric text-mono-metric">macOS Sonoma / Sequoia HUD</span>
+</div>
+<button class="px-space-sm py-space-xs rounded-lg bg-primary text-on-primary font-label-sm text-label-sm transition-all hover:bg-primary-fixed duration-150" id="simAllBtn">
+            Simulate Reactive Waveforms
+          </button>
+</div>
+</div>
+</div>
+<!-- 18 States Component Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-space-lg">
+<!-- 1. IDLE SEED -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">01 // Idle State</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Anchor: Center</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">IDLE SEED</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">14px breathing disc with faint accent orange ring at bottom-center anchor.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="relative flex items-center justify-center cursor-pointer group">
+<div class="absolute inset-0 w-8 h-8 -m-2 rounded-full bg-primary-container/20 animate-ping duration-1000"></div>
+<div class="w-[14px] h-[14px] rounded-full bg-primary-container shadow-[0_0_12px_2px_rgba(255,107,53,0.6)] flex items-center justify-center transition-transform group-hover:scale-125">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-container-lowest"></span>
+</div>
+<!-- Tooltip simulation -->
+<div class="absolute -bottom-7 opacity-0 group-hover:opacity-100 transition-opacity px-space-xs py-space-2xs rounded bg-surface-dim font-mono-keycap text-mono-keycap text-on-surface whitespace-nowrap shadow-md">⌥ Space to summon</div>
+</div>
+</div>
+</div>
+<!-- 2. IDLE SIDE-TAB -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">02 // Docked State</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Screen Edge</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">IDLE SIDE-TAB</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Docked half-capsule tucked at desktop screen edge with 3px vertical sliver.</p>
+</div>
+<div class="py-space-xl flex items-center justify-start pl-space-base">
+<!-- Rendered Widget: Docked at left -->
+<div class="h-10 px-space-sm pl-space-xs rounded-r-xl bg-surface-dim/95 backdrop-blur-xl shadow-[0_8px_20px_rgba(0,0,0,0.6)] flex items-center gap-space-xs cursor-pointer hover:pl-space-md transition-all">
+<div class="w-[3px] h-6 rounded-full bg-primary-container shadow-[0_0_8px_rgba(255,107,53,0.8)]"></div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">keyboard_tab_rtl</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant tracking-wider uppercase">Flow</span>
+</div>
+</div>
+</div>
+<!-- 3. SUMMONING -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">03 // Initialization</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Cold Boot ~180ms</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">SUMMONING</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Expanded capsule with shimmering loading triple dots and warm starting state.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-10 px-space-lg rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_16px_36px_-8px_rgba(0,0,0,0.75)] flex items-center gap-space-sm">
+<div class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-bounce"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-bounce [animation-delay:0.15s]"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container animate-bounce [animation-delay:0.3s]"></span>
+</div>
+<span class="font-body-compact text-body-compact text-on-surface-variant">Starting audio engine...</span>
+</div>
+</div>
+</div>
+<!-- 4. LISTENING (Normal English) -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">04 // Capture: Primary</span>
+<span class="px-space-xs py-space-2xs rounded bg-[#1e293b] text-[#38bdf8] font-mono-keycap text-mono-keycap">Lat: 12ms</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">LISTENING (Normal English)</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">24-bar live gradient waveform, red REC dot, timer, 'EN' blue dialect badge.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 px-space-base rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(56,189,248,0.25),0_12px_32px_rgba(0,0,0,0.8)] flex items-center gap-space-sm">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-[#ef4444] animate-pulse"></span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">0:06</span>
+</div>
+<!-- Waveform bars -->
+<div class="flex items-center gap-[2.5px] h-5 px-space-xs">
+<span class="w-[2.5px] h-2 bg-gradient-to-t from-primary-container to-primary rounded-full animate-pulse"></span>
+<span class="w-[2.5px] h-4 bg-gradient-to-t from-primary-container to-primary rounded-full"></span>
+<span class="w-[2.5px] h-5 bg-gradient-to-t from-primary-container to-primary rounded-full animate-pulse"></span>
+<span class="w-[2.5px] h-3 bg-gradient-to-t from-primary-container to-primary rounded-full"></span>
+<span class="w-[2.5px] h-5 bg-gradient-to-t from-primary-container to-primary rounded-full"></span>
+<span class="w-[2.5px] h-2 bg-gradient-to-t from-primary-container to-primary rounded-full"></span>
+<span class="w-[2.5px] h-4 bg-gradient-to-t from-primary-container to-primary rounded-full animate-pulse"></span>
+<span class="w-[2.5px] h-1.5 bg-gradient-to-t from-primary-container to-primary rounded-full"></span>
+</div>
+<span class="px-space-xs py-space-2xs rounded-full bg-[#0369a1]/40 text-[#7dd3fc] font-mono-keycap text-mono-keycap font-semibold">EN</span>
+</div>
+</div>
+</div>
+<!-- 5. LISTENING (Hindi) -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">05 // Capture: Indic</span>
+<span class="px-space-xs py-space-2xs rounded bg-[#064e3b] text-tertiary-fixed font-mono-keycap text-mono-keycap">Devanagari</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">LISTENING (Hindi)</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Emerald glow ring, live waveform, 'HI' green badge, 'नमस्ते...' streaming interim.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 px-space-base rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(83,225,111,0.3),0_8px_24px_rgba(0,0,0,0.8)] flex items-center gap-space-sm">
+<span class="px-space-xs py-space-2xs rounded-full bg-tertiary-container/30 text-tertiary font-mono-keycap text-mono-keycap font-semibold">HI</span>
+<div class="flex items-center gap-[2.5px] h-4">
+<span class="w-[2.5px] h-3 bg-tertiary rounded-full animate-pulse"></span>
+<span class="w-[2.5px] h-5 bg-tertiary rounded-full"></span>
+<span class="w-[2.5px] h-2 bg-tertiary rounded-full animate-pulse"></span>
+<span class="w-[2.5px] h-4 bg-tertiary rounded-full"></span>
+</div>
+<span class="font-body-compact text-body-compact text-on-surface tracking-wide">नमस्ते दुनिया...</span>
+</div>
+</div>
+</div>
+<!-- 6. LISTENING (Code-Switch MIX) -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">06 // Multilingual</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Hinglish Auto-detect</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">LISTENING (Code-Switch MIX)</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Dual-language dynamic tracker with gradient MIX badge & phoneme stream.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 px-space-base rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_16px_36px_rgba(0,0,0,0.8)] flex items-center gap-space-sm">
+<span class="px-space-xs py-space-2xs rounded-full bg-gradient-to-r from-primary-container to-tertiary text-surface-container-lowest font-mono-keycap text-mono-keycap font-bold">MIX</span>
+<div class="flex items-center gap-1 text-on-surface">
+<span class="font-body-compact text-body-compact">deploy kar do</span>
+<span class="w-1.5 h-3 bg-primary-container animate-pulse rounded-xs"></span>
+</div>
+<div class="flex items-center gap-1">
+<span class="w-1 h-3 rounded-full bg-primary-container"></span>
+<span class="w-1 h-4 rounded-full bg-tertiary"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- 7. LISTENING + TOGGLE MODE -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">07 // Hands-Free</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Persistent Lock</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">LISTENING + TOGGLE MODE</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Continuous dictation mode anchored with explicit tactile circular red stop button.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 pl-space-base pr-space-xs rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_12px_32px_rgba(0,0,0,0.8)] flex items-center gap-space-base">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[15px] text-primary-container">lock_open_right</span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">Continuous</span>
+</div>
+<div class="flex items-center gap-1 h-3">
+<span class="w-1 h-3 bg-on-surface-variant rounded-full"></span>
+<span class="w-1 h-2 bg-on-surface-variant rounded-full"></span>
+</div>
+<!-- Red Stop Button -->
+<button class="w-8 h-8 rounded-full bg-error-container hover:bg-error text-on-error flex items-center justify-center transition-colors shadow-inner">
+<span class="material-symbols-outlined text-[14px]">stop</span>
+</button>
+</div>
+</div>
+</div>
+<!-- 8. LISTENING + LOCAL AI -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">08 // Privacy Mode</span>
+<span class="px-space-xs py-space-2xs rounded bg-tertiary-container/30 text-tertiary font-mono-keycap text-mono-keycap">Zero Network</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">LISTENING + LOCAL AI</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Hardware lock glyph with green Local badge signaling on-device Whisper inference.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 px-space-base rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(83,225,111,0.2),0_16px_36px_rgba(0,0,0,0.7)] flex items-center gap-space-sm">
+<div class="flex items-center gap-1 px-space-xs py-space-2xs rounded-full bg-tertiary/15 text-tertiary">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span class="font-mono-keycap text-mono-keycap font-semibold">Local</span>
+</div>
+<div class="flex items-center gap-1 h-4">
+<span class="w-1 h-3 bg-tertiary rounded-full"></span>
+<span class="w-1 h-5 bg-tertiary rounded-full animate-pulse"></span>
+<span class="w-1 h-2 bg-tertiary rounded-full"></span>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant">M3 Max 16-Core</span>
+</div>
+</div>
+</div>
+<!-- 9. PAUSE DETECTED (VAD) -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">09 // VAD Silence</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Threshold: -42dB</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">PAUSE DETECTED (VAD)</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Audio eased down to a calm flat 3px horizontal line with sine wobble, muted glow.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-10 px-space-lg rounded-full bg-surface-dim/80 backdrop-blur-xl shadow-[0_8px_24px_rgba(0,0,0,0.6)] flex items-center gap-space-base">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">PAUSED</span>
+<!-- Calmed flat wave line -->
+<div class="w-24 h-[3px] rounded-full bg-surface-container-highest overflow-hidden relative">
+<div class="absolute inset-0 bg-primary-container/40 rounded-full animate-pulse"></div>
+</div>
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">hourglass_empty</span>
+</div>
+</div>
+</div>
+<!-- 10. WHISPER MODE -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">10 // Low-Decibel Gain</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">+18dB Boost</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">WHISPER MODE</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Boosted amplitude waveform with faint horizontal shimmer and whisper speech bubble.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 px-space-base rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,181,157,0.25),0_12px_28px_rgba(0,0,0,0.8)] flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">record_voice_over</span>
+<div class="flex items-center gap-[2px]">
+<span class="w-[2px] h-5 bg-secondary rounded-full animate-pulse"></span>
+<span class="w-[2px] h-6 bg-secondary rounded-full"></span>
+<span class="w-[2px] h-4 bg-secondary rounded-full animate-pulse"></span>
+<span class="w-[2px] h-5 bg-secondary rounded-full"></span>
+<span class="w-[2px] h-3 bg-secondary rounded-full"></span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary tracking-wide">Whisper Gain Active</span>
+</div>
+</div>
+</div>
+<!-- 11. TRANSCRIBING (Cloud) -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">11 // Server Async</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Cloud API</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">TRANSCRIBING (Cloud)</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Collapsed single horizontal line with traveling shimmer sweep & status label.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-10 px-space-lg rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_16px_36px_rgba(0,0,0,0.7)] flex items-center gap-space-base">
+<div class="w-16 h-[2px] bg-surface-container-highest rounded-full overflow-hidden relative">
+<div class="absolute inset-0 w-1/2 bg-primary-container rounded-full animate-[ping_1.5s_infinite]"></div>
+</div>
+<span class="font-body-compact text-body-compact text-on-surface">Transcribing...</span>
+<span class="material-symbols-outlined text-[14px] text-primary-container animate-spin">sync</span>
+</div>
+</div>
+</div>
+<!-- 12. TRANSCRIBING (Local with Progress) -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">12 // Device Compute</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">CoreML INT8</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">TRANSCRIBING (Local Progress)</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Thin high-contrast orange bar progress tracker with numeric completion badge.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 px-space-base rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_16px_36px_rgba(0,0,0,0.7)] flex items-center gap-space-base">
+<span class="font-body-compact text-body-compact text-on-surface">Transcribing</span>
+<div class="w-20 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 47%"></div>
+</div>
+<span class="font-mono-metric text-mono-metric text-primary font-medium">47%</span>
+</div>
+</div>
+</div>
+<!-- 13. STREAMING PARTIAL -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">13 // Interim Hypotheses</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Token Stream</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">STREAMING PARTIAL</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">2-line transcript snippet with dimmed trailing unconfirmed tokens and caret.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget: expanded capsule -->
+<div class="h-12 px-space-base max-w-[280px] rounded-2xl bg-surface-dim/95 backdrop-blur-2xl shadow-[0_16px_36px_rgba(0,0,0,0.85)] flex items-center gap-space-sm overflow-hidden">
+<div class="min-w-0 flex-1">
+<span class="font-body-compact text-body-compact text-on-surface leading-tight">Ship the beta release</span>
+<span class="font-body-compact text-body-compact text-on-surface-variant/50"> tomorrow...</span>
+<span class="inline-block w-1.5 h-3 bg-primary-container align-middle animate-pulse ml-0.5"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- 14. CLEANING -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">14 // Post-Process</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">LLM Polish</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">CLEANING</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Sparkle glyph sweeping across stream with 'Cleaning syntax & fillers...'.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-10 px-space-base rounded-full bg-surface-dim/90 backdrop-blur-2xl shadow-[0_12px_28px_rgba(0,0,0,0.7)] flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-container animate-pulse">auto_awesome</span>
+<span class="font-body-compact text-body-compact text-on-surface-variant">Cleaning syntax & fillers...</span>
+</div>
+</div>
+</div>
+<!-- 15. DONE / PASTED -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">15 // Complete & Injected</span>
+<span class="px-space-xs py-space-2xs rounded bg-tertiary-container/30 text-tertiary font-mono-keycap text-mono-keycap">Accessibility API</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">DONE / PASTED</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Capsule with blooming green checkmark confirms direct paste to target cursor.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-10 px-space-lg rounded-full bg-surface-dim/95 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(83,225,111,0.25),0_12px_28px_rgba(0,0,0,0.7)] flex items-center gap-space-sm">
+<div class="w-5 h-5 rounded-full bg-tertiary/20 text-tertiary flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-medium">Pasted to cursor</span>
+</div>
+</div>
+</div>
+<!-- 16. ERROR RECOVERY -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">16 // Exception State</span>
+<span class="px-space-xs py-space-2xs rounded bg-error-container/40 text-error font-mono-keycap text-mono-keycap">E-304</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">ERROR RECOVERY</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Soft error aura with 'Couldn't transcribe', Retry and Cloud fallback triggers.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 pl-space-base pr-space-xs rounded-full bg-surface-dim/95 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(255,180,171,0.3),0_12px_28px_rgba(0,0,0,0.8)] flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-error">error</span>
+<span class="font-body-compact text-body-compact text-error">Failed</span>
+<div class="flex items-center gap-1 ml-space-xs">
+<button class="px-space-xs py-space-2xs rounded bg-surface-container-highest hover:bg-surface-bright text-on-surface font-label-sm text-label-sm">Retry</button>
+<button class="px-space-xs py-space-2xs rounded bg-surface-container-highest hover:bg-surface-bright text-on-surface-variant font-label-sm text-label-sm">Use Cloud</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 17. OFFLINE MODEL DOWNLOADING -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">17 // Model Provisioning</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">840MB Base</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">OFFLINE MODEL DOWNLOADING</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Integrated progress ring with 'Getting Whisper Turbo ready — 41%'.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 px-space-base rounded-full bg-surface-dim/95 backdrop-blur-2xl shadow-[0_12px_28px_rgba(0,0,0,0.7)] flex items-center gap-space-sm">
+<svg class="w-4 h-4 -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container-highest" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path>
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="41, 100" stroke-linecap="round" stroke-width="4"></path>
+</svg>
+<span class="font-body-compact text-body-compact text-on-surface">Whisper Turbo: <span class="text-primary font-mono-metric font-medium">41%</span></span>
+</div>
+</div>
+</div>
+<!-- 18. NO MIC / PERMISSION -->
+<div class="flex flex-col justify-between p-space-lg rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors duration-200 shadow-sm min-h-[220px]">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">18 // TCC Security Alert</span>
+<span class="px-space-xs py-space-2xs rounded bg-[#78350f]/30 text-[#fde047] font-mono-keycap text-mono-keycap">TCC Auth</span>
+</div>
+<h2 class="font-headline-md text-headline-md text-on-surface mt-space-2xs">NO MIC / PERMISSION</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-2xs">Amber warning frame indicating OS audio permission barrier with direct Settings trigger.</p>
+</div>
+<div class="py-space-xl flex items-center justify-center">
+<!-- Rendered Widget -->
+<div class="h-11 pl-space-base pr-space-xs rounded-full bg-surface-dim/95 backdrop-blur-2xl shadow-[0_0_0_1px_rgba(253,224,71,0.3),0_12px_28px_rgba(0,0,0,0.8)] flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-[#fde047]">mic_off</span>
+<span class="font-body-compact text-body-compact text-on-surface">Mic Access Needed</span>
+<button class="px-space-sm py-space-2xs rounded-full bg-[#fde047] hover:bg-[#fef08a] text-[#422006] font-label-sm text-label-sm font-semibold transition-colors">
+              Enable
+            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Interactions & Gestures (Drag Affordance + Context Menu) -->
+<div class="mt-space-3xl flex flex-col gap-space-lg">
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">touch_app</span>
+<span class="font-mono-keycap text-mono-keycap uppercase tracking-widest">Physical & Pointer Affordances</span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-space-lg">
+<!-- Interaction 1: Drag Affordance -->
+<div class="p-space-xl rounded-xl bg-surface-container flex flex-col justify-between shadow-md">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-primary-container uppercase">Gesture Layer 01</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Hover Reveal</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-space-xs">Hover Grabber & Snap Geometry</h2>
+<p class="font-body-default text-body-default text-on-surface-variant mt-space-xs">
+              When cursor moves within 12px of the capsule boundaries, the left vertical drag handle reveals a dual-column 6-dot matrix with grab cursor. Magnetic edge snapping attaches to screen corners with 16px safe margins.
+            </p>
+</div>
+<!-- Interactive Live Demo Area -->
+<div class="mt-space-2xl p-space-xl rounded-xl bg-surface-container-lowest flex flex-col items-center justify-center min-h-[160px] relative overflow-hidden group">
+<div class="font-mono-keycap text-mono-keycap text-on-surface-variant mb-space-sm group-hover:text-primary transition-colors">
+              Hover over the pill to inspect affordance:
+            </div>
+<!-- Floating Pill with Grabber -->
+<div class="h-11 px-space-base rounded-full bg-surface-dim/95 backdrop-blur-xl shadow-[0_16px_36px_-8px_rgba(0,0,0,0.8)] flex items-center gap-space-sm cursor-grab active:cursor-grabbing hover:scale-[1.02] transition-all duration-150">
+<!-- 2-column grabber dots (opacity transitions on container hover) -->
+<div class="flex items-center gap-[2px] opacity-40 group-hover:opacity-100 transition-opacity">
+<div class="flex flex-col gap-[3px]">
+<span class="w-1 h-1 rounded-full bg-on-surface"></span>
+<span class="w-1 h-1 rounded-full bg-on-surface"></span>
+<span class="w-1 h-1 rounded-full bg-on-surface"></span>
+</div>
+<div class="flex flex-col gap-[3px]">
+<span class="w-1 h-1 rounded-full bg-on-surface"></span>
+<span class="w-1 h-1 rounded-full bg-on-surface"></span>
+<span class="w-1 h-1 rounded-full bg-on-surface"></span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs pl-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="font-body-compact text-body-compact text-on-surface">Ready • Drag to dock</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant ml-space-sm px-space-xs py-space-2xs bg-surface-container rounded">Auto-snap ON</span>
+</div>
+</div>
+</div>
+<!-- Interaction 2: Right-Click Context Menu -->
+<div class="p-space-xl rounded-xl bg-surface-container flex flex-col justify-between shadow-md">
+<div>
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-primary-container uppercase">Gesture Layer 02</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">Secondary Click</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-space-xs">macOS Native Context Overlay</h2>
+<p class="font-body-default text-body-default text-on-surface-variant mt-space-xs">
+              Context menu trigger with acrylic blur, SF Pro density, hotkey badges, and audio route submenu.
+            </p>
+</div>
+<!-- Mock Desktop Context Menu -->
+<div class="mt-space-2xl flex items-center justify-center p-space-lg rounded-xl bg-surface-container-lowest relative">
+<!-- Floating Menu Container -->
+<div class="w-64 rounded-xl bg-surface-dim/95 backdrop-blur-2xl shadow-[0_20px_48px_-4px_rgba(0,0,0,0.9),0_0_0_1px_rgba(255,255,255,0.08)] p-space-xs flex flex-col gap-0.5">
+<!-- Item 1: Hide -->
+<button class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-on-surface hover:bg-surface-container transition-colors text-left group">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-on-surface">visibility_off</span>
+<span class="font-body-compact text-body-compact">Hide Flow Bar</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">⌘H</span>
+</button>
+<!-- Item 2: Settings -->
+<button class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-on-surface hover:bg-surface-container transition-colors text-left group">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-on-surface">tune</span>
+<span class="font-body-compact text-body-compact">Preferences...</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">⌘,</span>
+</button>
+<div class="h-[1px] bg-surface-container my-1"></div>
+<!-- Item 3: Microphone Submenu Trigger -->
+<div class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-on-surface bg-surface-container-high">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-container">mic</span>
+<span class="font-body-compact text-body-compact">Microphone</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Shure MV7</span>
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">chevron_right</span>
+</div>
+</div>
+<!-- Item 4: Language -->
+<button class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-on-surface hover:bg-surface-container transition-colors text-left group">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-on-surface">translate</span>
+<span class="font-body-compact text-body-compact">Language Mode</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="px-space-xs rounded bg-[#0369a1]/30 text-[#7dd3fc] font-mono-keycap text-mono-keycap">EN (US)</span>
+<span class="material-symbols-outlined text-[14px] text-on-surface-variant">chevron_right</span>
+</div>
+</button>
+<div class="h-[1px] bg-surface-container my-1"></div>
+<!-- Item 5: Paste Last Transcript -->
+<button class="flex items-center justify-between px-space-sm py-1.5 rounded-lg text-on-surface hover:bg-surface-container transition-colors text-left group">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant group-hover:text-on-surface">content_paste</span>
+<span class="font-body-compact text-body-compact">Paste Last Transcript</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">⌥⇧V</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Demo Script -->
+<script>
+    (function() {
+      const btn = document.getElementById('simAllBtn');
+      let active = false;
+      
+      btn.addEventListener('click', () => {
+        active = !active;
+        btn.textContent = active ? 'Freezing Waveforms' : 'Simulate Reactive Waveforms';
+        
+        // Randomize bar heights momentarily to simulate speech energy
+        const bars = document.querySelectorAll('.animate-pulse');
+        bars.forEach(bar => {
+          if (active) {
+            bar.classList.add('scale-y-125');
+          } else {
+            bar.classList.remove('scale-y-125');
+          }
+        });
+      });
+    })();
+  </script>
+</div></main></div></body></html>

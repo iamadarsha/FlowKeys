@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#00531c","surface-dim":"#131315","on-surface":"#e5e1e4","error":"#ffb4ab","on-secondary-container":"#efa790","primary":"#ffb59d","inverse-surface":"#e5e1e4","surface-container-highest":"#353437","tertiary":"#53e16f","on-background":"#e5e1e4","on-secondary-fixed":"#360f03","surface-variant":"#353437","on-secondary":"#512313","on-tertiary":"#003911","inverse-primary":"#ab3500","on-primary-fixed-variant":"#832600","background":"#131315","surface-bright":"#39393b","primary-fixed-dim":"#ffb59d","surface-container":"#201f21","primary-fixed":"#ffdbd0","on-tertiary-fixed":"#002107","on-error":"#690005","inverse-on-surface":"#303032","secondary-fixed-dim":"#ffb59d","tertiary-fixed-dim":"#53e16f","surface":"#131315","secondary":"#ffb59d","secondary-container":"#6f3b29","on-tertiary-container":"#003a11","on-primary-container":"#5f1900","surface-container-lowest":"#0e0e10","on-surface-variant":"#e1bfb5","on-primary-fixed":"#390c00","surface-container-high":"#2a2a2c","on-secondary-fixed-variant":"#6c3927","primary-container":"#ff6b35","surface-tint":"#ffb59d","secondary-fixed":"#ffdbd0","on-error-container":"#ffdad6","tertiary-fixed":"#72fe88","error-container":"#93000a","surface-container-low":"#1b1b1d","tertiary-container":"#06b146","outline":"#a98a80","on-primary":"#5d1900","outline-variant":"#594139"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-base":"0.75rem","space-xs":"0.25rem","space-sm":"0.375rem","space-2xs":"0.125rem","panel-padding-modal":"1.25rem","space-md":"0.5rem","space-3xl":"2rem","space-xl":"1.25rem","space-lg":"1rem","space-2xl":"1.5rem","panel-padding-compact":"0.5rem","panel-padding-standard":"0.75rem"},fontFamily:{"label-sm":["Geist"],"label-md":["Geist"],"headline-md":["Geist"],"mono-keycap":["JetBrains Mono"],"headline-lg":["Geist"],display:["Geist"],"mono-metric":["JetBrains Mono"],"body-lg":["Geist"],"body-default":["Geist"],"body-compact":["Geist"]},fontSize:{"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"500"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-md":["15px",{lineHeight:"20px",letterSpacing:"-0.015em",fontWeight:"500"}],"mono-keycap":["10px",{lineHeight:"12px",letterSpacing:"0.04em",fontWeight:"500"}],"headline-lg":["18px",{lineHeight:"24px",letterSpacing:"-0.02em",fontWeight:"600"}],display:["24px",{lineHeight:"32px",letterSpacing:"-0.025em",fontWeight:"600"}],"mono-metric":["12px",{lineHeight:"16px",letterSpacing:"-0.02em",fontWeight:"500"}],"body-lg":["14px",{lineHeight:"20px",letterSpacing:"-0.01em",fontWeight:"400"}],"body-default":["13px",{lineHeight:"18px",letterSpacing:"-0.005em",fontWeight:"400"}],"body-compact":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}}</script></head><body class="bg-surface-container-lowest text-on-surface font-body-default text-body-default min-h-screen selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-52 bg-surface-dim z-50 flex flex-col justify-between select-none shadow-[1px_0_0_rgba(255,255,255,0.07)]"><div class="flex flex-col"><div class="px-space-lg pt-space-lg pb-space-md flex items-center gap-space-sm"><div class="w-3 h-3 rounded-full bg-[#FF5F56] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#27C93F] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div></div><div class="px-space-lg py-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="FlowKeys Icon" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">FlowKeys</span></div><span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">v2.0</span></div><nav class="mt-space-sm px-space-sm flex flex-col gap-space-2xs" data-active-classes="bg-surface-container-high text-on-surface font-semibold"><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[18px]">home</span><span class="font-body-compact text-body-compact">Home</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="history" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span class="font-body-compact text-body-compact">History</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="dictionary" href="#"><span class="material-symbols-outlined text-[18px]">menu_book</span><span class="font-body-compact text-body-compact">Dictionary</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="snippets" href="#"><span class="material-symbols-outlined text-[18px]">post_add</span><span class="font-body-compact text-body-compact">Snippets</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="smart-modes" href="#"><span class="material-symbols-outlined text-[18px]">motion_mode</span><span class="font-body-compact text-body-compact">Smart Modes</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="style" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-compact text-body-compact">Style</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="voice-macros" href="#"><span class="material-symbols-outlined text-[18px]">mic</span><span class="font-body-compact text-body-compact">Voice Macros</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="local-ai" href="#"><span class="material-symbols-outlined text-[18px]">memory</span><span class="font-body-compact text-body-compact">Local AI</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg transition-colors bg-surface-container-high text-on-surface font-semibold" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div><div class="p-space-base m-space-sm rounded-xl bg-surface-container shadow-[0_16px_36px_-8px_rgba(0,0,0,0.75)]"><div class="flex items-center gap-space-xs text-primary-container"><span class="material-symbols-outlined text-[16px]">local_fire_department</span><span class="font-label-md text-label-md font-semibold">12-day streak</span></div><div class="mt-space-2xs flex items-center justify-between text-on-surface-variant"><span class="font-body-compact text-body-compact">Today</span><span class="font-mono-metric text-mono-metric text-on-surface font-medium">1,204 words</span></div></div></aside><div class="pl-52 min-h-screen flex flex-col"><header class="fixed top-0 left-52 right-0 h-14 bg-surface-dim/85 backdrop-blur-xl z-40 flex items-center justify-between px-space-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><img alt="FlowKeys Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-surface-container shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase tracking-wider">Engine Ready</span></div></div><div class="flex items-center gap-space-base"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-lg bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">keyboard_command_key</span><span class="font-mono-keycap text-mono-keycap">⌥ Space</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-14 flex-1 bg-surface-container-lowest w-full px-space-xl py-space-lg"><div class="flex flex-col w-full">
+<!-- Header Breadcrumb & Status Banner -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-lg mb-space-3xl">
+<div>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-mono-keycap text-mono-keycap uppercase tracking-widest mb-space-xs">
+<span>macOS Native Integration</span>
+<span>/</span>
+<span class="text-primary">System Tray & NSMenu</span>
+<span>/</span>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-high text-on-surface">SPEC 14.4</span>
+</div>
+<h1 class="font-display text-display text-on-surface font-semibold tracking-tight">Menu-Bar Icon & Secondary Status Menu (B2)</h1>
+<p class="font-body-default text-body-default text-on-surface-variant mt-space-2xs">
+        Native macOS NSMenu specifications, flyout submenus, and 16px pixel-perfect template icon family.
+      </p>
+</div>
+<!-- Live macOS Context Simulator Toggle Bar -->
+<div class="flex items-center gap-space-sm p-space-xs bg-surface-container rounded-xl shadow-sm">
+<div class="flex items-center gap-space-xs px-space-base py-space-xs rounded-lg bg-surface-container-high text-on-surface">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-mono-keycap text-mono-keycap">NSStatusBar.system</span>
+</div>
+<div class="flex items-center gap-space-2xs px-space-sm py-space-xs text-on-surface-variant font-body-compact text-body-compact">
+<span>Dark Aqua</span>
+<span class="font-mono-metric text-mono-metric text-primary">VibrantBlur</span>
+</div>
+</div>
+</div>
+<!-- Main Multi-Column Showcase Layout -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-2xl items-start">
+<!-- LEFT / CENTER: The Interactive macOS NSMenu Simulator & Flyouts -->
+<div class="xl:col-span-7 flex flex-col gap-space-2xl">
+<!-- Panel Header -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">layers</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-medium">macOS Status Bar & Live NSMenu View</h2>
+</div>
+<span class="font-mono-keycap text-mono-keycap px-space-sm py-space-2xs rounded bg-surface-container text-on-surface-variant">Width: 268px • Corner: 6px</span>
+</div>
+<!-- macOS Desktop Top Edge Mockup -->
+<div class="relative bg-surface-dim rounded-2xl shadow-xl overflow-hidden p-space-base">
+<!-- Mock macOS Menu Bar Bar Strip -->
+<div class="w-full h-8 bg-[#18181b]/95 backdrop-blur-2xl rounded-lg px-space-base flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-space-base text-on-surface-variant font-label-sm text-label-sm">
+<span class="font-bold text-on-surface text-[13px]"></span>
+<span class="font-semibold text-on-surface">FlowKeys</span>
+<span class="hover:text-on-surface cursor-default">File</span>
+<span class="hover:text-on-surface cursor-default">Edit</span>
+<span class="hover:text-on-surface cursor-default">Speech</span>
+<span class="hover:text-on-surface cursor-default">Window</span>
+</div>
+<!-- Status bar icons (Right pinned) -->
+<div class="flex items-center gap-space-md text-on-surface">
+<span class="material-symbols-outlined text-[15px] opacity-70">wifi</span>
+<span class="material-symbols-outlined text-[15px] opacity-70">battery_horiz_075</span>
+<span class="material-symbols-outlined text-[15px] opacity-70">search</span>
+<!-- Active FlowKeys Tray Target -->
+<div class="px-space-xs py-space-2xs rounded bg-primary-container text-on-primary-container flex items-center gap-1 shadow-[0_0_12px_rgba(255,107,53,0.4)]" id="trayTarget">
+<svg class="w-3.5 h-3.5 fill-current" viewbox="0 0 16 16">
+<circle cx="8" cy="8" r="2.2"></circle>
+<path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" stroke-linecap="round" stroke-width="1.2"></path>
+</svg>
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+</div>
+<span class="font-mono-metric text-mono-metric opacity-80 text-[11px]">Tue 9:41 AM</span>
+</div>
+</div>
+<!-- Popover NSMenu Staged Canvas -->
+<div class="relative mt-space-md pt-space-xs pb-space-2xl px-space-md flex flex-col md:flex-row gap-space-lg items-start justify-center">
+<!-- PRIMARY NSMenu (268px Native macOS Dark Aqua) -->
+<div class="w-[268px] rounded-lg bg-[#1a1a1c]/95 backdrop-blur-2xl shadow-[0_18px_48px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.1)] p-[4px] text-on-surface select-none z-20">
+<!-- Item: Open FlowKeys -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] opacity-70 group-hover:opacity-100">keyboard_alt</span>
+<span class="font-body-default text-body-default truncate font-medium">Open FlowKeys</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-primary-container">⌘O</span>
+</div>
+<!-- Item: Paste Last Transcript -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] opacity-70 group-hover:opacity-100">content_paste</span>
+<span class="font-body-default text-body-default truncate">Paste Last Transcript</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-primary-container">⇧⌘V</span>
+</div>
+<!-- Divider -->
+<div class="h-[1px] bg-surface-container-highest my-1 mx-2"></div>
+<!-- Item: Start Dictation -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] text-tertiary group-hover:text-on-primary-container">mic</span>
+<span class="font-body-default text-body-default truncate font-medium">Start Dictation</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-primary-container">Fn</span>
+</div>
+<!-- Item: Rewrite Selection -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] opacity-70 group-hover:opacity-100">auto_fix_high</span>
+<span class="font-body-default text-body-default truncate">Rewrite Selection</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-primary-container">⌥⌘Fn</span>
+</div>
+<!-- Divider -->
+<div class="h-[1px] bg-surface-container-highest my-1 mx-2"></div>
+<!-- Submenu Trigger: Language (Active State Visualized) -->
+<div class="flex items-center justify-between px-space-base py-space-xs rounded-[5px] bg-surface-container-high text-on-surface cursor-default" id="subLanguageTrigger">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] text-primary">translate</span>
+<span class="font-body-default text-body-default truncate">Language</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">EN-US</span>
+<span class="material-symbols-outlined text-[14px]">arrow_right</span>
+</div>
+</div>
+<!-- Submenu Trigger: Microphone -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] opacity-70 group-hover:opacity-100">graphic_eq</span>
+<span class="font-body-default text-body-default truncate">Microphone</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-primary-container truncate max-w-[65px]">AirPods</span>
+<span class="material-symbols-outlined text-[14px] opacity-60 group-hover:opacity-100">arrow_right</span>
+</div>
+</div>
+<!-- Submenu Trigger: Smart Mode -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] opacity-70 group-hover:opacity-100">bolt</span>
+<span class="font-body-default text-body-default truncate">Smart Mode</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-primary-container">Casual</span>
+<span class="material-symbols-outlined text-[14px] opacity-60 group-hover:opacity-100">arrow_right</span>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-[1px] bg-surface-container-highest my-1 mx-2"></div>
+<!-- Item: Recent Transcripts -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] opacity-70 group-hover:opacity-100">history</span>
+<span class="font-body-default text-body-default truncate">Recent Transcripts</span>
+</div>
+<span class="material-symbols-outlined text-[14px] opacity-60 group-hover:opacity-100">arrow_right</span>
+</div>
+<!-- Item: Local AI Engine Pip -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-tertiary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-tertiary"></span>
+</span>
+<span class="font-body-default text-body-default truncate">Local Engine (Whisper)</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-tertiary group-hover:text-on-primary-container">0.8ms</span>
+</div>
+<!-- Item: Settings -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] opacity-70 group-hover:opacity-100">settings</span>
+<span class="font-body-default text-body-default truncate">Settings...</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-primary-container">⌘,</span>
+</div>
+<!-- Divider -->
+<div class="h-[1px] bg-surface-container-highest my-1 mx-2"></div>
+<!-- Item: Help & Shortcuts -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] opacity-70 group-hover:opacity-100">help_outline</span>
+<span class="font-body-default text-body-default truncate">Help & Shortcuts</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-primary-container">⌘?</span>
+</div>
+<!-- Item: Quit FlowKeys -->
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-error-container hover:text-on-error-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-[15px] text-error group-hover:text-on-error-container">power_settings_new</span>
+<span class="font-body-default text-body-default truncate">Quit FlowKeys</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap opacity-60 group-hover:text-on-error-container">⌘Q</span>
+</div>
+</div>
+<!-- SECONDARY FLYOUT SUBMENU: Language Dialects (Simulated Attached) -->
+<div class="w-[230px] rounded-lg bg-[#18181a]/95 backdrop-blur-2xl shadow-[0_18px_48px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] p-[4px] text-on-surface select-none z-30 md:-ml-3 mt-10 md:mt-20">
+<div class="px-space-base py-space-2xs text-[10px] uppercase font-mono-keycap tracking-wider text-on-surface-variant opacity-60">
+              Transcription Language
+            </div>
+<!-- EN Checkmark Active -->
+<div class="flex items-center justify-between px-space-base py-space-xs rounded-[5px] bg-surface-container-high text-on-surface">
+<div class="flex items-center gap-space-sm min-w-0">
+<span class="material-symbols-outlined text-primary text-[15px]">check</span>
+<span class="font-body-default text-body-default font-medium">English (US)</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#4A90E2]"></span>
+</div>
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0 pl-[23px]">
+<span class="font-body-default text-body-default truncate">Hindi (हिन्दी)</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#138808]"></span>
+</div>
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0 pl-[23px]">
+<span class="font-body-default text-body-default truncate">Bengali (বাংলা)</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#0B7345]"></span>
+</div>
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0 pl-[23px]">
+<span class="font-body-default text-body-default truncate">Hinglish</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+</div>
+<div class="h-[1px] bg-surface-container-highest my-1 mx-2"></div>
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0 pl-[23px]">
+<span class="font-body-default text-body-default truncate">Auto Detect</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap opacity-60">AI</span>
+</div>
+<div class="group flex items-center justify-between px-space-base py-space-xs rounded-[5px] hover:bg-primary-container hover:text-on-primary-container cursor-default transition-colors">
+<div class="flex items-center gap-space-sm min-w-0 pl-[23px]">
+<span class="font-body-default text-body-default truncate">Script & Transliterate</span>
+</div>
+<span class="material-symbols-outlined text-[13px] opacity-60">arrow_right</span>
+</div>
+</div>
+<!-- THIRD FLYOUT SUBMENU: Recent Transcripts Mini Stack -->
+<div class="w-[240px] rounded-lg bg-[#18181a]/95 backdrop-blur-2xl shadow-[0_18px_48px_rgba(0,0,0,0.85),0_0_0_1px_rgba(255,255,255,0.08)] p-[4px] text-on-surface select-none z-10 md:-ml-4 mt-28 md:mt-44">
+<div class="px-space-base py-space-2xs text-[10px] uppercase font-mono-keycap tracking-wider text-on-surface-variant opacity-60">
+              Quick Copy History
+            </div>
+<div class="p-space-xs flex flex-col gap-1">
+<button class="w-full text-left p-space-xs rounded hover:bg-surface-container-high transition-colors group" onclick="navigator.clipboard.writeText('refactor authenticateUser() with token verification')">
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-mono-metric">
+<span>10:42 AM • 6 words</span>
+<span class="opacity-0 group-hover:opacity-100 text-primary">Copy</span>
+</div>
+<div class="font-body-compact text-body-compact text-on-surface truncate mt-0.5">"refactor authenticateUser() with..."</div>
+</button>
+<button class="w-full text-left p-space-xs rounded hover:bg-surface-container-high transition-colors group" onclick="navigator.clipboard.writeText('Let us push the sync meeting to 3 PM IST')">
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-mono-metric">
+<span>10:15 AM • 9 words</span>
+<span class="opacity-0 group-hover:opacity-100 text-primary">Copy</span>
+</div>
+<div class="font-body-compact text-body-compact text-on-surface truncate mt-0.5">"Let us push the sync meeting to..."</div>
+</button>
+<button class="w-full text-left p-space-xs rounded hover:bg-surface-container-high transition-colors group" onclick="navigator.clipboard.writeText('const response = await engine.transcribe()')">
+<div class="flex items-center justify-between text-[11px] text-on-surface-variant font-mono-metric">
+<span>09:50 AM • 5 words</span>
+<span class="opacity-0 group-hover:opacity-100 text-primary">Copy</span>
+</div>
+<div class="font-body-compact text-body-compact text-on-surface truncate mt-0.5">"const response = await engine..."</div>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Interaction Architecture Matrix -->
+<div class="p-space-xl bg-surface-container rounded-2xl shadow-sm">
+<div class="flex items-center gap-space-sm mb-space-base">
+<span class="material-symbols-outlined text-primary text-[20px]">touch_app</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-medium">Click Interaction Mapping</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<div class="p-space-base rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Left-Click (Primary)</span>
+<span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs bg-surface-container-highest rounded text-primary">Single Click</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+              Immediately triggers the active <strong class="text-on-surface">Floating Pill Voice HUD</strong> for fast dictation without displaying menu chrome. Ultra-responsive 0ms latch.
+            </p>
+</div>
+<div class="p-space-base rounded-xl bg-surface-container-low flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Right-Click / ⌃+Click</span>
+<span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs bg-surface-container-highest rounded text-tertiary">Context Menu</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+              Spawns the full <strong class="text-on-surface">NSMenu</strong> tree shown above for dialect toggling, input device routing, audio telemetry, and daemon termination.
+            </p>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT: 16px & 32px Template Icon Family Grid -->
+<div class="xl:col-span-5 flex flex-col gap-space-2xl">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[20px]">grid_view</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-medium">16pt Template Icon Family</h2>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">PDF Vector / 1x & @2x</span>
+</div>
+<!-- Icon States Roster -->
+<div class="flex flex-col gap-space-base">
+<!-- STATE 1: IDLE -->
+<div class="p-space-base rounded-xl bg-surface-container flex items-center justify-between gap-space-base shadow-sm hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-space-lg">
+<!-- Icon Display Chamber (16pt & 32pt preview) -->
+<div class="w-14 h-14 rounded-lg bg-surface-container-lowest flex items-center justify-center relative shadow-inner">
+<!-- Pixel Grid Guidelines Visual -->
+<div class="absolute inset-2 grid grid-cols-4 grid-rows-4 opacity-10 pointer-events-none">
+<div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div>
+<div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div>
+<div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div>
+<div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div><div class="border-[0.5px] border-white"></div>
+</div>
+<svg class="w-5 h-5 text-on-surface" fill="currentColor" viewbox="0 0 16 16">
+<circle cx="8" cy="8" r="2.2"></circle>
+<path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" stroke-linecap="round" stroke-width="1.2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md font-medium text-on-surface">1. Idle Template</span>
+<span class="font-mono-keycap text-mono-keycap px-space-2xs bg-surface-container-highest rounded text-on-surface-variant">Default</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-0.5">
+                Soundwave sunburst mark. Monochrome hairline with dynamic macOS dark/light inversion.
+              </p>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant text-right">16×16<br/><span class="opacity-50">@2x: 32px</span></span>
+</div>
+<!-- STATE 2: RECORDING -->
+<div class="p-space-base rounded-xl bg-surface-container flex items-center justify-between gap-space-base shadow-sm hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-space-lg">
+<div class="w-14 h-14 rounded-lg bg-surface-container-lowest flex items-center justify-center relative shadow-inner">
+<svg class="w-5 h-5 text-on-surface" fill="currentColor" viewbox="0 0 16 16">
+<circle class="text-error animate-ping origin-center opacity-40" cx="8" cy="8" r="3.2"></circle>
+<circle class="text-error" cx="8" cy="8" r="3"></circle>
+<path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" opacity="0.6" stroke="currentColor" stroke-linecap="round" stroke-width="1"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md font-medium text-on-surface">2. Recording</span>
+<span class="font-mono-keycap text-mono-keycap px-space-2xs bg-error-container rounded text-on-error-container">1.4s pulse</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-0.5">
+                Center audio dot pulses crimson red while audio hardware buffer is hot.
+              </p>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant text-right">44.1kHz<br/><span class="text-error">Active</span></span>
+</div>
+<!-- STATE 3: TRANSCRIBING -->
+<div class="p-space-base rounded-xl bg-surface-container flex items-center justify-between gap-space-base shadow-sm hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-space-lg">
+<div class="w-14 h-14 rounded-lg bg-surface-container-lowest flex items-center justify-center relative shadow-inner">
+<svg class="w-5 h-5 text-on-surface" viewbox="0 0 16 16">
+<!-- Clockwise sweeping arc -->
+<circle class="text-primary animate-spin" cx="8" cy="8" fill="none" r="6" stroke="currentColor" stroke-dasharray="14 30" stroke-width="1.2" style="animation-duration: 0.9s; transform-origin: 8px 8px;"></circle>
+<circle class="text-primary" cx="8" cy="8" fill="currentColor" r="2"></circle>
+</svg>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md font-medium text-on-surface">3. Transcribing</span>
+<span class="font-mono-keycap text-mono-keycap px-space-2xs bg-surface-container-highest rounded text-primary">Inference</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-0.5">
+                1pt arc sweeping clockwise around the mark during CoreML neural decoding.
+              </p>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-primary text-right"><12ms<br/><span class="opacity-50">Local</span></span>
+</div>
+<!-- STATE 4: MODEL DOWNLOADING -->
+<div class="p-space-base rounded-xl bg-surface-container flex items-center justify-between gap-space-base shadow-sm hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-space-lg">
+<div class="w-14 h-14 rounded-lg bg-surface-container-lowest flex items-center justify-center relative shadow-inner">
+<svg class="w-5 h-5 text-on-surface" viewbox="0 0 16 16">
+<circle cx="8" cy="8" fill="none" r="6" stroke="rgba(255,255,255,0.2)" stroke-width="1.4"></circle>
+<circle class="text-tertiary rotate-[-90deg] origin-center" cx="8" cy="8" fill="none" r="6" stroke="currentColor" stroke-dasharray="26 38" stroke-linecap="round" stroke-width="1.4"></circle>
+<path class="text-on-surface" d="M8 5v4m-1.5-1.5L8 9l1.5-1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.2"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md font-medium text-on-surface">4. Downloading</span>
+<span class="font-mono-keycap text-mono-keycap px-space-2xs bg-tertiary-container rounded text-on-tertiary-container">68%</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-0.5">
+                Radial progress fill arc displaying weights fetch (e.g. Whisper Large-v3 turbo).
+              </p>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant text-right">412 MB<br/><span class="text-tertiary">24 MB/s</span></span>
+</div>
+<!-- STATE 5: ATTENTION / WARNING -->
+<div class="p-space-base rounded-xl bg-surface-container flex items-center justify-between gap-space-base shadow-sm hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-space-lg">
+<div class="w-14 h-14 rounded-lg bg-surface-container-lowest flex items-center justify-center relative shadow-inner">
+<svg class="w-5 h-5 text-on-surface" fill="currentColor" viewbox="0 0 16 16">
+<circle cx="8" cy="8" r="2.2"></circle>
+<path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" stroke-linecap="round" stroke-width="1.2"></path>
+<!-- Amber attention pip top right -->
+<circle class="text-[#FFBD2E]" cx="13" cy="3" r="2"></circle>
+</svg>
+</div>
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md font-medium text-on-surface">5. Attention Required</span>
+<span class="font-mono-keycap text-mono-keycap px-space-2xs bg-[#FFBD2E]/20 text-[#FFBD2E] rounded">Perms</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-0.5">
+                Amber status indicator badge when Accessibility or Audio permissions lapse.
+              </p>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-[#FFBD2E] text-right">TCC Alert<br/><span class="opacity-50">Privilege</span></span>
+</div>
+</div>
+<!-- Native CoreAudio Integration Specs -->
+<div class="p-space-xl bg-surface-container rounded-2xl shadow-sm">
+<div class="flex items-center gap-space-sm mb-space-base">
+<span class="material-symbols-outlined text-primary text-[20px]">developer_board</span>
+<h3 class="font-headline-md text-headline-md text-on-surface font-medium">CoreAudio & NSStatusItem Bridge</h3>
+</div>
+<div class="space-y-space-md text-body-compact text-body-compact text-on-surface-variant">
+<div class="flex items-center justify-between pb-space-xs border-b border-white/5">
+<span class="font-mono-metric text-mono-metric">AudioTap Latency</span>
+<span class="font-mono-metric text-mono-metric text-tertiary">0.24 ms (Direct ring buffer)</span>
+</div>
+<div class="flex items-center justify-between pb-space-xs border-b border-white/5">
+<span class="font-mono-metric text-mono-metric">AppKit Item Class</span>
+<span class="font-mono-metric text-mono-metric text-on-surface">NSStatusItem (variable length)</span>
+</div>
+<div class="flex items-center justify-between pb-space-xs border-b border-white/5">
+<span class="font-mono-metric text-mono-metric">Template Rendering</span>
+<span class="font-mono-metric text-mono-metric text-on-surface">isTemplate = YES (macOS auto-tint)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-mono-metric text-mono-metric">VBR VAD Threshold</span>
+<span class="font-mono-metric text-mono-metric text-primary">-42 dBFS (Voice activity detector)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Micro-interaction script -->
+<script>
+    // Submenu interactive hover response
+    const trigger = document.getElementById('subLanguageTrigger');
+    if (trigger) {
+      trigger.addEventListener('mouseenter', () => {
+        trigger.classList.add('bg-primary-container', 'text-on-primary-container');
+        trigger.classList.remove('bg-surface-container-high', 'text-on-surface');
+      });
+      trigger.addEventListener('mouseleave', () => {
+        trigger.classList.remove('bg-primary-container', 'text-on-primary-container');
+        trigger.classList.add('bg-surface-container-high', 'text-on-surface');
+      });
+    }
+  </script>
+</div></main></div></body></html>

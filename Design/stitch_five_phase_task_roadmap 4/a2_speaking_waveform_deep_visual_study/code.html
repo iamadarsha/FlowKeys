@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#00531c","surface-dim":"#131315","on-surface":"#e5e1e4","error":"#ffb4ab","on-secondary-container":"#efa790","primary":"#ffb59d","inverse-surface":"#e5e1e4","surface-container-highest":"#353437","tertiary":"#53e16f","on-background":"#e5e1e4","on-secondary-fixed":"#360f03","surface-variant":"#353437","on-secondary":"#512313","on-tertiary":"#003911","inverse-primary":"#ab3500","on-primary-fixed-variant":"#832600","background":"#131315","surface-bright":"#39393b","primary-fixed-dim":"#ffb59d","surface-container":"#201f21","primary-fixed":"#ffdbd0","on-tertiary-fixed":"#002107","on-error":"#690005","inverse-on-surface":"#303032","secondary-fixed-dim":"#ffb59d","tertiary-fixed-dim":"#53e16f","surface":"#131315","secondary":"#ffb59d","secondary-container":"#6f3b29","on-tertiary-container":"#003a11","on-primary-container":"#5f1900","surface-container-lowest":"#0e0e10","on-surface-variant":"#e1bfb5","on-primary-fixed":"#390c00","surface-container-high":"#2a2a2c","on-secondary-fixed-variant":"#6c3927","primary-container":"#ff6b35","surface-tint":"#ffb59d","secondary-fixed":"#ffdbd0","on-error-container":"#ffdad6","tertiary-fixed":"#72fe88","error-container":"#93000a","surface-container-low":"#1b1b1d","tertiary-container":"#06b146","outline":"#a98a80","on-primary":"#5d1900","outline-variant":"#594139"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-base":"0.75rem","space-xs":"0.25rem","space-sm":"0.375rem","space-2xs":"0.125rem","panel-padding-modal":"1.25rem","space-md":"0.5rem","space-3xl":"2rem","space-xl":"1.25rem","space-lg":"1rem","space-2xl":"1.5rem","panel-padding-compact":"0.5rem","panel-padding-standard":"0.75rem"},fontFamily:{"label-sm":["Geist"],"label-md":["Geist"],"headline-md":["Geist"],"mono-keycap":["JetBrains Mono"],"headline-lg":["Geist"],display:["Geist"],"mono-metric":["JetBrains Mono"],"body-lg":["Geist"],"body-default":["Geist"],"body-compact":["Geist"]},fontSize:{"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"500"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-md":["15px",{lineHeight:"20px",letterSpacing:"-0.015em",fontWeight:"500"}],"mono-keycap":["10px",{lineHeight:"12px",letterSpacing:"0.04em",fontWeight:"500"}],"headline-lg":["18px",{lineHeight:"24px",letterSpacing:"-0.02em",fontWeight:"600"}],display:["24px",{lineHeight:"32px",letterSpacing:"-0.025em",fontWeight:"600"}],"mono-metric":["12px",{lineHeight:"16px",letterSpacing:"-0.02em",fontWeight:"500"}],"body-lg":["14px",{lineHeight:"20px",letterSpacing:"-0.01em",fontWeight:"400"}],"body-default":["13px",{lineHeight:"18px",letterSpacing:"-0.005em",fontWeight:"400"}],"body-compact":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}}</script></head><body class="bg-surface-container-lowest text-on-surface font-body-default text-body-default min-h-screen selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-52 bg-surface-dim z-50 flex flex-col justify-between select-none shadow-[1px_0_0_rgba(255,255,255,0.07)]"><div class="flex flex-col"><div class="px-space-lg pt-space-lg pb-space-md flex items-center gap-space-sm"><div class="w-3 h-3 rounded-full bg-[#FF5F56] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#27C93F] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div></div><div class="px-space-lg py-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="FlowKeys Icon" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">FlowKeys</span></div><span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">v2.0</span></div><nav class="mt-space-sm px-space-sm flex flex-col gap-space-2xs" data-active-classes="bg-surface-container-high text-on-surface font-semibold"><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[18px]">home</span><span class="font-body-compact text-body-compact">Home</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="history" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span class="font-body-compact text-body-compact">History</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="dictionary" href="#"><span class="material-symbols-outlined text-[18px]">menu_book</span><span class="font-body-compact text-body-compact">Dictionary</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="snippets" href="#"><span class="material-symbols-outlined text-[18px]">post_add</span><span class="font-body-compact text-body-compact">Snippets</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="smart-modes" href="#"><span class="material-symbols-outlined text-[18px]">motion_mode</span><span class="font-body-compact text-body-compact">Smart Modes</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="style" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-compact text-body-compact">Style</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="voice-macros" href="#"><span class="material-symbols-outlined text-[18px]">mic</span><span class="font-body-compact text-body-compact">Voice Macros</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="local-ai" href="#"><span class="material-symbols-outlined text-[18px]">memory</span><span class="font-body-compact text-body-compact">Local AI</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg transition-colors bg-surface-container-high text-on-surface font-semibold" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div><div class="p-space-base m-space-sm rounded-xl bg-surface-container shadow-[0_16px_36px_-8px_rgba(0,0,0,0.75)]"><div class="flex items-center gap-space-xs text-primary-container"><span class="material-symbols-outlined text-[16px]">local_fire_department</span><span class="font-label-md text-label-md font-semibold">12-day streak</span></div><div class="mt-space-2xs flex items-center justify-between text-on-surface-variant"><span class="font-body-compact text-body-compact">Today</span><span class="font-mono-metric text-mono-metric text-on-surface font-medium">1,204 words</span></div></div></aside><div class="pl-52 min-h-screen flex flex-col"><header class="fixed top-0 left-52 right-0 h-14 bg-surface-dim/85 backdrop-blur-xl z-40 flex items-center justify-between px-space-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><img alt="FlowKeys Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-surface-container shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase tracking-wider">Engine Ready</span></div></div><div class="flex items-center gap-space-base"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-lg bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">keyboard_command_key</span><span class="font-mono-keycap text-mono-keycap">⌥ Space</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-14 flex-1 bg-surface-container-lowest w-full px-space-xl py-space-lg"><div class="flex flex-col w-full">
+<!-- Spec Sheet Header Banner -->
+<div class="relative bg-surface-container-low rounded-xl p-space-2xl mb-space-xl overflow-hidden shadow-2xl">
+<div class="absolute -right-16 -top-24 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute left-1/3 -bottom-20 w-64 h-64 bg-tertiary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-space-lg">
+<div>
+<div class="flex items-center gap-space-sm mb-space-xs">
+<span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-primary font-semibold tracking-wider uppercase">SPEC-ID: A2-AUDIO-WAVE</span>
+<span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container text-on-surface-variant">DSP ENGINE v2.4</span>
+<span class="flex items-center gap-1 font-mono-keycap text-mono-keycap text-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+            60FPS FLUID SYNTH
+          </span>
+</div>
+<h1 class="font-display text-display text-on-surface tracking-tight">Speaking Waveform // Motion & Audio Architecture</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl mt-space-2xs">
+          Continuous fluid dynamics, multi-band envelope parameters, and language glow tinting for floating macOS HUD and inline engine overlays.
+        </p>
+</div>
+<!-- Quick Actions / Mode Switchers -->
+<div class="flex items-center gap-space-sm bg-surface-container-highest p-1.5 rounded-lg shadow-inner">
+<button class="flex items-center gap-space-xs px-space-md py-space-xs rounded bg-primary-container text-on-primary font-headline-md text-label-md transition-all active:scale-95 shadow-sm" id="btn-demo-mode" onclick="togglePlayback()">
+<span class="material-symbols-outlined text-[16px]" id="play-icon">play_arrow</span>
+<span id="play-label">Simulate Realtime Stream</span>
+</button>
+<button class="px-space-sm py-space-xs rounded font-mono-keycap text-mono-keycap text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="switchLanguageTint('mix')">
+          Reset Tints
+        </button>
+</div>
+</div>
+</div>
+<!-- HERO SECTION: 3 AMPLITUDE SNAPSHOTS -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-space-xl mb-space-2xl">
+<!-- Snapshot 1: Quiet Speech -->
+<div class="relative bg-surface-container rounded-xl p-space-xl flex flex-col justify-between overflow-hidden shadow-xl group">
+<div class="flex items-start justify-between">
+<div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase tracking-wider">STATE 01 // IDLE & SUB-VOCAL</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-space-2xs">Quiet Speech</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-1">10% – 25% amplitude window with gentle fluid ripples.</p>
+</div>
+<div class="text-right">
+<span class="font-mono-metric text-mono-metric text-primary-fixed bg-surface-container-high px-space-xs py-space-2xs rounded">-34 dBFS</span>
+</div>
+</div>
+<!-- Waveform Visualization Display Stage -->
+<div class="relative my-space-2xl py-space-xl flex items-center justify-center bg-surface-container-lowest rounded-lg overflow-hidden">
+<!-- Baseline Ambient Glow Ring -->
+<div class="absolute w-56 h-14 rounded-full bg-primary-container/10 blur-md pointer-events-none opacity-40"></div>
+<div class="relative flex items-center gap-[3px] h-12 px-space-md">
+<!-- 24 SVG Bars (Snapshot 1) -->
+<svg class="h-8 w-[120px] overflow-visible" fill="none" viewbox="0 0 120 32" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient id="grad-quiet" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#FF6B35" stop-opacity="0.9"></stop>
+<stop offset="100%" stop-color="#FFB59D" stop-opacity="0.4"></stop>
+</lineargradient>
+</defs>
+<!-- 24 Bars: min 3px, max 8px in quiet mode -->
+<rect fill="url(#grad-quiet)" height="4" rx="1" width="2" x="0" y="14"></rect>
+<rect fill="url(#grad-quiet)" height="5" rx="1" width="2" x="5" y="13.5"></rect>
+<rect fill="url(#grad-quiet)" height="4" rx="1" width="2" x="10" y="14"></rect>
+<rect fill="url(#grad-quiet)" height="6" rx="1" width="2" x="15" y="13"></rect>
+<rect fill="url(#grad-quiet)" height="7" rx="1" width="2" x="20" y="12.5"></rect>
+<rect fill="url(#grad-quiet)" height="6" rx="1" width="2" x="25" y="13"></rect>
+<rect fill="url(#grad-quiet)" height="8" rx="1" width="2" x="30" y="12"></rect>
+<rect fill="url(#grad-quiet)" height="5" rx="1" width="2" x="35" y="13.5"></rect>
+<rect fill="url(#grad-quiet)" height="6" rx="1" width="2" x="40" y="13"></rect>
+<rect fill="url(#grad-quiet)" height="7" rx="1" width="2" x="45" y="12.5"></rect>
+<rect fill="url(#grad-quiet)" height="8" rx="1" width="2" x="50" y="12"></rect>
+<rect fill="url(#grad-quiet)" height="6" rx="1" width="2" x="55" y="13"></rect>
+<rect fill="url(#grad-quiet)" height="5" rx="1" width="2" x="60" y="13.5"></rect>
+<rect fill="url(#grad-quiet)" height="8" rx="1" width="2" x="65" y="12"></rect>
+<rect fill="url(#grad-quiet)" height="7" rx="1" width="2" x="70" y="12.5"></rect>
+<rect fill="url(#grad-quiet)" height="6" rx="1" width="2" x="75" y="13"></rect>
+<rect fill="url(#grad-quiet)" height="5" rx="1" width="2" x="80" y="13.5"></rect>
+<rect fill="url(#grad-quiet)" height="4" rx="1" width="2" x="85" y="14"></rect>
+<rect fill="url(#grad-quiet)" height="6" rx="1" width="2" x="90" y="13"></rect>
+<rect fill="url(#grad-quiet)" height="5" rx="1" width="2" x="95" y="13.5"></rect>
+<rect fill="url(#grad-quiet)" height="4" rx="1" width="2" x="100" y="14"></rect>
+<rect fill="url(#grad-quiet)" height="4" rx="1" width="2" x="105" y="14"></rect>
+<rect fill="url(#grad-quiet)" height="3" rx="1" width="2" x="110" y="14.5"></rect>
+<rect fill="url(#grad-quiet)" height="3" rx="1" width="2" x="115" y="14.5"></rect>
+</svg>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs text-on-surface-variant font-mono-metric text-mono-metric">
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="block text-on-surface font-label-md">Peak Height</span>
+          7.8 px (27.8%)
+        </div>
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="block text-on-surface font-label-md">Glow Dispersion</span>
+          4.0 px (0.15α)
+        </div>
+</div>
+</div>
+<!-- Snapshot 2: Normal Speech -->
+<div class="relative bg-surface-container rounded-xl p-space-xl flex flex-col justify-between overflow-hidden shadow-2xl group">
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 w-44 h-44 bg-primary-container/20 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10 flex items-start justify-between">
+<div>
+<span class="font-mono-keycap text-mono-keycap text-primary-container uppercase tracking-wider font-semibold">STATE 02 // TYPICAL CONVERSATION</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-space-2xs">Normal Speech</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-1">30% – 70% amplitude with natural formant double peaks.</p>
+</div>
+<div class="text-right">
+<span class="font-mono-metric text-mono-metric text-tertiary bg-surface-container-high px-space-xs py-space-2xs rounded">-16 dBFS</span>
+</div>
+</div>
+<!-- Waveform Visualization Display Stage -->
+<div class="relative my-space-2xl py-space-xl flex items-center justify-center bg-surface-container-lowest rounded-lg overflow-hidden">
+<!-- Dual Aura Layer -->
+<div class="absolute w-56 h-16 rounded-full bg-primary-container/25 blur-lg pointer-events-none"></div>
+<div class="relative flex items-center gap-[3px] h-12 px-space-md">
+<!-- 24 SVG Bars (Snapshot 2) -->
+<svg class="h-8 w-[120px] overflow-visible" fill="none" viewbox="0 0 120 32" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient id="grad-normal" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#FF6B35"></stop>
+<stop offset="100%" stop-color="#FFB59D"></stop>
+</lineargradient>
+</defs>
+<rect fill="url(#grad-normal)" height="5" rx="1" width="2" x="0" y="13.5"></rect>
+<rect fill="url(#grad-normal)" height="8" rx="1" width="2" x="5" y="12"></rect>
+<rect fill="url(#grad-normal)" height="14" rx="1" width="2" x="10" y="9"></rect>
+<rect fill="url(#grad-normal)" height="20" rx="1" width="2" x="15" y="6"></rect>
+<rect fill="url(#grad-normal)" height="22" rx="1" width="2" x="20" y="5"></rect>
+<rect fill="url(#grad-normal)" height="18" rx="1" width="2" x="25" y="7"></rect>
+<rect fill="url(#grad-normal)" height="12" rx="1" width="2" x="30" y="10"></rect>
+<rect fill="url(#grad-normal)" height="10" rx="1" width="2" x="35" y="11"></rect>
+<rect fill="url(#grad-normal)" height="12" rx="1" width="2" x="40" y="10"></rect>
+<rect fill="url(#grad-normal)" height="16" rx="1" width="2" x="45" y="8"></rect>
+<rect fill="url(#grad-normal)" height="19" rx="1" width="2" x="50" y="6.5"></rect>
+<rect fill="url(#grad-normal)" height="20" rx="1" width="2" x="55" y="6"></rect>
+<rect fill="url(#grad-normal)" height="18" rx="1" width="2" x="60" y="7"></rect>
+<rect fill="url(#grad-normal)" height="14" rx="1" width="2" x="65" y="9"></rect>
+<rect fill="url(#grad-normal)" height="10" rx="1" width="2" x="70" y="11"></rect>
+<rect fill="url(#grad-normal)" height="12" rx="1" width="2" x="75" y="10"></rect>
+<rect fill="url(#grad-normal)" height="16" rx="1" width="2" x="80" y="8"></rect>
+<rect fill="url(#grad-normal)" height="18" rx="1" width="2" x="85" y="7"></rect>
+<rect fill="url(#grad-normal)" height="14" rx="1" width="2" x="90" y="9"></rect>
+<rect fill="url(#grad-normal)" height="10" rx="1" width="2" x="95" y="11"></rect>
+<rect fill="url(#grad-normal)" height="7" rx="1" width="2" x="100" y="12.5"></rect>
+<rect fill="url(#grad-normal)" height="5" rx="1" width="2" x="105" y="13.5"></rect>
+<rect fill="url(#grad-normal)" height="4" rx="1" width="2" x="110" y="14"></rect>
+<rect fill="url(#grad-normal)" height="3" rx="1" width="2" x="115" y="14.5"></rect>
+</svg>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs text-on-surface-variant font-mono-metric text-mono-metric">
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="block text-on-surface font-label-md">Peak Height</span>
+          22.0 px (78.5%)
+        </div>
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="block text-on-surface font-label-md">Glow Dispersion</span>
+          12.0 px (0.35α)
+        </div>
+</div>
+</div>
+<!-- Snapshot 3: Loud / Emphasis -->
+<div class="relative bg-surface-container rounded-xl p-space-xl flex flex-col justify-between overflow-hidden shadow-2xl group">
+<div class="absolute -top-8 right-0 w-48 h-48 bg-primary-container/30 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex items-start justify-between">
+<div>
+<span class="font-mono-keycap text-mono-keycap text-primary-fixed uppercase tracking-wider font-semibold">STATE 03 // STRESSED SYLLABLE</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mt-space-2xs">Loud / Emphasis</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-1">Full 100% envelope ceiling with active bloom radiation.</p>
+</div>
+<div class="text-right">
+<span class="font-mono-metric text-mono-metric text-primary-container bg-surface-container-high px-space-xs py-space-2xs rounded">-3 dBFS</span>
+</div>
+</div>
+<!-- Waveform Visualization Display Stage -->
+<div class="relative my-space-2xl py-space-xl flex items-center justify-center bg-surface-container-lowest rounded-lg overflow-hidden">
+<!-- Bloomed Ambient Glow Ring -->
+<div class="absolute w-60 h-20 rounded-full bg-primary-container/40 blur-xl pointer-events-none animate-pulse"></div>
+<div class="absolute w-44 h-12 rounded-full bg-primary/20 blur-md pointer-events-none"></div>
+<div class="relative flex items-center gap-[3px] h-12 px-space-md">
+<!-- 24 SVG Bars (Snapshot 3: Stressed) -->
+<svg class="h-8 w-[120px] overflow-visible" fill="none" viewbox="0 0 120 32" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<lineargradient id="grad-loud" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#FF6B35"></stop>
+<stop offset="100%" stop-color="#FFDBD0"></stop>
+</lineargradient>
+</defs>
+<rect fill="url(#grad-loud)" height="10" rx="1" width="2" x="0" y="11"></rect>
+<rect fill="url(#grad-loud)" height="16" rx="1" width="2" x="5" y="8"></rect>
+<rect fill="url(#grad-loud)" height="22" rx="1" width="2" x="10" y="5"></rect>
+<rect fill="url(#grad-loud)" height="26" rx="1" width="2" x="15" y="3"></rect>
+<rect fill="url(#grad-loud)" height="28" rx="1" width="2" x="20" y="2"></rect>
+<rect fill="url(#grad-loud)" height="28" rx="1" width="2" x="25" y="2"></rect>
+<rect fill="url(#grad-loud)" height="25" rx="1" width="2" x="30" y="3.5"></rect>
+<rect fill="url(#grad-loud)" height="22" rx="1" width="2" x="35" y="5"></rect>
+<rect fill="url(#grad-loud)" height="26" rx="1" width="2" x="40" y="3"></rect>
+<rect fill="url(#grad-loud)" height="28" rx="1" width="2" x="45" y="2"></rect>
+<rect fill="url(#grad-loud)" height="28" rx="1" width="2" x="50" y="2"></rect>
+<rect fill="url(#grad-loud)" height="28" rx="1" width="2" x="55" y="2"></rect>
+<rect fill="url(#grad-loud)" height="25" rx="1" width="2" x="60" y="3.5"></rect>
+<rect fill="url(#grad-loud)" height="24" rx="1" width="2" x="65" y="4"></rect>
+<rect fill="url(#grad-loud)" height="26" rx="1" width="2" x="70" y="3"></rect>
+<rect fill="url(#grad-loud)" height="28" rx="1" width="2" x="75" y="2"></rect>
+<rect fill="url(#grad-loud)" height="24" rx="1" width="2" x="80" y="4"></rect>
+<rect fill="url(#grad-loud)" height="20" rx="1" width="2" x="85" y="6"></rect>
+<rect fill="url(#grad-loud)" height="16" rx="1" width="2" x="90" y="8"></rect>
+<rect fill="url(#grad-loud)" height="12" rx="1" width="2" x="95" y="10"></rect>
+<rect fill="url(#grad-loud)" height="10" rx="1" width="2" x="100" y="11"></rect>
+<rect fill="url(#grad-loud)" height="8" rx="1" width="2" x="105" y="12"></rect>
+<rect fill="url(#grad-loud)" height="6" rx="1" width="2" x="110" y="13"></rect>
+<rect fill="url(#grad-loud)" height="5" rx="1" width="2" x="115" y="13.5"></rect>
+</svg>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs text-on-surface-variant font-mono-metric text-mono-metric">
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="block text-on-surface font-label-md">Peak Height</span>
+          28.0 px (100.0%)
+        </div>
+<div class="bg-surface-container-low p-space-sm rounded">
+<span class="block text-on-surface font-label-md">Glow Dispersion</span>
+          24.0 px (0.65α)
+        </div>
+</div>
+</div>
+</div>
+<!-- TECHNICAL ANNOTATIONS & ARCHITECTURE GRID -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-xl mb-space-2xl">
+<!-- Interactive Live Simulation & HUD Preview (5 cols) -->
+<div class="xl:col-span-5 flex flex-col gap-space-lg">
+<!-- Card: Live Stream Sandbox -->
+<div class="bg-surface-container rounded-xl p-space-xl shadow-xl flex flex-col justify-between h-full">
+<div>
+<div class="flex items-center justify-between pb-space-md">
+<div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">INTERACTIVE KERNEL</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Waveform Dynamic Generator</h3>
+</div>
+<span class="px-space-xs py-space-2xs rounded bg-surface-container-high font-mono-keycap text-mono-keycap text-tertiary">DSP ACTIVE</span>
+</div>
+<!-- Dynamic Wave Stage -->
+<div class="relative w-full h-44 bg-surface-container-lowest rounded-xl flex flex-col items-center justify-center overflow-hidden my-space-base shadow-inner">
+<!-- Background crosshair grid -->
+<div class="absolute inset-0 bg-[radial-gradient(circle,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:12px_12px] opacity-40"></div>
+<!-- Glow Anchor -->
+<div class="absolute w-44 h-16 rounded-full bg-primary-container/20 blur-xl transition-all duration-150" id="dynamic-glow"></div>
+<!-- The Live Bar Canvas / Flex Rack -->
+<div class="relative z-10 flex items-center gap-[3px] h-32 px-space-md" id="live-waveform-rack">
+<!-- Dynamically populated 24 bars via script -->
+</div>
+<!-- Calibration Legend -->
+<div class="absolute bottom-2 left-3 right-3 flex items-center justify-between font-mono-keycap text-mono-keycap text-on-surface-variant">
+<span>MIN: 3PX</span>
+<span class="text-primary-container font-medium">HARMONIC SPLINE</span>
+<span>MAX: 28PX</span>
+</div>
+</div>
+<!-- Real-Time Param Controls -->
+<div class="space-y-space-sm pt-space-xs">
+<div class="flex items-center justify-between text-body-compact text-on-surface-variant">
+<span class="font-label-sm text-label-sm">Input Signal Amplitude</span>
+<span class="font-mono-metric text-mono-metric text-on-surface" id="input-gain-val">58% RMS</span>
+</div>
+<input class="w-full accent-primary cursor-pointer bg-surface-container-high rounded h-1.5" id="input-gain-slider" max="100" min="0" oninput="updateGain(this.value)" type="range" value="58"/>
+</div>
+</div>
+<!-- 1/2 Scale HUD Embed Inset -->
+<div class="mt-space-lg pt-space-base bg-surface-container-low rounded-lg p-space-md">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">HUD Inset Spec (1/2 Scale)</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">36px Height Pill</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mb-space-sm">Used inside foreground floating macOS Capsule.</p>
+<!-- Miniature Floating HUD Simulation -->
+<div class="w-full flex items-center justify-center py-space-sm">
+<div class="inline-flex items-center gap-space-sm px-space-base py-1.5 rounded-full bg-surface-dim/95 shadow-2xl backdrop-blur-xl">
+<!-- Mini visualizer (5 bars) -->
+<div class="flex items-center gap-[2px] h-4">
+<span class="w-[2px] h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="w-[2px] h-3.5 rounded-full bg-primary"></span>
+<span class="w-[2px] h-4 rounded-full bg-primary"></span>
+<span class="w-[2px] h-2.5 rounded-full bg-primary animate-pulse"></span>
+<span class="w-[2px] h-1.5 rounded-full bg-primary"></span>
+</div>
+<span class="font-body-compact text-body-compact text-on-surface truncate max-w-[140px]">"transcribing continuous audio..."</span>
+<span class="px-1.5 py-0.5 rounded-full bg-[#4A90E2]/20 text-[#4A90E2] font-mono-keycap text-[9px] font-bold">EN</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Technical Specs & Parameter Cards (7 cols) -->
+<div class="xl:col-span-7 flex flex-col gap-space-lg">
+<!-- Primary Architectural Spec Matrix -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Spec 1: Bar Geometry -->
+<div class="bg-surface-container rounded-xl p-space-lg shadow-md flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs text-primary mb-space-xs">
+<span class="material-symbols-outlined text-[18px]">straighten</span>
+<span class="font-label-md text-label-md font-semibold uppercase tracking-wider">Bar Geometry & Count</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+              Fixed dimensional constraints preventing spatial flickering at rapid speech rates.
+            </p>
+</div>
+<div class="mt-space-md space-y-1.5 font-mono-metric text-mono-metric bg-surface-container-low p-space-sm rounded">
+<div class="flex justify-between"><span class="text-on-surface-variant">Bar Count</span><span class="text-on-surface">Exactly 24 bars</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Bar Width</span><span class="text-on-surface">2.0 px</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Pitch / Spacing</span><span class="text-on-surface">3.0 px (gap)</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Corner Radius</span><span class="text-on-surface">1.0 px squircle</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Boundaries</span><span class="text-primary-container">3px min / 28px max</span></div>
+</div>
+</div>
+<!-- Spec 2: Physics Envelope -->
+<div class="bg-surface-container rounded-xl p-space-lg shadow-md flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs text-primary mb-space-xs">
+<span class="material-symbols-outlined text-[18px]">waves</span>
+<span class="font-label-md text-label-md font-semibold uppercase tracking-wider">Fluid Physics Engine</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+              Asymmetric ballistic envelope tuned for organic, water-ripple fluidity.
+            </p>
+</div>
+<div class="mt-space-md space-y-1.5 font-mono-metric text-mono-metric bg-surface-container-low p-space-sm rounded">
+<div class="flex justify-between"><span class="text-on-surface-variant">Attack Curve</span><span class="text-on-surface">60ms (fast ease-out)</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Release Curve</span><span class="text-on-surface">220ms (fluid ease-in)</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Neighbor Smoothing</span><span class="text-on-surface">±1 bar Gaussian</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Damping Factor</span><span class="text-on-surface">0.82ζ (critical)</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Interpolation</span><span class="text-primary-container">Catmull-Rom spline</span></div>
+</div>
+</div>
+<!-- Spec 3: Fill Gradient -->
+<div class="bg-surface-container rounded-xl p-space-lg shadow-md flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs text-primary mb-space-xs">
+<span class="material-symbols-outlined text-[18px]">gradient</span>
+<span class="font-label-md text-label-md font-semibold uppercase tracking-wider">Fill Gradient Matrix</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+              Vertical linear color displacement mapped to relative bar height.
+            </p>
+</div>
+<div class="mt-space-md space-y-2">
+<div class="h-6 w-full rounded bg-gradient-to-b from-primary-container to-secondary shadow-inner"></div>
+<div class="flex justify-between font-mono-metric text-mono-metric text-on-surface-variant">
+<span>Top: #FF6B35 (Accent)</span>
+<span>Bottom: #FFB59D (Salmon)</span>
+</div>
+</div>
+</div>
+<!-- Spec 4: Ambient Glow Ring -->
+<div class="bg-surface-container rounded-xl p-space-lg shadow-md flex flex-col justify-between">
+<div>
+<div class="flex items-center gap-space-xs text-primary mb-space-xs">
+<span class="material-symbols-outlined text-[18px]">blur_on</span>
+<span class="font-label-md text-label-md font-semibold uppercase tracking-wider">Ambient Glow Ring</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+              Dual-stage radial bloom projected onto floating HUD backdrop.
+            </p>
+</div>
+<div class="mt-space-md space-y-1.5 font-mono-metric text-mono-metric bg-surface-container-low p-space-sm rounded">
+<div class="flex justify-between"><span class="text-on-surface-variant">Baseline Opacity</span><span class="text-on-surface">30% resting aura</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Peak Transient Pulse</span><span class="text-on-surface">55% alpha surge</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Bloom Radius</span><span class="text-on-surface">6px – 24px dynamic</span></div>
+<div class="flex justify-between"><span class="text-on-surface-variant">Trigger Threshold</span><span class="text-primary-container">> -12 dB RMS</span></div>
+</div>
+</div>
+</div>
+<!-- Language Tint Matrix Palette Card -->
+<div class="bg-surface-container rounded-xl p-space-lg shadow-xl">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">palette</span>
+<h3 class="font-headline-md text-headline-md text-on-surface">Dialect Audio Reactive Tint Matrix</h3>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">Contextual Auto-Shift</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mb-space-md">
+          When multilingual streaming is detected, the audio envelope adapts its aura and crest color to indicate active language engine routing without shifting layout width.
+        </p>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-space-sm">
+<!-- EN -->
+<button class="group p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-all text-left" onclick="switchLanguageTint('en')">
+<div class="flex items-center gap-1.5 mb-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#4A90E2] shadow-[0_0_8px_#4A90E2]"></span>
+<span class="font-headline-md text-label-md text-on-surface font-semibold">EN (English)</span>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant block">#4A90E2 Blue</span>
+<span class="font-mono-keycap text-[9px] text-on-surface-variant/70 mt-1 block">Global Lexicon</span>
+</button>
+<!-- HI -->
+<button class="group p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-all text-left" onclick="switchLanguageTint('hi')">
+<div class="flex items-center gap-1.5 mb-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#138808] shadow-[0_0_8px_#138808]"></span>
+<span class="font-headline-md text-label-md text-on-surface font-semibold">HI (Hindi)</span>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant block">#138808 Green</span>
+<span class="font-mono-keycap text-[9px] text-on-surface-variant/70 mt-1 block">Devanagari ASR</span>
+</button>
+<!-- BN -->
+<button class="group p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-all text-left" onclick="switchLanguageTint('bn')">
+<div class="flex items-center gap-1.5 mb-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#0B7345] shadow-[0_0_8px_#0B7345]"></span>
+<span class="font-headline-md text-label-md text-on-surface font-semibold">BN (Bengali)</span>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant block">#0B7345 Emerald</span>
+<span class="font-mono-keycap text-[9px] text-on-surface-variant/70 mt-1 block">Eastern Indic Core</span>
+</button>
+<!-- MIX -->
+<button class="group p-space-sm rounded-lg bg-surface-container-low hover:bg-surface-container-high transition-all text-left" onclick="switchLanguageTint('mix')">
+<div class="flex items-center gap-1.5 mb-1.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#FF6B35] shadow-[0_0_8px_#FF6B35]"></span>
+<span class="font-headline-md text-label-md text-on-surface font-semibold">MIX (Code-Switch)</span>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant block">#FF6B35 → Salmon</span>
+<span class="font-mono-keycap text-[9px] text-on-surface-variant/70 mt-1 block">Dual Phoneme Pipe</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 6-FRAME MOTION FILMSTRIP: ANATOMY OF ONE SPOKEN SYLLABLE -->
+<div class="bg-surface-container rounded-xl p-space-xl shadow-2xl mb-space-xl">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-lg">
+<div>
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-primary uppercase font-bold tracking-wider">TEMPORAL MOTION KINETICS</span>
+<span class="px-space-xs py-0.5 rounded bg-surface-container-highest font-mono-keycap text-mono-keycap text-on-surface-variant">320ms Total Event</span>
+</div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface mt-1">6-Frame Syllabic Filmstrip Decomposition</h3>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-0.5">
+          Step-by-step frame breakdown for engineering the instantaneous transition of a single voiced consonant-vowel burst.
+        </p>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-mono-metric text-mono-metric">
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span> 60ms Attack</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-secondary"></span> 220ms Release</span>
+</div>
+</div>
+<!-- The 6 Frames Grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-space-md">
+<!-- FRAME 1: Rest -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md flex flex-col justify-between group hover:bg-surface-container-low transition-colors">
+<div>
+<div class="flex items-center justify-between font-mono-keycap text-mono-keycap text-on-surface-variant mb-space-xs">
+<span class="font-bold text-on-surface">FRAME 01</span>
+<span>T = 0ms</span>
+</div>
+<span class="font-label-md text-label-md text-primary-fixed block font-medium">Rest Baseline</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant block mt-0.5">Flat line idle state</span>
+</div>
+<!-- Frame Display -->
+<div class="h-24 flex items-center justify-center my-space-md">
+<div class="flex items-center gap-[2px] h-8">
+<!-- 24 flat 3px bars -->
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+</div>
+</div>
+<div class="pt-space-xs font-mono-keycap text-mono-keycap text-on-surface-variant/80 border-t-0">
+          Min height clamp: 3px
+        </div>
+</div>
+<!-- FRAME 2: Attack -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md flex flex-col justify-between group hover:bg-surface-container-low transition-colors">
+<div>
+<div class="flex items-center justify-between font-mono-keycap text-mono-keycap text-on-surface-variant mb-space-xs">
+<span class="font-bold text-on-surface">FRAME 02</span>
+<span>T = 30ms</span>
+</div>
+<span class="font-label-md text-label-md text-primary font-medium">Attack Phase</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant block mt-0.5">Rapid ease-out burst</span>
+</div>
+<!-- Frame Display -->
+<div class="h-24 flex items-center justify-center my-space-md">
+<div class="flex items-center gap-[2px] h-8">
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-primary/60"></div>
+<div class="w-[2px] h-[7px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[12px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[16px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[14px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[10px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[6px] rounded-full bg-primary/70"></div>
+<div class="w-[2px] h-[5px] rounded-full bg-primary/60"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-primary/50"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+</div>
+</div>
+<div class="pt-space-xs font-mono-keycap text-mono-keycap text-on-surface-variant/80">
+          Surge: 60ms curve
+        </div>
+</div>
+<!-- FRAME 3: Peak -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md flex flex-col justify-between group hover:bg-surface-container-low transition-colors shadow-sm">
+<div>
+<div class="flex items-center justify-between font-mono-keycap text-mono-keycap text-on-surface-variant mb-space-xs">
+<span class="font-bold text-on-surface">FRAME 03</span>
+<span>T = 70ms</span>
+</div>
+<span class="font-label-md text-label-md text-primary-container font-medium">Peak Resonance</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant block mt-0.5">Max envelope height</span>
+</div>
+<!-- Frame Display -->
+<div class="h-24 flex items-center justify-center my-space-md relative">
+<div class="absolute w-16 h-8 bg-primary-container/20 blur-md rounded-full"></div>
+<div class="flex items-center gap-[2px] h-8 relative z-10">
+<div class="w-[2px] h-[5px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[10px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[18px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[24px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[28px] rounded-full bg-primary-fixed"></div>
+<div class="w-[2px] h-[26px] rounded-full bg-primary-fixed"></div>
+<div class="w-[2px] h-[20px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[14px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[19px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[25px] rounded-full bg-primary-fixed"></div>
+<div class="w-[2px] h-[23px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[16px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[11px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[7px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[5px] rounded-full bg-primary/70"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-primary/60"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/50"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+</div>
+</div>
+<div class="pt-space-xs font-mono-keycap text-mono-keycap text-primary">
+          Height: 28px (Max)
+        </div>
+</div>
+<!-- FRAME 4: Hold / Sustain -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md flex flex-col justify-between group hover:bg-surface-container-low transition-colors">
+<div>
+<div class="flex items-center justify-between font-mono-keycap text-mono-keycap text-on-surface-variant mb-space-xs">
+<span class="font-bold text-on-surface">FRAME 04</span>
+<span>T = 120ms</span>
+</div>
+<span class="font-label-md text-label-md text-secondary font-medium">Formant Sustain</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant block mt-0.5">Harmonic dispersion</span>
+</div>
+<!-- Frame Display -->
+<div class="h-24 flex items-center justify-center my-space-md">
+<div class="flex items-center gap-[2px] h-8">
+<div class="w-[2px] h-[4px] rounded-full bg-primary/60"></div>
+<div class="w-[2px] h-[7px] rounded-full bg-primary/80"></div>
+<div class="w-[2px] h-[12px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[16px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[19px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[17px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[14px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[15px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[18px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[20px] rounded-full bg-primary-container"></div>
+<div class="w-[2px] h-[16px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[14px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[12px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[9px] rounded-full bg-primary/80"></div>
+<div class="w-[2px] h-[6px] rounded-full bg-primary/70"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-primary/60"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-primary/50"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+</div>
+</div>
+<div class="pt-space-xs font-mono-keycap text-mono-keycap text-on-surface-variant/80">
+          ±1 neighbor ripple
+        </div>
+</div>
+<!-- FRAME 5: Release -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md flex flex-col justify-between group hover:bg-surface-container-low transition-colors">
+<div>
+<div class="flex items-center justify-between font-mono-keycap text-mono-keycap text-on-surface-variant mb-space-xs">
+<span class="font-bold text-on-surface">FRAME 05</span>
+<span>T = 240ms</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant font-medium">Fluid Release</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant block mt-0.5">220ms slow ease-in</span>
+</div>
+<!-- Frame Display -->
+<div class="h-24 flex items-center justify-center my-space-md">
+<div class="flex items-center gap-[2px] h-8">
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-primary/50"></div>
+<div class="w-[2px] h-[5px] rounded-full bg-primary/60"></div>
+<div class="w-[2px] h-[7px] rounded-full bg-primary/70"></div>
+<div class="w-[2px] h-[9px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[8px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[6px] rounded-full bg-primary/70"></div>
+<div class="w-[2px] h-[7px] rounded-full bg-primary/70"></div>
+<div class="w-[2px] h-[8px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[9px] rounded-full bg-primary"></div>
+<div class="w-[2px] h-[7px] rounded-full bg-primary/70"></div>
+<div class="w-[2px] h-[6px] rounded-full bg-primary/60"></div>
+<div class="w-[2px] h-[5px] rounded-full bg-primary/50"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-primary/50"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-primary/40"></div>
+</div>
+</div>
+<div class="pt-space-xs font-mono-keycap text-mono-keycap text-on-surface-variant/80">
+          Decay tail: 220ms
+        </div>
+</div>
+<!-- FRAME 6: Settle -->
+<div class="bg-surface-container-lowest rounded-xl p-space-md flex flex-col justify-between group hover:bg-surface-container-low transition-colors">
+<div>
+<div class="flex items-center justify-between font-mono-keycap text-mono-keycap text-on-surface-variant mb-space-xs">
+<span class="font-bold text-on-surface">FRAME 06</span>
+<span>T = 320ms</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface font-medium">Settle to Rest</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant block mt-0.5">Back to calm water</span>
+</div>
+<!-- Frame Display -->
+<div class="h-24 flex items-center justify-center my-space-md">
+<div class="flex items-center gap-[2px] h-8">
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3.5px] rounded-full bg-on-surface-variant/50"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-on-surface-variant/60"></div>
+<div class="w-[2px] h-[4px] rounded-full bg-on-surface-variant/60"></div>
+<div class="w-[2px] h-[3.5px] rounded-full bg-on-surface-variant/50"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+<div class="w-[2px] h-[3px] rounded-full bg-on-surface-variant/40"></div>
+</div>
+</div>
+<div class="pt-space-xs font-mono-keycap text-mono-keycap text-tertiary">
+          State: Zero drift
+        </div>
+</div>
+</div>
+</div>
+<!-- IMPLEMENTATION GUIDE / CODE SIGNATURE FOOTER -->
+<div class="bg-surface-container-low rounded-xl p-space-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-space-lg shadow-inner">
+<div>
+<span class="font-mono-keycap text-mono-keycap text-primary-container uppercase">Swift & Metal Shader Signature</span>
+<h4 class="font-headline-md text-headline-md text-on-surface mt-1">FlowAudioEnvelopeRenderer.metal</h4>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-1">
+        Pipeline targets macOS 14+ Metal 3 hardware shaders with SIMD-vectorized 24-bar biquad smoothing.
+      </p>
+</div>
+<div class="flex items-center gap-space-sm font-mono-keycap text-mono-keycap">
+<div class="px-space-md py-space-xs rounded bg-surface-container text-on-surface">
+<span>FPS LOCK: 60.00</span>
+</div>
+<div class="px-space-md py-space-xs rounded bg-surface-container text-on-surface">
+<span>CPU OVERHEAD: < 0.4%</span>
+</div>
+<button class="flex items-center gap-1 px-space-md py-space-xs rounded bg-surface-container-highest text-primary hover:bg-surface-container transition-all" onclick="navigator.clipboard?.writeText('FlowAudioEnvelopeRenderer');">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Copy Shader Stub</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // FlowKeys Continuous Waveform Simulator Engine
+  const TOTAL_BARS = 24;
+  const rack = document.getElementById('live-waveform-rack');
+  const glow = document.getElementById('dynamic-glow');
+  const gainVal = document.getElementById('input-gain-val');
+  
+  let currentGain = 0.58;
+  let isSimulating = true;
+  let animFrameId = null;
+  let currentTint = 'mix'; // 'en', 'hi', 'bn', 'mix'
+
+  // Build the 24 live bars
+  const bars = [];
+  if (rack) {
+    rack.innerHTML = '';
+    for (let i = 0; i < TOTAL_BARS; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'w-[2px] rounded-full transition-all duration-[60ms] ease-out';
+      bar.style.height = '3px';
+      bar.style.backgroundColor = '#FF6B35';
+      rack.appendChild(bar);
+      bars.push(bar);
+    }
+  }
+
+  // Animation math simulating speech water-ripples
+  let phase = 0;
+  function renderWave() {
+    phase += 0.08;
+    const peakdB = -34 + (currentGain * 31);
+    
+    // Multi-band harmonic simulation
+    for (let i = 0; i < TOTAL_BARS; i++) {
+      const normalizedIdx = i / TOTAL_BARS;
+      // Dual peak formant simulation
+      const formant1 = Math.exp(-Math.pow((normalizedIdx - 0.28) * 5.0, 2));
+      const formant2 = Math.exp(-Math.pow((normalizedIdx - 0.62) * 6.5, 2));
+      const ripple = Math.sin(phase * 2.2 + i * 0.45) * 0.25 + 0.75;
+      
+      const combinedEnvelope = (formant1 * 0.65 + formant2 * 0.55) * ripple;
+      const targetHeight = Math.max(3, Math.min(28, 3 + (combinedEnvelope * currentGain * 25)));
+      
+      if (bars[i]) {
+        bars[i].style.height = `${targetHeight.toFixed(1)}px`;
+      }
+    }
+
+    // Glow Bloom based on peak volume
+    if (glow) {
+      const bloomRadius = 10 + currentGain * 24;
+      const bloomOpacity = 0.15 + currentGain * 0.45;
+      glow.style.width = `${120 + currentGain * 140}px`;
+      glow.style.height = `${36 + currentGain * 32}px`;
+      glow.style.filter = `blur(${bloomRadius}px)`;
+      glow.style.opacity = bloomOpacity.toString();
+    }
+
+    if (isSimulating) {
+      animFrameId = requestAnimationFrame(renderWave);
+    }
+  }
+
+  // Realtime Gain Control
+  window.updateGain = function(val) {
+    currentGain = val / 100;
+    if (gainVal) {
+      gainVal.innerText = `${val}% RMS`;
+    }
+  };
+
+  // Toggle Live Mode
+  window.togglePlayback = function() {
+    isSimulating = !isSimulating;
+    const playIcon = document.getElementById('play-icon');
+    const playLabel = document.getElementById('play-label');
+    if (isSimulating) {
+      if (playIcon) playIcon.innerText = 'pause';
+      if (playLabel) playLabel.innerText = 'Pause Engine Stream';
+      renderWave();
+    } else {
+      if (playIcon) playIcon.innerText = 'play_arrow';
+      if (playLabel) playLabel.innerText = 'Resume Simulation';
+      cancelAnimationFrame(animFrameId);
+    }
+  };
+
+  // Dialect Tint Matrix Switcher
+  window.switchLanguageTint = function(lang) {
+    currentTint = lang;
+    let colorStart = '#FF6B35';
+    let glowColor = 'rgba(255, 107, 53, 0.35)';
+
+    if (lang === 'en') {
+      colorStart = '#4A90E2';
+      glowColor = 'rgba(74, 144, 226, 0.4)';
+    } else if (lang === 'hi') {
+      colorStart = '#138808';
+      glowColor = 'rgba(19, 136, 8, 0.4)';
+    } else if (lang === 'bn') {
+      colorStart = '#0B7345';
+      glowColor = 'rgba(11, 115, 69, 0.4)';
+    } else {
+      colorStart = '#FF6B35';
+      glowColor = 'rgba(255, 107, 53, 0.35)';
+    }
+
+    bars.forEach(b => {
+      b.style.backgroundColor = colorStart;
+    });
+
+    if (glow) {
+      glow.style.backgroundColor = glowColor;
+    }
+  };
+
+  // Kickstart on mount
+  renderWave();
+</script></main></div></body></html>

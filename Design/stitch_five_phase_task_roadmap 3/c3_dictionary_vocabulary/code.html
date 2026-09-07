@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#00531c","surface-dim":"#131315","on-surface":"#e5e1e4","error":"#ffb4ab","on-secondary-container":"#efa790","primary":"#ffb59d","inverse-surface":"#e5e1e4","surface-container-highest":"#353437","tertiary":"#53e16f","on-background":"#e5e1e4","on-secondary-fixed":"#360f03","surface-variant":"#353437","on-secondary":"#512313","on-tertiary":"#003911","inverse-primary":"#ab3500","on-primary-fixed-variant":"#832600","background":"#131315","surface-bright":"#39393b","primary-fixed-dim":"#ffb59d","surface-container":"#201f21","primary-fixed":"#ffdbd0","on-tertiary-fixed":"#002107","on-error":"#690005","inverse-on-surface":"#303032","secondary-fixed-dim":"#ffb59d","tertiary-fixed-dim":"#53e16f","surface":"#131315","secondary":"#ffb59d","secondary-container":"#6f3b29","on-tertiary-container":"#003a11","on-primary-container":"#5f1900","surface-container-lowest":"#0e0e10","on-surface-variant":"#e1bfb5","on-primary-fixed":"#390c00","surface-container-high":"#2a2a2c","on-secondary-fixed-variant":"#6c3927","primary-container":"#ff6b35","surface-tint":"#ffb59d","secondary-fixed":"#ffdbd0","on-error-container":"#ffdad6","tertiary-fixed":"#72fe88","error-container":"#93000a","surface-container-low":"#1b1b1d","tertiary-container":"#06b146","outline":"#a98a80","on-primary":"#5d1900","outline-variant":"#594139"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-base":"0.75rem","space-xs":"0.25rem","space-sm":"0.375rem","space-2xs":"0.125rem","panel-padding-modal":"1.25rem","space-md":"0.5rem","space-3xl":"2rem","space-xl":"1.25rem","space-lg":"1rem","space-2xl":"1.5rem","panel-padding-compact":"0.5rem","panel-padding-standard":"0.75rem"},fontFamily:{"label-sm":["Geist"],"label-md":["Geist"],"headline-md":["Geist"],"mono-keycap":["JetBrains Mono"],"headline-lg":["Geist"],display:["Geist"],"mono-metric":["JetBrains Mono"],"body-lg":["Geist"],"body-default":["Geist"],"body-compact":["Geist"]},fontSize:{"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"500"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-md":["15px",{lineHeight:"20px",letterSpacing:"-0.015em",fontWeight:"500"}],"mono-keycap":["10px",{lineHeight:"12px",letterSpacing:"0.04em",fontWeight:"500"}],"headline-lg":["18px",{lineHeight:"24px",letterSpacing:"-0.02em",fontWeight:"600"}],display:["24px",{lineHeight:"32px",letterSpacing:"-0.025em",fontWeight:"600"}],"mono-metric":["12px",{lineHeight:"16px",letterSpacing:"-0.02em",fontWeight:"500"}],"body-lg":["14px",{lineHeight:"20px",letterSpacing:"-0.01em",fontWeight:"400"}],"body-default":["13px",{lineHeight:"18px",letterSpacing:"-0.005em",fontWeight:"400"}],"body-compact":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}}</script></head><body class="bg-surface-container-lowest text-on-surface font-body-default text-body-default min-h-screen selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-52 bg-surface-dim z-50 flex flex-col justify-between select-none shadow-[1px_0_0_rgba(255,255,255,0.07)]"><div class="flex flex-col"><div class="px-space-lg pt-space-lg pb-space-md flex items-center gap-space-sm"><div class="w-3 h-3 rounded-full bg-[#FF5F56] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#27C93F] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div></div><div class="px-space-lg py-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="FlowKeys Icon" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">FlowKeys</span></div><span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">v2.0</span></div><nav class="mt-space-sm px-space-sm flex flex-col gap-space-2xs" data-active-classes="bg-surface-container-high text-on-surface font-semibold"><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[18px]">home</span><span class="font-body-compact text-body-compact">Home</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="history" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span class="font-body-compact text-body-compact">History</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="dictionary" href="#"><span class="material-symbols-outlined text-[18px]">menu_book</span><span class="font-body-compact text-body-compact">Dictionary</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="snippets" href="#"><span class="material-symbols-outlined text-[18px]">post_add</span><span class="font-body-compact text-body-compact">Snippets</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="smart-modes" href="#"><span class="material-symbols-outlined text-[18px]">motion_mode</span><span class="font-body-compact text-body-compact">Smart Modes</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="style" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-compact text-body-compact">Style</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="voice-macros" href="#"><span class="material-symbols-outlined text-[18px]">mic</span><span class="font-body-compact text-body-compact">Voice Macros</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="local-ai" href="#"><span class="material-symbols-outlined text-[18px]">memory</span><span class="font-body-compact text-body-compact">Local AI</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg transition-colors bg-surface-container-high text-on-surface font-semibold" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div><div class="p-space-base m-space-sm rounded-xl bg-surface-container shadow-[0_16px_36px_-8px_rgba(0,0,0,0.75)]"><div class="flex items-center gap-space-xs text-primary-container"><span class="material-symbols-outlined text-[16px]">local_fire_department</span><span class="font-label-md text-label-md font-semibold">12-day streak</span></div><div class="mt-space-2xs flex items-center justify-between text-on-surface-variant"><span class="font-body-compact text-body-compact">Today</span><span class="font-mono-metric text-mono-metric text-on-surface font-medium">1,204 words</span></div></div></aside><div class="pl-52 min-h-screen flex flex-col"><header class="fixed top-0 left-52 right-0 h-14 bg-surface-dim/85 backdrop-blur-xl z-40 flex items-center justify-between px-space-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><img alt="FlowKeys Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-surface-container shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase tracking-wider">Engine Ready</span></div></div><div class="flex items-center gap-space-base"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-lg bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">keyboard_command_key</span><span class="font-mono-keycap text-mono-keycap">⌥ Space</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-14 flex-1 bg-surface-container-lowest w-full px-space-xl py-space-lg"><div class="flex flex-col w-full max-w-6xl mx-auto space-y-space-xl">
+<!-- Top Command & Action Bar -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md pt-space-xs">
+<div>
+<div class="flex items-center gap-space-xs text-primary font-mono-keycap uppercase tracking-widest text-[10px] mb-space-2xs">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+        Neural Acoustic Memory
+      </div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight">Dictionary</h1>
+<p class="font-body-default text-body-default text-on-surface-variant mt-space-2xs">
+        Names, brands, and acoustic corrections FlowKeys must strictly lock into speech inference.
+      </p>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto">
+<button class="group relative inline-flex items-center gap-space-xs px-space-base py-space-sm rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold transition-all duration-150 active:scale-95 shadow-[0_4px_16px_-2px_rgba(255,107,53,0.3)] hover:brightness-110" id="openModalBtn">
+<span class="material-symbols-outlined text-[17px] transition-transform duration-200 group-hover:rotate-90">add</span>
+<span>Add word</span>
+<span class="ml-space-xs px-1.5 py-0.5 rounded bg-surface-container-lowest/30 font-mono-keycap text-mono-keycap text-[9px]">⌘N</span>
+</button>
+</div>
+</div>
+<!-- Realtime Acoustic Learned Correction Banner (Dismissible) -->
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-secondary-container/40 via-surface-container to-surface-container p-space-base transition-all duration-300 shadow-md" id="correctionBanner">
+<div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-base relative z-10">
+<div class="flex items-center gap-space-base">
+<div class="w-9 h-9 rounded-lg bg-primary-container/20 flex items-center justify-center shrink-0 text-primary-container shadow-inner">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">auto_fix_high</span>
+</div>
+<div class="space-y-space-2xs">
+<div class="flex items-center gap-space-xs flex-wrap">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Learned from corrections</span>
+<span class="px-space-xs py-0.5 rounded-full bg-surface-container-highest font-mono-metric text-[10px] text-on-surface-variant">Slack Workspace</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+            You replaced <span class="font-mono-metric text-on-surface line-through opacity-70">"Rhaul"</span> with <span class="font-mono-metric text-primary font-medium">"Rahul"</span> 3 times today. Store phonetic latch permanently?
+          </p>
+</div>
+</div>
+<div class="flex items-center gap-space-xs shrink-0 self-end sm:self-auto">
+<button class="px-space-base py-space-xs rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors" id="dismissBannerBtn">
+          Dismiss
+        </button>
+<button class="px-space-base py-space-xs rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:brightness-105 transition-all shadow-sm" id="acceptCorrectionBtn">
+          Add to Dictionary
+        </button>
+</div>
+</div>
+</div>
+<!-- Filters, Query & Capacity Metrics Tray -->
+<div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-sm p-space-xs rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex items-center gap-space-sm flex-1">
+<!-- Search Input -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-space-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">search</span>
+<input class="w-full h-8 pl-8 pr- space-base rounded-lg bg-surface-container text-on-surface font-body-compact text-body-compact placeholder:text-on-surface-variant/50 focus:outline-none focus:ring-1 focus:ring-primary transition-all" id="vocabFilterInput" placeholder="Filter vocabulary, spoken triggers, or tags..." type="text"/>
+<span class="absolute right-space-sm top-1/2 -translate-y-1/2 font-mono-keycap text-[9px] px-1 py-0.5 rounded bg-surface-container-highest text-on-surface-variant">/</span>
+</div>
+<!-- Sorting Select -->
+<div class="relative">
+<select class="h-8 pl-space-sm pr-7 rounded-lg bg-surface-container text-on-surface font-label-md text-label-md appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary transition-all" id="sortSelect">
+<option value="recent">Recently Added</option>
+<option value="starred">Starred first</option>
+<option value="az">Alphabetical (A–Z)</option>
+<option value="oldest">Oldest</option>
+</select>
+<span class="material-symbols-outlined pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-[16px]">expand_more</span>
+</div>
+</div>
+<!-- Capacity Gauge & Metric -->
+<div class="flex items-center gap-space-base px-space-base py-space-xs self-end md:self-auto">
+<div class="flex flex-col items-end gap-0.5">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">38</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant">of 500 slots</span>
+</div>
+<div class="w-28 h-1 rounded-full bg-surface-container-highest overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 7.6%;"></div>
+</div>
+</div>
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant hover:text-on-surface cursor-pointer" title="Dictionary Sync Status">sync</span>
+</div>
+</div>
+<!-- Main Vocabulary List -->
+<div class="space-y-space-xs" id="dictionaryList">
+<!-- Row 1: FlowKeys -->
+<div class="vocab-row group flex items-center justify-between p-space-base rounded-xl bg-surface-container hover:bg-surface-container-high transition-all duration-150 shadow-sm" data-keyword="flowkeys">
+<div class="flex items-center gap-space-base min-w-0">
+<button class="star-toggle text-primary focus:outline-none hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+<div class="space-y-space-2xs min-w-0">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-md text-headline-md font-semibold text-on-surface tracking-tight">FlowKeys</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest font-mono-keycap text-mono-keycap text-on-surface-variant">Strict Casing</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-compact text-body-compact">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">graphic_eq</span>
+              Spoken heuristic: <span class="font-mono-metric text-on-surface">"flow keys"</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xl shrink-0">
+<div class="hidden sm:flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-lowest">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4A90E2]"></span>
+<span class="font-mono-metric text-mono-metric text-on-surface">EN</span>
+</div>
+<div class="hidden md:flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Built-in Seed</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/60">System core</span>
+</div>
+<div class="flex items-center gap-space-xs opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="edit-btn p-1.5 rounded-lg hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Edit row">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="delete-btn p-1.5 rounded-lg hover:bg-error-container/20 text-on-surface-variant hover:text-error transition-colors" title="Delete word">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Row 2: Temenos -->
+<div class="vocab-row group flex items-center justify-between p-space-base rounded-xl bg-surface-container hover:bg-surface-container-high transition-all duration-150 shadow-sm" data-keyword="temenos tame nos">
+<div class="flex items-center gap-space-base min-w-0">
+<button class="star-toggle text-primary focus:outline-none hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+<div class="space-y-space-2xs min-w-0">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-md text-headline-md font-semibold text-on-surface tracking-tight">Temenos</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant">Financial Core System</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-compact text-body-compact">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">graphic_eq</span>
+              Phonetic link: <span class="font-mono-metric text-on-surface">"tame nos"</span>
+<span class="material-symbols-outlined text-[12px] text-primary">arrow_forward</span>
+<span class="font-mono-metric text-primary">"Temenos"</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xl shrink-0">
+<div class="hidden sm:flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-lowest">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4A90E2]"></span>
+<span class="font-mono-metric text-mono-metric text-on-surface">EN</span>
+</div>
+<div class="hidden md:flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-primary">Learned</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/60">Auto-added (3 uses)</span>
+</div>
+<div class="flex items-center gap-space-xs opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="edit-btn p-1.5 rounded-lg hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Edit row">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="delete-btn p-1.5 rounded-lg hover:bg-error-container/20 text-on-surface-variant hover:text-error transition-colors" title="Delete word">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Row 3: बेंगलुरु -->
+<div class="vocab-row group flex items-center justify-between p-space-base rounded-xl bg-surface-container hover:bg-surface-container-high transition-all duration-150 shadow-sm" data-keyword="बेंगलुरु bangalore">
+<div class="flex items-center gap-space-base min-w-0">
+<button class="star-toggle text-on-surface-variant/40 hover:text-primary focus:outline-none hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]">star</span>
+</button>
+<div class="space-y-space-2xs min-w-0">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-md text-headline-md font-semibold text-on-surface tracking-tight">बेंगलुरु</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest font-mono-keycap text-mono-keycap text-on-surface-variant">Devanagari Script Target</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-compact text-body-compact">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">graphic_eq</span>
+              Spoken heuristic: <span class="font-mono-metric text-on-surface">"Bangalore"</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xl shrink-0">
+<div class="hidden sm:flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-lowest">
+<span class="w-1.5 h-1.5 rounded-full bg-[#138808]"></span>
+<span class="font-mono-metric text-mono-metric text-on-surface">HI</span>
+</div>
+<div class="hidden md:flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Added by you</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/60">Manual entry</span>
+</div>
+<div class="flex items-center gap-space-xs opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="edit-btn p-1.5 rounded-lg hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Edit row">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="delete-btn p-1.5 rounded-lg hover:bg-error-container/20 text-on-surface-variant hover:text-error transition-colors" title="Delete word">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Row 4: Kubernetes -->
+<div class="vocab-row group flex items-center justify-between p-space-base rounded-xl bg-surface-container hover:bg-surface-container-high transition-all duration-150 shadow-sm" data-keyword="kubernetes koober net ees devops">
+<div class="flex items-center gap-space-base min-w-0">
+<button class="star-toggle text-on-surface-variant/40 hover:text-primary focus:outline-none hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]">star</span>
+</button>
+<div class="space-y-space-2xs min-w-0">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-md text-headline-md font-semibold text-on-surface tracking-tight">Kubernetes</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant">DevOps ecosystem</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-compact text-body-compact">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">graphic_eq</span>
+              Spoken heuristic: <span class="font-mono-metric text-on-surface">"koober net ees"</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xl shrink-0">
+<div class="hidden sm:flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-lowest">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4A90E2]"></span>
+<span class="font-mono-metric text-mono-metric text-on-surface">EN</span>
+</div>
+<div class="hidden md:flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-primary">Learned</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/60">Pattern matching</span>
+</div>
+<div class="flex items-center gap-space-xs opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="edit-btn p-1.5 rounded-lg hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Edit row">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="delete-btn p-1.5 rounded-lg hover:bg-error-container/20 text-on-surface-variant hover:text-error transition-colors" title="Delete word">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Row 5: Jupyter -->
+<div class="vocab-row group flex items-center justify-between p-space-base rounded-xl bg-surface-container hover:bg-surface-container-high transition-all duration-150 shadow-sm" data-keyword="jupyter jupiter notebook">
+<div class="flex items-center gap-space-base min-w-0">
+<button class="star-toggle text-on-surface-variant/40 hover:text-primary focus:outline-none hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[18px]">star</span>
+</button>
+<div class="space-y-space-2xs min-w-0">
+<div class="flex items-center gap-space-sm flex-wrap">
+<span class="font-headline-md text-headline-md font-semibold text-on-surface tracking-tight">Jupyter</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest font-mono-keycap text-mono-keycap text-on-surface-variant">Data Science</span>
+</div>
+<div class="flex items-center gap-space-sm text-on-surface-variant font-body-compact text-body-compact">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">graphic_eq</span>
+              Spoken heuristic: <span class="font-mono-metric text-on-surface">"jupiter notebook"</span>
+</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-xl shrink-0">
+<div class="hidden sm:flex items-center gap-space-xs px-2.5 py-1 rounded-full bg-surface-container-lowest">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4A90E2]"></span>
+<span class="font-mono-metric text-mono-metric text-on-surface">EN</span>
+</div>
+<div class="hidden md:flex flex-col items-end">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Added by you</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/60">Manual entry</span>
+</div>
+<div class="flex items-center gap-space-xs opacity-70 group-hover:opacity-100 transition-opacity">
+<button class="edit-btn p-1.5 rounded-lg hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Edit row">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="delete-btn p-1.5 rounded-lg hover:bg-error-container/20 text-on-surface-variant hover:text-error transition-colors" title="Delete word">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footnote / Acoustic Engine Status -->
+<div class="flex flex-col sm:flex-row items-center justify-between gap-space-sm pt-space-md text-on-surface-variant font-body-compact text-body-compact border-t border-surface-container-high/50">
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span>Local language model indexing ready. Changes apply across active sessions in under 200ms.</span>
+</div>
+<div class="flex items-center gap-space-sm font-mono-keycap text-mono-keycap">
+<span>Import .CSV</span>
+<span>·</span>
+<span>Export Dictionary</span>
+</div>
+</div>
+<!-- Slide-over / Modal Overlay for Add/Edit Word -->
+<div class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-space-base transition-opacity duration-200" id="wordModalBackdrop">
+<div class="relative w-full max-w-lg rounded-2xl bg-surface-container p-panel-padding-modal shadow-[0_24px_48px_-8px_rgba(0,0,0,0.85)] transform transition-all duration-200 scale-95 opacity-0" id="wordModal">
+<!-- Modal Header -->
+<div class="flex items-center justify-between pb-space-base border-b border-surface-container-highest/60">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold" id="modalTitle">Add Word or Phrase</h2>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-0.5">Define spelling latch and phonetics for FlowKeys.</p>
+</div>
+<button class="p-1.5 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" id="closeModalBtn">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Modal Body -->
+<div class="py-space-base space-y-space-base">
+<!-- Word Input -->
+<div class="space-y-space-xs">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between">
+<span>Word or phrase</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Output Target</span>
+</label>
+<input class="w-full h-10 px-space-base rounded-lg bg-surface-container-low text-on-surface font-body-default text-body-default placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-1 focus:ring-primary shadow-inner" id="targetWordInput" placeholder="e.g. Temenos or बेंगलुरु" type="text" value="Temenos"/>
+</div>
+<!-- Phonetic Correction Toggle & Configuration -->
+<div class="rounded-xl bg-surface-container-low p-space-base space-y-space-base">
+<div class="flex items-center justify-between">
+<div class="space-y-0.5">
+<span class="font-label-md text-label-md text-on-surface font-medium block">Phonetic Correction Heuristic</span>
+<span class="font-body-compact text-[11px] text-on-surface-variant block">Map alternate sounding sounds to target casing</span>
+</div>
+<button class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full bg-primary transition-colors duration-200 ease-in-out focus:outline-none" id="phoneticToggle" type="button">
+<span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-surface-container shadow-md ring-0 transition duration-200 ease-in-out translate-x-4 mt-0.5 ml-0.5" id="phoneticToggleKnob"></span>
+</button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-sm pt-space-xs border-t border-surface-container-high/60" id="phoneticFields">
+<div class="space-y-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant">When I say:</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[14px] text-on-surface-variant">mic</span>
+<input class="w-full h-8 pl-8 pr- space-base rounded-lg bg-surface-container text-on-surface font-mono-metric text-mono-metric focus:outline-none focus:ring-1 focus:ring-primary" id="spokenHeuristicInput" type="text" value="tame nos"/>
+</div>
+</div>
+<div class="space-y-space-2xs">
+<label class="font-label-sm text-label-sm text-on-surface-variant">Write it as:</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[14px] text-primary">check</span>
+<input class="w-full h-8 pl-8 pr- space-base rounded-lg bg-surface-container text-primary font-mono-metric text-mono-metric focus:outline-none focus:ring-1 focus:ring-primary" id="replacementTargetInput" type="text" value="Temenos"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Language Segmented Picker -->
+<div class="space-y-space-xs">
+<label class="font-label-md text-label-md text-on-surface">Language Scope</label>
+<div class="grid grid-cols-4 p-1 rounded-xl bg-surface-container-lowest gap-1">
+<button class="lang-pill py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">Any</button>
+<button class="lang-pill py-1.5 rounded-lg font-label-md text-label-md bg-surface-container text-on-surface font-semibold shadow-sm transition-all" type="button">EN</button>
+<button class="lang-pill py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">HI</button>
+<button class="lang-pill py-1.5 rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-all" type="button">BN</button>
+</div>
+</div>
+<!-- Privacy Shield Callout -->
+<div class="flex items-start gap-space-sm p-space-sm rounded-xl bg-surface-container-low text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-tertiary shrink-0 mt-0.5">verified_user</span>
+<p class="font-body-compact text-[11px] leading-relaxed">
+            FlowKeys sends only words relevant to each dictation to the model, preserving edge-level isolation without streaming full lexicon databases.
+          </p>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="flex items-center justify-end gap-space-sm pt-space-base border-t border-surface-container-highest/60">
+<button class="px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md text-label-md" id="cancelModalBtn">
+          Cancel
+        </button>
+<button class="px-space-xl py-space-sm rounded-lg bg-primary-container text-on-primary-container font-label-md text-label-md font-semibold hover:brightness-110 active:scale-95 transition-all shadow-md" id="saveWordBtn">
+          Save word
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Filter & Search Interactivity
+  const vocabFilterInput = document.getElementById('vocabFilterInput');
+  const rows = document.querySelectorAll('.vocab-row');
+
+  vocabFilterInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase().trim();
+    rows.forEach(row => {
+      const dataKeyword = row.getAttribute('data-keyword') || '';
+      const text = row.innerText.toLowerCase();
+      if (text.includes(term) || dataKeyword.includes(term)) {
+        row.style.display = 'flex';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+
+  // Star Toggle
+  document.querySelectorAll('.star-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const icon = btn.querySelector('.material-symbols-outlined');
+      const isFilled = icon.getAttribute('style')?.includes("FILL' 1");
+      if (isFilled) {
+        icon.style = '';
+        btn.classList.remove('text-primary');
+        btn.classList.add('text-on-surface-variant/40');
+      } else {
+        icon.style = "font-variation-settings: 'FILL' 1;";
+        btn.classList.add('text-primary');
+        btn.classList.remove('text-on-surface-variant/40');
+      }
+    });
+  });
+
+  // Delete Action
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const row = e.target.closest('.vocab-row');
+      if (row) {
+        row.style.transition = 'opacity 0.2s, transform 0.2s';
+        row.style.opacity = '0';
+        row.style.transform = 'scale(0.98)';
+        setTimeout(() => row.remove(), 200);
+      }
+    });
+  });
+
+  // Learned Banner Dismiss & Accept
+  const banner = document.getElementById('correctionBanner');
+  document.getElementById('dismissBannerBtn')?.addEventListener('click', () => {
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateY(-10px)';
+    setTimeout(() => banner.remove(), 300);
+  });
+  document.getElementById('acceptCorrectionBtn')?.addEventListener('click', () => {
+    banner.innerHTML = `
+      <div class="flex items-center gap-2 text-tertiary font-label-md py-1">
+        <span class="material-symbols-outlined text-[18px]">check_circle</span>
+        <span>"Rahul" successfully committed to permanent lexicon.</span>
+      </div>
+    `;
+    setTimeout(() => {
+      banner.style.opacity = '0';
+      setTimeout(() => banner.remove(), 300);
+    }, 1800);
+  });
+
+  // Modal Open/Close Logic
+  const backdrop = document.getElementById('wordModalBackdrop');
+  const modal = document.getElementById('wordModal');
+  const openModalBtn = document.getElementById('openModalBtn');
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const cancelModalBtn = document.getElementById('cancelModalBtn');
+  const saveWordBtn = document.getElementById('saveWordBtn');
+
+  function showModal(title = "Add Word or Phrase") {
+    document.getElementById('modalTitle').textContent = title;
+    backdrop.classList.remove('hidden');
+    backdrop.classList.add('flex');
+    requestAnimationFrame(() => {
+      modal.classList.remove('scale-95', 'opacity-0');
+      modal.classList.add('scale-100', 'opacity-100');
+    });
+  }
+
+  function hideModal() {
+    modal.classList.remove('scale-100', 'opacity-100');
+    modal.classList.add('scale-95', 'opacity-0');
+    setTimeout(() => {
+      backdrop.classList.add('hidden');
+      backdrop.classList.remove('flex');
+    }, 150);
+  }
+
+  openModalBtn.addEventListener('click', () => showModal("Add Word or Phrase"));
+  closeModalBtn.addEventListener('click', hideModal);
+  cancelModalBtn.addEventListener('click', hideModal);
+  saveWordBtn.addEventListener('click', () => {
+    saveWordBtn.textContent = 'Saved!';
+    setTimeout(() => {
+      saveWordBtn.textContent = 'Save word';
+      hideModal();
+    }, 400);
+  });
+
+  // Edit Row button opens modal with context
+  document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const row = e.target.closest('.vocab-row');
+      const term = row.querySelector('.font-headline-md')?.textContent.trim() || 'Word';
+      showModal(`Edit "${term}"`);
+    });
+  });
+
+  // Phonetic Toggle Switch in Modal
+  let phoneticActive = true;
+  const toggleBtn = document.getElementById('phoneticToggle');
+  const toggleKnob = document.getElementById('phoneticToggleKnob');
+  const phoneticFields = document.getElementById('phoneticFields');
+
+  toggleBtn.addEventListener('click', () => {
+    phoneticActive = !phoneticActive;
+    if (phoneticActive) {
+      toggleBtn.classList.remove('bg-surface-container-highest');
+      toggleBtn.classList.add('bg-primary');
+      toggleKnob.classList.add('translate-x-4');
+      phoneticFields.style.display = 'grid';
+    } else {
+      toggleBtn.classList.remove('bg-primary');
+      toggleBtn.classList.add('bg-surface-container-highest');
+      toggleKnob.classList.remove('translate-x-4');
+      phoneticFields.style.display = 'none';
+    }
+  });
+
+  // Segmented Language Picker
+  const langPills = document.querySelectorAll('.lang-pill');
+  langPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      langPills.forEach(p => {
+        p.classList.remove('bg-surface-container', 'text-on-surface', 'font-semibold', 'shadow-sm');
+        p.classList.add('text-on-surface-variant');
+      });
+      pill.classList.add('bg-surface-container', 'text-on-surface', 'font-semibold', 'shadow-sm');
+      pill.classList.remove('text-on-surface-variant');
+    });
+  });
+
+  // Global Shortcut ⌘N for add word
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'n') {
+      e.preventDefault();
+      showModal("Add Word or Phrase");
+    }
+  });
+</script></main></div></body></html>

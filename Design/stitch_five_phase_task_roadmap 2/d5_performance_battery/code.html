@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#00531c","surface-dim":"#131315","on-surface":"#e5e1e4","error":"#ffb4ab","on-secondary-container":"#efa790","primary":"#ffb59d","inverse-surface":"#e5e1e4","surface-container-highest":"#353437","tertiary":"#53e16f","on-background":"#e5e1e4","on-secondary-fixed":"#360f03","surface-variant":"#353437","on-secondary":"#512313","on-tertiary":"#003911","inverse-primary":"#ab3500","on-primary-fixed-variant":"#832600","background":"#131315","surface-bright":"#39393b","primary-fixed-dim":"#ffb59d","surface-container":"#201f21","primary-fixed":"#ffdbd0","on-tertiary-fixed":"#002107","on-error":"#690005","inverse-on-surface":"#303032","secondary-fixed-dim":"#ffb59d","tertiary-fixed-dim":"#53e16f","surface":"#131315","secondary":"#ffb59d","secondary-container":"#6f3b29","on-tertiary-container":"#003a11","on-primary-container":"#5f1900","surface-container-lowest":"#0e0e10","on-surface-variant":"#e1bfb5","on-primary-fixed":"#390c00","surface-container-high":"#2a2a2c","on-secondary-fixed-variant":"#6c3927","primary-container":"#ff6b35","surface-tint":"#ffb59d","secondary-fixed":"#ffdbd0","on-error-container":"#ffdad6","tertiary-fixed":"#72fe88","error-container":"#93000a","surface-container-low":"#1b1b1d","tertiary-container":"#06b146","outline":"#a98a80","on-primary":"#5d1900","outline-variant":"#594139"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-base":"0.75rem","space-xs":"0.25rem","space-sm":"0.375rem","space-2xs":"0.125rem","panel-padding-modal":"1.25rem","space-md":"0.5rem","space-3xl":"2rem","space-xl":"1.25rem","space-lg":"1rem","space-2xl":"1.5rem","panel-padding-compact":"0.5rem","panel-padding-standard":"0.75rem"},fontFamily:{"label-sm":["Geist"],"label-md":["Geist"],"headline-md":["Geist"],"mono-keycap":["JetBrains Mono"],"headline-lg":["Geist"],display:["Geist"],"mono-metric":["JetBrains Mono"],"body-lg":["Geist"],"body-default":["Geist"],"body-compact":["Geist"]},fontSize:{"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"500"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-md":["15px",{lineHeight:"20px",letterSpacing:"-0.015em",fontWeight:"500"}],"mono-keycap":["10px",{lineHeight:"12px",letterSpacing:"0.04em",fontWeight:"500"}],"headline-lg":["18px",{lineHeight:"24px",letterSpacing:"-0.02em",fontWeight:"600"}],display:["24px",{lineHeight:"32px",letterSpacing:"-0.025em",fontWeight:"600"}],"mono-metric":["12px",{lineHeight:"16px",letterSpacing:"-0.02em",fontWeight:"500"}],"body-lg":["14px",{lineHeight:"20px",letterSpacing:"-0.01em",fontWeight:"400"}],"body-default":["13px",{lineHeight:"18px",letterSpacing:"-0.005em",fontWeight:"400"}],"body-compact":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}}</script></head><body class="bg-surface-container-lowest text-on-surface font-body-default text-body-default min-h-screen selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-52 bg-surface-dim z-50 flex flex-col justify-between select-none shadow-[1px_0_0_rgba(255,255,255,0.07)]"><div class="flex flex-col"><div class="px-space-lg pt-space-lg pb-space-md flex items-center gap-space-sm"><div class="w-3 h-3 rounded-full bg-[#FF5F56] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#27C93F] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div></div><div class="px-space-lg py-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="FlowKeys Icon" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">FlowKeys</span></div><span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">v2.0</span></div><nav class="mt-space-sm px-space-sm flex flex-col gap-space-2xs" data-active-classes="bg-surface-container-high text-on-surface font-semibold"><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[18px]">home</span><span class="font-body-compact text-body-compact">Home</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="history" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span class="font-body-compact text-body-compact">History</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="dictionary" href="#"><span class="material-symbols-outlined text-[18px]">menu_book</span><span class="font-body-compact text-body-compact">Dictionary</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="snippets" href="#"><span class="material-symbols-outlined text-[18px]">post_add</span><span class="font-body-compact text-body-compact">Snippets</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="smart-modes" href="#"><span class="material-symbols-outlined text-[18px]">motion_mode</span><span class="font-body-compact text-body-compact">Smart Modes</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="style" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-compact text-body-compact">Style</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="voice-macros" href="#"><span class="material-symbols-outlined text-[18px]">mic</span><span class="font-body-compact text-body-compact">Voice Macros</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="local-ai" href="#"><span class="material-symbols-outlined text-[18px]">memory</span><span class="font-body-compact text-body-compact">Local AI</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg transition-colors bg-surface-container-high text-on-surface font-semibold" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div><div class="p-space-base m-space-sm rounded-xl bg-surface-container shadow-[0_16px_36px_-8px_rgba(0,0,0,0.75)]"><div class="flex items-center gap-space-xs text-primary-container"><span class="material-symbols-outlined text-[16px]">local_fire_department</span><span class="font-label-md text-label-md font-semibold">12-day streak</span></div><div class="mt-space-2xs flex items-center justify-between text-on-surface-variant"><span class="font-body-compact text-body-compact">Today</span><span class="font-mono-metric text-mono-metric text-on-surface font-medium">1,204 words</span></div></div></aside><div class="pl-52 min-h-screen flex flex-col"><header class="fixed top-0 left-52 right-0 h-14 bg-surface-dim/85 backdrop-blur-xl z-40 flex items-center justify-between px-space-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><img alt="FlowKeys Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-surface-container shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase tracking-wider">Engine Ready</span></div></div><div class="flex items-center gap-space-base"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-lg bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">keyboard_command_key</span><span class="font-mono-keycap text-mono-keycap">⌥ Space</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-14 flex-1 bg-surface-container-lowest w-full px-space-xl py-space-lg"><div class="flex flex-col w-full">
+<!-- Subtle Ambient Glow -->
+<div class="relative w-full">
+<div class="absolute -top-12 -left-12 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="absolute top-48 right-0 w-80 h-80 bg-tertiary-container/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<!-- Breadcrumbs & Context Header -->
+<div class="flex items-center justify-between pb-space-lg">
+<div class="flex flex-col gap-space-2xs">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-mono-keycap text-mono-keycap tracking-wider uppercase">
+<span>FlowKeys Hub</span>
+<span class="opacity-40">/</span>
+<span>Local AI</span>
+<span class="opacity-40">/</span>
+<span class="text-primary font-medium">Performance & Battery</span>
+</div>
+<h1 class="font-display text-display text-on-surface font-semibold tracking-tight">Performance & Battery</h1>
+<p class="font-body-default text-body-default text-on-surface-variant">Balance real-time inference speed against battery consumption on Apple Silicon.</p>
+</div>
+<!-- Quick Action: Recalibrate / Diagnostic Trigger -->
+<div class="flex items-center gap-space-sm">
+<div class="flex items-center gap-space-xs px-space-base py-space-xs rounded-full bg-surface-container shadow-sm text-on-surface">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-mono-metric text-mono-metric text-on-surface">Thermal State: Nominal</span>
+</div>
+<button class="flex items-center gap-space-xs px-space-base py-space-xs rounded-lg bg-surface-container text-on-surface font-label-md text-label-md hover:bg-surface-container-high transition-colors shadow-sm active:scale-95 duration-150" id="recalibrate-btn">
+<span class="material-symbols-outlined text-[16px]">tune</span>
+<span>Run Profiler</span>
+</button>
+</div>
+</div>
+<!-- Top Grid: Profile Selection (Card 1) -->
+<section class="mb-space-xl">
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">speed</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-medium">Compute & Energy Profile</h2>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">Dynamic Apple Silicon Orchestration</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-base" id="profile-container">
+<!-- Low Power Profile Card -->
+<div class="profile-card group relative p-space-lg rounded-xl bg-surface-container shadow-sm cursor-pointer transition-all duration-200 hover:bg-surface-container-high" data-profile="low">
+<div class="flex items-start justify-between">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">energy_savings_leaf</span>
+</div>
+<span class="status-indicator w-3 h-3 rounded-full bg-surface-container-highest shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]"></span>
+</div>
+<div class="mt-space-lg">
+<div class="flex items-baseline gap-space-xs">
+<h3 class="font-headline-md text-headline-md font-semibold text-on-surface">Low Power</h3>
+</div>
+<p class="mt-space-2xs font-body-compact text-body-compact text-on-surface-variant line-clamp-3">
+              Smallest model (Whisper Fast), unloads immediately after dictation, restricts execution to Efficiency cores. Maximum battery life.
+            </p>
+</div>
+<div class="mt-space-lg pt-space-md flex items-center justify-between text-on-surface-variant">
+<span class="font-mono-keycap text-mono-keycap uppercase">RAM Footprint</span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">~180 MB</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-on-surface-variant">
+<span class="font-mono-keycap text-mono-keycap uppercase">Execution Core</span>
+<span class="font-mono-metric text-mono-metric text-tertiary font-medium">E-Cores Only</span>
+</div>
+</div>
+<!-- Balanced Profile Card (Active Default) -->
+<div class="profile-card active-profile group relative p-space-lg rounded-xl bg-surface-container-high shadow-xl cursor-pointer transition-all duration-200" data-profile="balanced">
+<div class="flex items-start justify-between">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[20px]">balance</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-primary-container text-on-primary-container font-semibold uppercase">Active</span>
+<span class="status-indicator w-3 h-3 rounded-full bg-primary-container shadow-[0_0_8px_rgba(255,107,53,0.8)]"></span>
+</div>
+</div>
+<div class="mt-space-lg">
+<div class="flex items-center gap-space-xs">
+<h3 class="font-headline-md text-headline-md font-semibold text-on-surface">Balanced</h3>
+<span class="font-label-sm text-label-sm text-primary">(Recommended)</span>
+</div>
+<p class="mt-space-2xs font-body-compact text-body-compact text-on-surface-variant line-clamp-3">
+              Whisper Turbo model, keeps warm in RAM for 30s, dynamic core scaling (ANE + Performance cores). Seamless responsiveness.
+            </p>
+</div>
+<div class="mt-space-lg pt-space-md flex items-center justify-between text-on-surface-variant">
+<span class="font-mono-keycap text-mono-keycap uppercase">RAM Footprint</span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">~604 MB</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-on-surface-variant">
+<span class="font-mono-keycap text-mono-keycap uppercase">Execution Core</span>
+<span class="font-mono-metric text-mono-metric text-primary font-medium">ANE + Hyb P-Cores</span>
+</div>
+</div>
+<!-- Accuracy & Throughput Profile Card -->
+<div class="profile-card group relative p-space-lg rounded-xl bg-surface-container shadow-sm cursor-pointer transition-all duration-200 hover:bg-surface-container-high" data-profile="accuracy">
+<div class="flex items-start justify-between">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-on-surface-variant group-hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+</div>
+<span class="status-indicator w-3 h-3 rounded-full bg-surface-container-highest shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]"></span>
+</div>
+<div class="mt-space-lg">
+<div class="flex items-baseline gap-space-xs">
+<h3 class="font-headline-md text-headline-md font-semibold text-on-surface">Accuracy & Throughput</h3>
+</div>
+<p class="mt-space-2xs font-body-compact text-body-compact text-on-surface-variant line-clamp-3">
+              Whisper Large v3, keeps warm for 2 minutes, all Performance cores engaged. Zero latency for back-to-back dictation.
+            </p>
+</div>
+<div class="mt-space-lg pt-space-md flex items-center justify-between text-on-surface-variant">
+<span class="font-mono-keycap text-mono-keycap uppercase">RAM Footprint</span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">~1.42 GB</span>
+</div>
+<div class="mt-space-xs flex items-center justify-between text-on-surface-variant">
+<span class="font-mono-keycap text-mono-keycap uppercase">Execution Core</span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">5P Cores Max Thrash</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Mid Section: Bento Split (CARD 2: Cache Policy & CARD 3: Hardware Diagnostics) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg mb-space-xl">
+<!-- CARD 2: RAM Resident Cache Policy (5 Cols) -->
+<section class="lg:col-span-5 flex flex-col justify-between p-space-lg rounded-xl bg-surface-container shadow-sm">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">memory_alt</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-medium">RAM Resident Cache Policy</h2>
+</div>
+<span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">Warm RAM</span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant mt-space-xs">
+            Determines how long whisper model weights remain loaded in unified system memory before flushing back to disk.
+          </p>
+<!-- Interactive Stepper / Picker Bar -->
+<div class="mt-space-lg p-space-sm rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex items-center justify-between mb-space-xs px-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Inactivity Timer</span>
+<span class="font-mono-metric text-mono-metric text-primary font-semibold" id="cache-timer-label">30 seconds</span>
+</div>
+<div class="grid grid-cols-6 gap-space-2xs mt-space-xs" id="cache-stepper-options">
+<button class="cache-btn py-space-xs rounded font-mono-keycap text-mono-keycap text-on-surface-variant hover:bg-surface-container-high transition-colors" data-val="0s">0s</button>
+<button class="cache-btn py-space-xs rounded font-mono-keycap text-mono-keycap text-on-surface-variant hover:bg-surface-container-high transition-colors" data-val="15s">15s</button>
+<button class="cache-btn py-space-xs rounded font-mono-keycap text-mono-keycap bg-surface-container-highest text-on-surface font-semibold shadow-sm" data-val="30s">30s</button>
+<button class="cache-btn py-space-xs rounded font-mono-keycap text-mono-keycap text-on-surface-variant hover:bg-surface-container-high transition-colors" data-val="1m">1m</button>
+<button class="cache-btn py-space-xs rounded font-mono-keycap text-mono-keycap text-on-surface-variant hover:bg-surface-container-high transition-colors" data-val="2m">2m</button>
+<button class="cache-btn py-space-xs rounded font-mono-keycap text-mono-keycap text-on-surface-variant hover:bg-surface-container-high transition-colors" data-val="Never">Never</button>
+</div>
+</div>
+<!-- Dynamic Explainer Box -->
+<div class="mt-space-md p-space-base rounded-lg bg-surface-container-high/60 shadow-sm flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-[16px] text-primary shrink-0 mt-0.5">info</span>
+<p class="font-body-compact text-body-compact text-on-surface-variant" id="cache-explainer">
+<strong class="text-on-surface font-medium">30 seconds:</strong> Eliminates cold-boot latency when speaking intermittently throughout working sessions, while cleanly releasing memory during extended breaks.
+            </p>
+</div>
+</div>
+<!-- Inline RAM Visual Bar -->
+<div class="mt-space-lg pt-space-md">
+<div class="flex items-center justify-between font-mono-keycap text-mono-keycap text-on-surface-variant mb-space-xs">
+<span>UNIFIED MEMORY PARTITION</span>
+<span class="text-on-surface">604 MB / 18 GB</span>
+</div>
+<div class="h-2 w-full bg-surface-container-lowest rounded-full overflow-hidden flex">
+<div class="h-full bg-primary-container transition-all duration-300" id="ram-fill" style="width: 3.3%"></div>
+<div class="h-full bg-surface-container-highest flex-1"></div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm mt-space-2xs">
+<span>Zero swap file usage</span>
+<span class="text-tertiary">3.3% Allocated</span>
+</div>
+</div>
+</section>
+<!-- CARD 3: Hardware & Acceleration Status (7 Cols) -->
+<section class="lg:col-span-7 flex flex-col justify-between p-space-lg rounded-xl bg-surface-container shadow-sm">
+<div>
+<div class="flex items-center justify-between mb-space-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">memory</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-medium">Hardware & Acceleration Status</h2>
+</div>
+<span class="flex items-center gap-space-2xs px-space-xs py-space-2xs rounded bg-surface-container-highest text-tertiary font-mono-keycap text-mono-keycap uppercase font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> ANE Active
+            </span>
+</div>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+            Direct bare-metal bridge to Apple Neural Engine and GPU compute queues using CoreML Metal shaders.
+          </p>
+<!-- Metric Cards Mosaic -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-space-base mt-space-base">
+<!-- Detected Host -->
+<div class="p-space-base rounded-lg bg-surface-container-low">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase block">Detected Host Engine</span>
+<span class="font-headline-md text-headline-md text-on-surface font-semibold mt-space-2xs block">Apple M3 Pro</span>
+<span class="font-body-compact text-body-compact text-on-surface-variant block mt-space-2xs">11-core: 5P + 6E Cores</span>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">14-core GPU</span>
+<span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">16-core ANE</span>
+</div>
+</div>
+<!-- Unified Memory Allocation -->
+<div class="p-space-base rounded-lg bg-surface-container-low">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase block">Unified System Memory</span>
+<div class="flex items-baseline gap-space-xs mt-space-2xs">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">18 GB</span>
+<span class="font-label-sm text-label-sm text-tertiary">LPDDR5-6400</span>
+</div>
+<span class="font-body-compact text-body-compact text-on-surface-variant block mt-space-2xs">FlowKeys footprint:</span>
+<div class="flex items-center gap-space-xs mt-space-xs">
+<span class="font-mono-metric text-mono-metric text-primary font-semibold">604 MB</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">· 3.3% system load</span>
+</div>
+</div>
+<!-- Pipeline Dispatch -->
+<div class="p-space-base rounded-lg bg-surface-container-low sm:col-span-2">
+<div class="flex items-center justify-between">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">Acceleration Pipeline</span>
+<span class="font-mono-keycap text-mono-keycap text-primary">Zero IPC Overhead</span>
+</div>
+<div class="mt-space-xs flex flex-wrap items-center gap-space-sm text-on-surface font-body-compact text-body-compact">
+<div class="flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container-highest">
+<span class="material-symbols-outlined text-[15px] text-tertiary">bolt</span>
+<span class="font-medium">Metal 3 Compute</span>
+</div>
+<span class="text-on-surface-variant font-mono-keycap">➔</span>
+<div class="flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container-highest">
+<span class="material-symbols-outlined text-[15px] text-primary">neurology</span>
+<span class="font-medium">ANE Direct Dispatch</span>
+</div>
+<span class="text-on-surface-variant font-mono-keycap">➔</span>
+<div class="flex items-center gap-space-xs px-space-sm py-space-xs rounded bg-surface-container-highest">
+<span class="material-symbols-outlined text-[15px] text-tertiary">memory</span>
+<span class="font-medium">FP16 Quantized</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Real-time Sparkline Indicator -->
+<div class="mt-space-lg pt-space-md flex items-center justify-between bg-surface-container-low p-space-base rounded-lg">
+<div class="flex items-center gap-space-base">
+<!-- Inline SVG Sparkline (Under 2KB, semantic currentColor) -->
+<svg class="w-24 h-7 text-tertiary" fill="none" viewbox="0 0 100 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 16L12 14L24 18L36 10L48 12L60 6L72 11L84 4L100 8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M0 16L12 14L24 18L36 10L48 12L60 6L72 11L84 4L100 8V24H0V16Z" fill="currentColor" fill-opacity="0.1"></path>
+</svg>
+<div class="flex flex-col">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase">ANE Load Surge</span>
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">14.2% Peak Active</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-medium">Thermal State: Nominal</span>
+</div>
+</div>
+</section>
+</div>
+<!-- CARD 4: Live Engine Benchmarks (Last 10 Sessions) -->
+<section class="p-space-lg rounded-xl bg-surface-container shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-space-md gap-space-xs">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[18px]">analytics</span>
+<h2 class="font-headline-md text-headline-md text-on-surface font-medium">Live Engine Benchmarks</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-space-xs">(Last 10 Sessions Recorded)</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">SAMPLING WINDOW: 48m VOICE INGESTION</span>
+<button class="p-space-2xs rounded hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors" id="refresh-bench-btn" title="Refresh metrics">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+</button>
+</div>
+</div>
+<!-- Modern Contrast Data Table without Borders -->
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-mono-keycap text-mono-keycap uppercase">
+<th class="py-space-sm px-space-base rounded-l-lg">Metric Name</th>
+<th class="py-space-sm px-space-base">Measured Value</th>
+<th class="py-space-sm px-space-base">Target SLA</th>
+<th class="py-space-sm px-space-base text-right rounded-r-lg">State Status</th>
+</tr>
+</thead>
+<tbody class="font-body-default text-body-default divide-transparent">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-high/60 transition-colors group">
+<td class="py-space-base px-space-base">
+<div class="flex items-center gap-space-sm">
+<div class="w-6 h-6 rounded bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">ac_unit</span>
+</div>
+<div>
+<span class="text-on-surface font-medium block">Model Load (Cold)</span>
+<span class="font-body-compact text-body-compact text-on-surface-variant">From NVMe storage flash to unified RAM</span>
+</div>
+</div>
+</td>
+<td class="py-space-base px-space-base">
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">120ms</span>
+</td>
+<td class="py-space-base px-space-base">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">< 250ms</span>
+</td>
+<td class="py-space-base px-space-base text-right">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-tertiary-container/20 text-tertiary font-mono-keycap text-mono-keycap font-medium uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> OK
+                </span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-high/60 transition-colors group">
+<td class="py-space-base px-space-base">
+<div class="flex items-center gap-space-sm">
+<div class="w-6 h-6 rounded bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+</div>
+<div>
+<span class="text-on-surface font-medium block">Model Load (Warm)</span>
+<span class="font-body-compact text-body-compact text-on-surface-variant">Pre-warmed weights in residency cache</span>
+</div>
+</div>
+</td>
+<td class="py-space-base px-space-base">
+<span class="font-mono-metric text-mono-metric text-primary font-semibold">0ms</span>
+</td>
+<td class="py-space-base px-space-base">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">0ms (Instant)</span>
+</td>
+<td class="py-space-base px-space-base text-right">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-tertiary-container/20 text-tertiary font-mono-keycap text-mono-keycap font-medium uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Instant
+                </span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-high/60 transition-colors group">
+<td class="py-space-base px-space-base">
+<div class="flex items-center gap-space-sm">
+<div class="w-6 h-6 rounded bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">file_download_done</span>
+</div>
+<div>
+<span class="text-on-surface font-medium block">Transcription RTF</span>
+<span class="font-body-compact text-body-compact text-on-surface-variant">Real-Time Factor (lower is faster)</span>
+</div>
+</div>
+</td>
+<td class="py-space-base px-space-base">
+<div class="flex items-baseline gap-space-xs">
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">0.12x</span>
+<span class="font-label-sm text-label-sm text-tertiary font-medium">(8.3x real-time)</span>
+</div>
+</td>
+<td class="py-space-base px-space-base">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">< 0.25x</span>
+</td>
+<td class="py-space-base px-space-base text-right">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-tertiary-container/20 text-tertiary font-mono-keycap text-mono-keycap font-medium uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Excellent
+                </span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-high/60 transition-colors group">
+<td class="py-space-base px-space-base">
+<div class="flex items-center gap-space-sm">
+<div class="w-6 h-6 rounded bg-surface-container-high flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">battery_charging_full</span>
+</div>
+<div>
+<span class="text-on-surface font-medium block">Battery Drain / Hr</span>
+<span class="font-body-compact text-body-compact text-on-surface-variant">Continuous stream active ingestion consumption</span>
+</div>
+</div>
+</td>
+<td class="py-space-base px-space-base">
+<span class="font-mono-metric text-mono-metric text-on-surface font-medium">0.8%</span>
+</td>
+<td class="py-space-base px-space-base">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">< 1.5%</span>
+</td>
+<td class="py-space-base px-space-base text-right">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-tertiary-container/20 text-tertiary font-mono-keycap text-mono-keycap font-medium uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Optimal
+                </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</div>
+<script>
+  (function() {
+    // 1. Profile Switcher Logic
+    const profileCards = document.querySelectorAll('.profile-card');
+    const ramFill = document.getElementById('ram-fill');
+
+    profileCards.forEach(card => {
+      card.addEventListener('click', () => {
+        profileCards.forEach(c => {
+          c.classList.remove('active-profile', 'bg-surface-container-high', 'shadow-xl');
+          c.classList.add('bg-surface-container', 'shadow-sm');
+          const badge = c.querySelector('.status-indicator');
+          if (badge) {
+            badge.className = 'status-indicator w-3 h-3 rounded-full bg-surface-container-highest shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]';
+          }
+          const pill = c.querySelector('.font-mono-keycap.bg-primary-container');
+          if (pill) pill.remove();
+        });
+
+        card.classList.add('active-profile', 'bg-surface-container-high', 'shadow-xl');
+        card.classList.remove('bg-surface-container');
+
+        const indicator = card.querySelector('.status-indicator');
+        if (indicator) {
+          indicator.className = 'status-indicator w-3 h-3 rounded-full bg-primary-container shadow-[0_0_8px_rgba(255,107,53,0.8)]';
+          const topFlex = indicator.parentElement;
+          if (topFlex && !topFlex.querySelector('.bg-primary-container')) {
+            const newPill = document.createElement('span');
+            newPill.className = 'font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-primary-container text-on-primary-container font-semibold uppercase';
+            newPill.textContent = 'Active';
+            topFlex.insertBefore(newPill, indicator);
+          }
+        }
+
+        const mode = card.getAttribute('data-profile');
+        if (mode === 'low' && ramFill) ramFill.style.width = '1.0%';
+        if (mode === 'balanced' && ramFill) ramFill.style.width = '3.3%';
+        if (mode === 'accuracy' && ramFill) ramFill.style.width = '7.8%';
+      });
+    });
+
+    // 2. Cache Stepper Inactivity Logic & Dynamic Text
+    const cacheBtns = document.querySelectorAll('.cache-btn');
+    const timerLabel = document.getElementById('cache-timer-label');
+    const explainer = document.getElementById('cache-explainer');
+
+    const cacheDict = {
+      '0s': {
+        label: 'Instant (0s)',
+        text: '<strong class="text-on-surface font-medium">Instant 0s:</strong> Unloads weights immediately after transcription terminates to free 547 MB of RAM. Best for ultralight workflows where background memory overhead is constrained.'
+      },
+      '15s': {
+        label: '15 seconds',
+        text: '<strong class="text-on-surface font-medium">15 seconds:</strong> Retains memory buffers across short cognitive pauses while ensuring rapid reclaim when switching between tasks.'
+      },
+      '30s': {
+        label: '30 seconds',
+        text: '<strong class="text-on-surface font-medium">30 seconds:</strong> Eliminates cold-boot latency when speaking intermittently throughout working sessions, while cleanly releasing memory during extended breaks.'
+      },
+      '1m': {
+        label: '1 minute',
+        text: '<strong class="text-on-surface font-medium">1 minute:</strong> Favors low latency for deep writing workflows with habitual pausing. Releases memory when attention shifts elsewhere.'
+      },
+      '2m': {
+        label: '2 minutes',
+        text: '<strong class="text-on-surface font-medium">2 minutes:</strong> Guarantees instantaneous whisper responsiveness throughout prolonged multi-turn dictation sessions.'
+      },
+      'Never': {
+        label: 'Never (Persistent)',
+        text: '<strong class="text-on-surface font-medium">Never:</strong> Permanently locks neural weights into Unified RAM. Guarantees true zero millisecond cold start at all times with 604 MB continuous reservation.'
+      }
+    };
+
+    cacheBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        cacheBtns.forEach(b => {
+          b.classList.remove('bg-surface-container-highest', 'text-on-surface', 'font-semibold', 'shadow-sm');
+          b.classList.add('text-on-surface-variant');
+        });
+        btn.classList.add('bg-surface-container-highest', 'text-on-surface', 'font-semibold', 'shadow-sm');
+        btn.classList.remove('text-on-surface-variant');
+
+        const val = btn.getAttribute('data-val');
+        if (cacheDict[val]) {
+          timerLabel.textContent = cacheDict[val].label;
+          explainer.innerHTML = cacheDict[val].text;
+        }
+      });
+    });
+
+    // 3. Micro-Interaction: Benchmark Refresh Feedback
+    const refreshBtn = document.getElementById('refresh-bench-btn');
+    if (refreshBtn) {
+      refreshBtn.addEventListener('click', () => {
+        const icon = refreshBtn.querySelector('.material-symbols-outlined');
+        if (icon) {
+          icon.classList.add('animate-spin');
+          setTimeout(() => icon.classList.remove('animate-spin'), 650);
+        }
+      });
+    }
+  })();
+</script></main></div></body></html>

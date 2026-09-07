@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-fixed-variant":"#00531c","surface-dim":"#131315","on-surface":"#e5e1e4","error":"#ffb4ab","on-secondary-container":"#efa790","primary":"#ffb59d","inverse-surface":"#e5e1e4","surface-container-highest":"#353437","tertiary":"#53e16f","on-background":"#e5e1e4","on-secondary-fixed":"#360f03","surface-variant":"#353437","on-secondary":"#512313","on-tertiary":"#003911","inverse-primary":"#ab3500","on-primary-fixed-variant":"#832600","background":"#131315","surface-bright":"#39393b","primary-fixed-dim":"#ffb59d","surface-container":"#201f21","primary-fixed":"#ffdbd0","on-tertiary-fixed":"#002107","on-error":"#690005","inverse-on-surface":"#303032","secondary-fixed-dim":"#ffb59d","tertiary-fixed-dim":"#53e16f","surface":"#131315","secondary":"#ffb59d","secondary-container":"#6f3b29","on-tertiary-container":"#003a11","on-primary-container":"#5f1900","surface-container-lowest":"#0e0e10","on-surface-variant":"#e1bfb5","on-primary-fixed":"#390c00","surface-container-high":"#2a2a2c","on-secondary-fixed-variant":"#6c3927","primary-container":"#ff6b35","surface-tint":"#ffb59d","secondary-fixed":"#ffdbd0","on-error-container":"#ffdad6","tertiary-fixed":"#72fe88","error-container":"#93000a","surface-container-low":"#1b1b1d","tertiary-container":"#06b146","outline":"#a98a80","on-primary":"#5d1900","outline-variant":"#594139"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-base":"0.75rem","space-xs":"0.25rem","space-sm":"0.375rem","space-2xs":"0.125rem","panel-padding-modal":"1.25rem","space-md":"0.5rem","space-3xl":"2rem","space-xl":"1.25rem","space-lg":"1rem","space-2xl":"1.5rem","panel-padding-compact":"0.5rem","panel-padding-standard":"0.75rem"},fontFamily:{"label-sm":["Geist"],"label-md":["Geist"],"headline-md":["Geist"],"mono-keycap":["JetBrains Mono"],"headline-lg":["Geist"],display:["Geist"],"mono-metric":["JetBrains Mono"],"body-lg":["Geist"],"body-default":["Geist"],"body-compact":["Geist"]},fontSize:{"label-sm":["11px",{lineHeight:"14px",letterSpacing:"0.02em",fontWeight:"500"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.01em",fontWeight:"500"}],"headline-md":["15px",{lineHeight:"20px",letterSpacing:"-0.015em",fontWeight:"500"}],"mono-keycap":["10px",{lineHeight:"12px",letterSpacing:"0.04em",fontWeight:"500"}],"headline-lg":["18px",{lineHeight:"24px",letterSpacing:"-0.02em",fontWeight:"600"}],display:["24px",{lineHeight:"32px",letterSpacing:"-0.025em",fontWeight:"600"}],"mono-metric":["12px",{lineHeight:"16px",letterSpacing:"-0.02em",fontWeight:"500"}],"body-lg":["14px",{lineHeight:"20px",letterSpacing:"-0.01em",fontWeight:"400"}],"body-default":["13px",{lineHeight:"18px",letterSpacing:"-0.005em",fontWeight:"400"}],"body-compact":["12px",{lineHeight:"16px",letterSpacing:"0em",fontWeight:"400"}]}}}}</script></head><body class="bg-surface-container-lowest text-on-surface font-body-default text-body-default min-h-screen selection:bg-primary-container selection:text-on-primary-container"><aside class="fixed left-0 top-0 h-full w-52 bg-surface-dim z-50 flex flex-col justify-between select-none shadow-[1px_0_0_rgba(255,255,255,0.07)]"><div class="flex flex-col"><div class="px-space-lg pt-space-lg pb-space-md flex items-center gap-space-sm"><div class="w-3 h-3 rounded-full bg-[#FF5F56] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#FFBD2E] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div><div class="w-3 h-3 rounded-full bg-[#27C93F] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.2)]"></div></div><div class="px-space-lg py-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="FlowKeys Icon" class="h-6 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><span class="font-headline-md text-headline-md font-semibold tracking-tight text-on-surface">FlowKeys</span></div><span class="font-mono-keycap text-mono-keycap px-space-xs py-space-2xs rounded bg-surface-container-highest text-on-surface-variant">v2.0</span></div><nav class="mt-space-sm px-space-sm flex flex-col gap-space-2xs" data-active-classes="bg-surface-container-high text-on-surface font-semibold"><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="home" href="#"><span class="material-symbols-outlined text-[18px]">home</span><span class="font-body-compact text-body-compact">Home</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="history" href="#"><span class="material-symbols-outlined text-[18px]">history</span><span class="font-body-compact text-body-compact">History</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="dictionary" href="#"><span class="material-symbols-outlined text-[18px]">menu_book</span><span class="font-body-compact text-body-compact">Dictionary</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="snippets" href="#"><span class="material-symbols-outlined text-[18px]">post_add</span><span class="font-body-compact text-body-compact">Snippets</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="smart-modes" href="#"><span class="material-symbols-outlined text-[18px]">motion_mode</span><span class="font-body-compact text-body-compact">Smart Modes</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="style" href="#"><span class="material-symbols-outlined text-[18px]">tune</span><span class="font-body-compact text-body-compact">Style</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="voice-macros" href="#"><span class="material-symbols-outlined text-[18px]">mic</span><span class="font-body-compact text-body-compact">Voice Macros</span></a><a class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" data-path="local-ai" href="#"><span class="material-symbols-outlined text-[18px]">memory</span><span class="font-body-compact text-body-compact">Local AI</span></a><a aria-current="page" class="flex items-center gap-space-sm px-space-base py-space-sm rounded-lg transition-colors bg-surface-container-high text-on-surface font-semibold" data-path="settings" href="#"><span class="material-symbols-outlined text-[18px]">settings</span><span class="font-body-compact text-body-compact">Settings</span></a></nav></div><div class="p-space-base m-space-sm rounded-xl bg-surface-container shadow-[0_16px_36px_-8px_rgba(0,0,0,0.75)]"><div class="flex items-center gap-space-xs text-primary-container"><span class="material-symbols-outlined text-[16px]">local_fire_department</span><span class="font-label-md text-label-md font-semibold">12-day streak</span></div><div class="mt-space-2xs flex items-center justify-between text-on-surface-variant"><span class="font-body-compact text-body-compact">Today</span><span class="font-mono-metric text-mono-metric text-on-surface font-medium">1,204 words</span></div></div></aside><div class="pl-52 min-h-screen flex flex-col"><header class="fixed top-0 left-52 right-0 h-14 bg-surface-dim/85 backdrop-blur-xl z-40 flex items-center justify-between px-space-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><img alt="FlowKeys Icon" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1ViP7_l3lBaIEeJLVebdMx-zq1AKNUnlpmSevZMuyUo35WLSekN2C5NL3XFKlqDvPQ4aW1CSQDxLvs36xZOlDLEOvApdMyleA8SSmMElBmdvZ8v_bt9nPIBXN1kuw1MYM3p__zXbZem_GFVr8rMa6ZEMAM0_ZjSkIVTr2REyrm8NsmBtTELamOdVuyBCdC0_RK7uau1xiuJXcXW4xKNDthcvXluW8Od8u1vp5s2si_0CjdU8cLysONZxg"/><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-surface-container shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"><span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span><span class="font-mono-keycap text-mono-keycap text-on-surface-variant uppercase tracking-wider">Engine Ready</span></div></div><div class="flex items-center gap-space-base"><div class="flex items-center gap-space-xs px-space-sm py-space-2xs rounded-lg bg-surface-container text-on-surface-variant"><span class="material-symbols-outlined text-[16px]">keyboard_command_key</span><span class="font-mono-keycap text-mono-keycap">⌥ Space</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="relative pt-14 flex-1 bg-surface-container-lowest w-full px-space-xl py-space-lg"><div class="flex flex-col w-full">
+<div class="relative flex flex-col gap-space-2xl max-w-7xl mx-auto w-full pb-space-3xl">
+<!-- Top Bar / Context Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-lg">
+<div class="flex flex-col gap-space-2xs">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap uppercase tracking-widest text-primary">Context Engine v2.4</span>
+<span class="text-on-surface-variant/40 text-[10px]">•</span>
+<span class="font-mono-keycap text-mono-keycap text-tertiary flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+            Dynamic Routing Active
+          </span>
+</div>
+<h1 class="font-display text-display text-on-surface font-semibold tracking-tight">Smart Modes</h1>
+<p class="font-body-default text-body-default text-on-surface-variant max-w-xl">
+          Define how FlowKeys cleans, standardizes, and grammatically formats spoken text based on your frontmost macOS window.
+        </p>
+</div>
+<!-- Controls & Master Switch -->
+<div class="flex items-center gap-space-md self-start md:self-center">
+<!-- Master Context Switch Card -->
+<div class="flex items-center gap-space-base px-space-base py-space-sm rounded-xl bg-surface-container shadow-md">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-medium">Frontmost App Detection</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Switch active style automatically</span>
+</div>
+<button aria-pressed="true" class="relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full bg-primary-container p-0.5 transition-colors duration-200 ease-in-out focus:outline-none" id="master-toggle" type="button">
+<span class="pointer-events-none inline-block h-4 w-4 transform rounded-full bg-on-primary shadow-sm transition duration-200 ease-in-out translate-x-4" id="master-toggle-dot"></span>
+</button>
+</div>
+<button class="flex items-center gap-space-xs px-space-base py-space-sm rounded-xl bg-primary text-on-primary font-label-md text-label-md shadow-lg shadow-primary/10 hover:bg-primary-fixed-dim active:scale-[0.98] transition-all" onclick="document.getElementById('new-mode-toast').classList.remove('opacity-0', 'pointer-events-none')">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>New Mode</span>
+</button>
+</div>
+</div>
+<!-- Main Workspace Split: Mode Grid & Quick Stats Overlay -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-xl items-start">
+<!-- Mode Cards Bento Grid (8 cols) -->
+<div class="xl:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+<!-- 1. Casual (Active Now) -->
+<div class="group relative rounded-xl bg-surface-container p-space-base flex flex-col justify-between min-h-[168px] shadow-sm hover:bg-surface-container-high transition-all cursor-pointer">
+<div class="absolute inset-0 rounded-xl shadow-[0_0_0_1px_#ff6b35] pointer-events-none"></div>
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold">Casual</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Conversational style</span>
+</div>
+</div>
+<!-- Active Status Badge -->
+<div class="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary-container/20 text-primary font-mono-keycap text-mono-keycap">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
+<span>ACTIVE NOW</span>
+</div>
+</div>
+<p class="mt-space-xs font-body-compact text-body-compact text-on-surface-variant line-clamp-2">
+              Natural cadence with conversational phrasing and colloquial nuance. Preserves contractions and soft pause tone.
+            </p>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/80 uppercase">Triggers:</span>
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-tertiary">chat</span> WhatsApp
+                </span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Messages</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Telegram</span>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant/60">3 apps</span>
+</div>
+</div>
+<!-- 2. Email (Polished) - Triggers Drawer On Click -->
+<div class="group relative rounded-xl bg-surface-container p-space-base flex flex-col justify-between min-h-[168px] shadow-sm hover:bg-surface-container-high transition-all cursor-pointer" onclick="openDrawer()">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold group-hover:text-primary transition-colors">Email (Polished)</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Executive standard</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">tune</span>
+</div>
+<p class="mt-space-xs font-body-compact text-body-compact text-on-surface-variant line-clamp-2">
+              Structured paragraphs, polite salutations, formal punctuation, eliminates redundant corporate filler words.
+            </p>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/80 uppercase">Triggers:</span>
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Apple Mail</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Outlook</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Gmail</span>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant/60">3 apps</span>
+</div>
+</div>
+<!-- 3. Code & Technical -->
+<div class="group relative rounded-xl bg-surface-container p-space-base flex flex-col justify-between min-h-[168px] shadow-sm hover:bg-surface-container-high transition-all cursor-pointer">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">data_object</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold group-hover:text-primary transition-colors">Code & Technical</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Casing + Raw Snippets</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">tune</span>
+</div>
+<p class="mt-space-xs font-body-compact text-body-compact text-on-surface-variant line-clamp-2">
+              snake_case, camelCase preservation, raw code syntax blocks, and bash terminal flags without spacing breaks.
+            </p>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/80 uppercase">Triggers:</span>
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">VS Code</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Xcode</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Terminal</span>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant/60">4 apps</span>
+</div>
+</div>
+<!-- 4. Notes & Bullets -->
+<div class="group relative rounded-xl bg-surface-container p-space-base flex flex-col justify-between min-h-[168px] shadow-sm hover:bg-surface-container-high transition-all cursor-pointer">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold group-hover:text-primary transition-colors">Notes & Bullets</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Hierarchical Lists</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">tune</span>
+</div>
+<p class="mt-space-xs font-body-compact text-body-compact text-on-surface-variant line-clamp-2">
+              Converts continuous voice stream into indented bullet hierarchies, markdown checkboxes, and explicit action items.
+            </p>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/80 uppercase">Triggers:</span>
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Obsidian</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Apple Notes</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Notion</span>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant/60">3 apps</span>
+</div>
+</div>
+<!-- 5. Social / Punchy -->
+<div class="group relative rounded-xl bg-surface-container p-space-base flex flex-col justify-between min-h-[168px] shadow-sm hover:bg-surface-container-high transition-all cursor-pointer">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">tag</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold group-hover:text-primary transition-colors">Social / Punchy</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">High Impact</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">tune</span>
+</div>
+<p class="mt-space-xs font-body-compact text-body-compact text-on-surface-variant line-clamp-2">
+              Short punchy sentences, crisp line breaks, and automatic lowercase tag conversion without trailing commas.
+            </p>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/80 uppercase">Triggers:</span>
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">X / Twitter</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">LinkedIn</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Slack</span>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant/60">3 apps</span>
+</div>
+</div>
+<!-- 6. Literal (Verbatim) -->
+<div class="group relative rounded-xl bg-surface-container p-space-base flex flex-col justify-between min-h-[168px] shadow-sm hover:bg-surface-container-high transition-all cursor-pointer">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined text-[18px]">format_quote</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold group-hover:text-primary transition-colors">Literal (Verbatim)</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Bypass LLM pipeline</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">tune</span>
+</div>
+<p class="mt-space-xs font-body-compact text-body-compact text-on-surface-variant line-clamp-2">
+              Zero LLM cleanup, zero rephrasing, raw whisper tokens with exact acoustic punctuation and pauses preserved.
+            </p>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/80 uppercase">Triggers:</span>
+<div class="flex items-center gap-1">
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Terminal</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-on-surface font-mono-keycap text-mono-keycap">Vim</span>
+</div>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant/60">2 apps</span>
+</div>
+</div>
+<!-- 7. Hindi / Indic Native -->
+<div class="group relative rounded-xl bg-surface-container p-space-base flex flex-col justify-between min-h-[168px] shadow-sm hover:bg-surface-container-high transition-all cursor-pointer md:col-span-2">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-tertiary/15 flex items-center justify-center text-tertiary">
+<span class="font-headline-md text-headline-md font-bold">ॐ</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-md text-headline-md text-on-surface font-semibold group-hover:text-primary transition-colors">Hindi / Indic Native</span>
+<span class="px-1.5 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant font-mono-keycap text-mono-keycap">देवनागरी</span>
+</div>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Phonetic auto-transliteration</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">tune</span>
+</div>
+<p class="mt-space-xs font-body-compact text-body-compact text-on-surface-variant max-w-2xl">
+              Forces pure native Devanagari script output regardless of input phonetic mixed words. Automatically strips Romanized Hinglish phonetic artifacts.
+            </p>
+</div>
+<div class="pt-space-sm mt-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant/80 uppercase">Target Engine:</span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-highest text-tertiary font-mono-keycap text-mono-keycap">Whisper Large v3 (Indic)</span>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface-variant/60">Global fallback toggle</span>
+</div>
+</div>
+</div>
+<!-- Quick Context Info / Real-time Pipeline Monitor (4 cols) -->
+<div class="xl:col-span-4 flex flex-col gap-space-base">
+<!-- Live Window Context Box -->
+<div class="rounded-xl bg-surface-container p-space-base shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-medium">Frontmost App Monitor</span>
+<span class="px-1.5 py-0.5 rounded bg-tertiary/10 text-tertiary font-mono-keycap text-mono-keycap uppercase">Hooked</span>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded-md bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[16px]">forum</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-compact text-body-compact text-on-surface font-medium">WhatsApp.app</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">com.tinyspeck.slackmacgap</span>
+</div>
+</div>
+<span class="font-mono-keycap text-mono-keycap px-2 py-0.5 rounded bg-primary-container text-on-primary-container font-semibold">Casual</span>
+</div>
+<div class="flex flex-col gap-1 mt-space-xs">
+<div class="flex justify-between text-on-surface-variant font-mono-keycap text-mono-keycap">
+<span>Latency overhead</span>
+<span class="text-on-surface">14ms</span>
+</div>
+<div class="flex justify-between text-on-surface-variant font-mono-keycap text-mono-keycap">
+<span>LLM Instruction Cache</span>
+<span class="text-tertiary">Warm</span>
+</div>
+</div>
+</div>
+<!-- Mode Performance Vector Chart -->
+<div class="rounded-xl bg-surface-container p-space-base shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-medium">Weekly Usage by Mode</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Last 7 days</span>
+</div>
+<!-- Inline Minimal SVG Bar Chart -->
+<div class="w-full pt-space-xs">
+<svg class="w-full h-24 overflow-visible" fill="none" viewbox="0 0 280 80">
+<!-- Grid hairlines -->
+<line class="text-surface-container-highest" stroke="currentColor" stroke-dasharray="2 2" x1="0" x2="280" y1="20" y2="20"></line>
+<line class="text-surface-container-highest" stroke="currentColor" stroke-dasharray="2 2" x1="0" x2="280" y1="50" y2="50"></line>
+<!-- Bars -->
+<!-- Casual -->
+<rect class="fill-primary" height="65" rx="3" width="22" x="15" y="15"></rect>
+<!-- Email -->
+<rect class="fill-surface-variant" height="52" rx="3" width="22" x="55" y="28"></rect>
+<!-- Code -->
+<rect class="fill-surface-variant" height="42" rx="3" width="22" x="95" y="38"></rect>
+<!-- Notes -->
+<rect class="fill-surface-variant" height="34" rx="3" width="22" x="135" y="46"></rect>
+<!-- Social -->
+<rect class="fill-surface-variant" height="22" rx="3" width="22" x="175" y="58"></rect>
+<!-- Literal -->
+<rect class="fill-surface-variant" height="14" rx="3" width="22" x="215" y="66"></rect>
+<!-- Indic -->
+<rect class="fill-surface-variant" height="28" rx="3" width="22" x="255" y="52"></rect>
+</svg>
+<div class="flex justify-between font-mono-keycap text-mono-keycap text-on-surface-variant/70 pt-2 px-1">
+<span>Cas</span>
+<span>Eml</span>
+<span>Cod</span>
+<span>Not</span>
+<span>Soc</span>
+<span>Lit</span>
+<span>Ind</span>
+</div>
+</div>
+<div class="mt-space-xs p-space-sm rounded-lg bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-space-xs text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">auto_fix_high</span>
+<span class="font-body-compact text-body-compact">Tokens rewritten today</span>
+</div>
+<span class="font-mono-metric text-mono-metric text-on-surface font-semibold">18,420</span>
+</div>
+</div>
+<!-- Documentation Micro Tip -->
+<div class="p-space-base rounded-xl bg-surface-container-low flex items-start gap-space-sm">
+<span class="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">lightbulb</span>
+<p class="font-body-compact text-body-compact text-on-surface-variant">
+            Hold <span class="font-mono-keycap text-mono-keycap px-1 py-0.5 rounded bg-surface-container-highest text-on-surface">⌥ Shift Space</span> anywhere to invoke the instant Mode Picker capsule directly at your text cursor.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Slide-over Drawer Backdrop -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity duration-300 opacity-0 pointer-events-none" id="drawer-backdrop" onclick="closeDrawer()"></div>
+<!-- Slide-over Edit Drawer: Mode Configuration -->
+<aside class="fixed top-0 right-0 h-full w-full max-w-lg bg-surface-dim z-50 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-out translate-x-full" id="edit-drawer">
+<!-- Drawer Header -->
+<div class="p-space-xl flex items-center justify-between bg-surface-dim shadow-[0_1px_0_rgba(255,255,255,0.06)]">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+</div>
+<div class="flex flex-col">
+<h2 class="font-headline-lg text-headline-lg text-on-surface font-semibold">Edit Mode: Email (Polished)</h2>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">ID: com.flowkeys.preset.email_v2</span>
+</div>
+</div>
+<button class="w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" onclick="closeDrawer()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Drawer Body -->
+<div class="flex-1 overflow-y-auto p-space-xl flex flex-col gap-space-xl">
+<!-- Segmented Picker: Default vs Custom -->
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface-variant">Prompt Engine Architecture</label>
+<div class="p-1 rounded-xl bg-surface-container-low grid grid-cols-2 gap-1">
+<button class="py-space-xs px-space-sm rounded-lg text-on-surface-variant font-label-md text-label-md transition-all hover:text-on-surface" id="tab-default" onclick="selectTab('default')">
+            System Prompt
+          </button>
+<button class="py-space-xs px-space-sm rounded-lg bg-surface-container-highest text-on-surface font-label-md text-label-md shadow-sm transition-all" id="tab-custom" onclick="selectTab('custom')">
+            Custom Prompt
+          </button>
+</div>
+</div>
+<!-- Custom Prompt Rules Textarea -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-medium">Custom Transformation Rules</label>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">Markdown syntax supported</span>
+</div>
+<textarea class="w-full rounded-xl bg-surface-container p-space-sm font-body-compact text-body-compact text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-1 focus:ring-primary resize-none shadow-sm" rows="5">You are an executive assistant. Transform spoken speech into clear, courteous business correspondence. Eliminate pleasantries redundancy and format structured requests into distinct concise paragraphs.</textarea>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-mono-keycap text-mono-keycap">
+<span class="material-symbols-outlined text-[12px] text-tertiary">check_circle</span>
+<span>Validated for low token generation overhead (<60 tokens/sec)</span>
+</div>
+</div>
+<!-- Force Language & Script Dropdowns -->
+<div class="grid grid-cols-2 gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface font-medium">Force Language</label>
+<div class="relative">
+<select class="w-full appearance-none rounded-xl bg-surface-container px-space-sm py-2 font-body-compact text-body-compact text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-sm pr-8 cursor-pointer">
+<option selected="">English (US)</option>
+<option>English (UK)</option>
+<option>Hindi (IN)</option>
+<option>Spanish (ES)</option>
+<option>Auto-Detect</option>
+</select>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant absolute right-2.5 top-2.5 pointer-events-none">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<label class="font-label-md text-label-md text-on-surface font-medium">Script Orthography</label>
+<div class="relative">
+<select class="w-full appearance-none rounded-xl bg-surface-container px-space-sm py-2 font-body-compact text-body-compact text-on-surface focus:outline-none focus:ring-1 focus:ring-primary shadow-sm pr-8 cursor-pointer">
+<option selected="">Roman</option>
+<option>Devanagari</option>
+<option>International Phonetic (IPA)</option>
+<option>Native Source</option>
+</select>
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant absolute right-2.5 top-2.5 pointer-events-none">expand_more</span>
+</div>
+</div>
+</div>
+<!-- App Trigger Picker -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface font-medium">App Trigger Rules</label>
+<button class="font-label-sm text-label-sm text-primary hover:underline flex items-center gap-1" onclick="addDummyRule()">
+<span class="material-symbols-outlined text-[14px]">add</span>
+<span>Add App Rule</span>
+</button>
+</div>
+<!-- Rules List Container -->
+<div class="flex flex-col gap-space-xs" id="rules-list">
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-6 h-6 rounded bg-surface-container-highest flex items-center justify-center text-[12px] font-bold text-on-surface">M</div>
+<span class="font-body-compact text-body-compact text-on-surface">Apple Mail</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">com.apple.mail</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors" onclick="this.parentElement.remove()">
+<span class="material-symbols-outlined text-[16px]">remove_circle_outline</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-6 h-6 rounded bg-surface-container-highest flex items-center justify-center text-[12px] font-bold text-on-surface">O</div>
+<span class="font-body-compact text-body-compact text-on-surface">Microsoft Outlook</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">com.microsoft.Outlook</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors" onclick="this.parentElement.remove()">
+<span class="material-symbols-outlined text-[16px]">remove_circle_outline</span>
+</button>
+</div>
+<div class="flex items-center justify-between p-space-sm rounded-lg bg-surface-container shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-6 h-6 rounded bg-surface-container-highest flex items-center justify-center text-[12px] font-bold text-on-surface">G</div>
+<span class="font-body-compact text-body-compact text-on-surface">Gmail (Brave/Chrome)</span>
+<span class="font-mono-keycap text-mono-keycap text-on-surface-variant">URL matches *mail.google.com*</span>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors" onclick="this.parentElement.remove()">
+<span class="material-symbols-outlined text-[16px]">remove_circle_outline</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-space-xl bg-surface-dim shadow-[0_-1px_0_rgba(255,255,255,0.06)] flex items-center justify-between">
+<button class="px-space-base py-space-sm rounded-xl font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors" onclick="closeDrawer()">
+        Cancel
+      </button>
+<div class="flex items-center gap-space-sm">
+<button class="px-space-base py-space-sm rounded-xl bg-primary-container text-on-primary-container font-label-md text-label-md shadow-md hover:brightness-110 active:scale-[0.98] transition-all" onclick="closeDrawer()">
+          Save Changes
+        </button>
+</div>
+</div>
+</aside>
+<!-- Notification Toast for New Mode Trigger -->
+<div class="fixed bottom-6 right-6 z-50 flex items-center gap-space-sm px-space-base py-space-sm rounded-xl bg-surface-container-highest text-on-surface shadow-2xl transition-all duration-200 opacity-0 pointer-events-none" id="new-mode-toast">
+<span class="material-symbols-outlined text-[18px] text-primary">info</span>
+<span class="font-body-compact text-body-compact">Custom prompt templates can also be loaded via local LLM file.</span>
+<button class="text-on-surface-variant hover:text-on-surface ml-2" onclick="document.getElementById('new-mode-toast').classList.add('opacity-0', 'pointer-events-none')">
+<span class="material-symbols-outlined text-[14px]">close</span>
+</button>
+</div>
+<script>
+    function openDrawer() {
+      const drawer = document.getElementById('edit-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      drawer.classList.remove('translate-x-full');
+      backdrop.classList.remove('opacity-0', 'pointer-events-none');
+    }
+
+    function closeDrawer() {
+      const drawer = document.getElementById('edit-drawer');
+      const backdrop = document.getElementById('drawer-backdrop');
+      drawer.classList.add('translate-x-full');
+      backdrop.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    function selectTab(tab) {
+      const defaultBtn = document.getElementById('tab-default');
+      const customBtn = document.getElementById('tab-custom');
+      if(tab === 'default') {
+        defaultBtn.classList.add('bg-surface-container-highest', 'text-on-surface', 'shadow-sm');
+        defaultBtn.classList.remove('text-on-surface-variant');
+        customBtn.classList.remove('bg-surface-container-highest', 'text-on-surface', 'shadow-sm');
+        customBtn.classList.add('text-on-surface-variant');
+      } else {
+        customBtn.classList.add('bg-surface-container-highest', 'text-on-surface', 'shadow-sm');
+        customBtn.classList.remove('text-on-surface-variant');
+        defaultBtn.classList.remove('bg-surface-container-highest', 'text-on-surface', 'shadow-sm');
+        defaultBtn.classList.add('text-on-surface-variant');
+      }
+    }
+
+    function addDummyRule() {
+      const list = document.getElementById('rules-list');
+      const newRow = document.createElement('div');
+      newRow.className = 'flex items-center justify-between p-space-sm rounded-lg bg-surface-container shadow-sm';
+      newRow.innerHTML = `
+        <div class="flex items-center gap-space-sm">
+          <div class="w-6 h-6 rounded bg-surface-container-highest flex items-center justify-center text-[12px] font-bold text-primary">S</div>
+          <span class="font-body-compact text-body-compact text-on-surface">Superhuman</span>
+          <span class="font-mono-keycap text-mono-keycap text-on-surface-variant">com.superhuman.electron</span>
+        </div>
+        <button onclick="this.parentElement.remove()" class="text-on-surface-variant hover:text-error transition-colors">
+          <span class="material-symbols-outlined text-[16px]">remove_circle_outline</span>
+        </button>
+      `;
+      list.appendChild(newRow);
+    }
+
+    // Toggle master switch
+    const toggle = document.getElementById('master-toggle');
+    const dot = document.getElementById('master-toggle-dot');
+    let isToggled = true;
+
+    toggle.addEventListener('click', () => {
+      isToggled = !isToggled;
+      if (isToggled) {
+        toggle.classList.remove('bg-surface-variant');
+        toggle.classList.add('bg-primary-container');
+        dot.classList.remove('translate-x-0');
+        dot.classList.add('translate-x-4');
+        toggle.setAttribute('aria-pressed', 'true');
+      } else {
+        toggle.classList.remove('bg-primary-container');
+        toggle.classList.add('bg-surface-variant');
+        dot.classList.remove('translate-x-4');
+        dot.classList.add('translate-x-0');
+        toggle.setAttribute('aria-pressed', 'false');
+      }
+    });
+  </script>
+</div></main></div></body></html>
