@@ -57,6 +57,7 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
 
     let modelManager: LocalModelManager
     private let engine: LocalWhisperEngine
+    private let indicEngine: LocalIndicEngine
     private let llmEngine: LocalLLMEngine
     private let store: LocalAISettingsStore
 
@@ -66,6 +67,7 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
         self.settings = store.load()
         self.modelManager = modelManager
         self.engine = LocalWhisperEngine()
+        self.indicEngine = LocalIndicEngine()
         self.llmEngine = LocalLLMEngine()
         os_log(.info, log: localAILog,
                "LocalAIController init — enabled=%{public}d route=%{public}@ builtWithLocalAI=%{public}d",
@@ -149,6 +151,7 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
 
         let selection = LanguageRouter.resolve(legacyMode: languageMode, override: languageOverride)
         let service = LocalTranscriptionService(engine: engine,
+                                                indicEngine: indicEngine,
                                                 modelManager: modelManager,
                                                 settings: settings)
         publish { self.state = .transcribing; self.transcriptionProgress = 0 }
@@ -267,6 +270,7 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
     func releaseAllModels() {
         Task { await engine.unload() }
         Task { await llmEngine.unload() }
+        Task { await indicEngine.unload() }
         publish { self.state = .idle }
     }
 

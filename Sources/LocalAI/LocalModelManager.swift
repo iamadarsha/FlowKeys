@@ -92,6 +92,12 @@ final class LocalModelManager: ObservableObject, @unchecked Sendable {
         return (isInstalled(descriptor) && fileManager.fileExists(atPath: url.path)) ? url : nil
     }
 
+    /// Directory holding a (possibly multi-file) installed model, or nil.
+    func installedModelDir(_ descriptor: LocalModelDescriptor) -> URL? {
+        guard isInstalled(descriptor) else { return nil }
+        return localURL(for: descriptor).deletingLastPathComponent()
+    }
+
     func status(_ id: String) -> LocalModelStatus { statuses[id] ?? .notInstalled }
 
     // MARK: - Compatibility
@@ -117,16 +123,12 @@ final class LocalModelManager: ObservableObject, @unchecked Sendable {
                 continue
             }
             let url = localURL(for: d)
-            guard fileManager.fileExists(atPath: url.path) else {
-                setStatus(.notInstalled, for: d.id)
-                continue
+            let mainOK = (try? fileManager.attributesOfItem(atPath: url.path)[.size] as? Int64) == d.expectedByteSize
+            let companionsOK = d.companions.allSatisfy { c in
+                let p = url.deletingLastPathComponent().appendingPathComponent(c.fileName).path
+                return (try? fileManager.attributesOfItem(atPath: p)[.size] as? Int64) == c.expectedByteSize
             }
-            if let size = try? fileManager.attributesOfItem(atPath: url.path)[.size] as? Int64,
-               size == d.expectedByteSize {
-                setStatus(.installed, for: d.id)
-            } else {
-                setStatus(.notInstalled, for: d.id)
-            }
+            setStatus((mainOK && companionsOK) ? .installed : .notInstalled, for: d.id)
         }
     }
 
@@ -184,7 +186,10 @@ final class LocalModelManager: ObservableObject, @unchecked Sendable {
     func delete(_ descriptor: LocalModelDescriptor) throws {
         cancelDownload(descriptor.id)
         let url = localURL(for: descriptor)
-        if fileManager.fileExists(atPath: url.path) {
+        if descriptor.isMultiFile {
+            let dir = url.deletingLastPathComponent()
+            if fileManager.fileExists(atPath: dir.path) { try fileManager.removeItem(at: dir) }
+        } else if fileManager.fileExists(atPath: url.path) {
             try fileManager.removeItem(at: url)
         }
         setStatus(.notInstalled, for: descriptor.id)
@@ -284,6 +289,41 @@ final class LocalModelManager: ObservableObject, @unchecked Sendable {
             try fileManager.removeItem(at: dest)
         }
         try fileManager.moveItem(at: partURL, to: dest)
-        os_log(.info, log: modelLog, "installed model %{public}@ (%lld bytes)", d.id, d.expectedByteSize)
+        os_log(.info, log: modelLog, "installed %{public}@ main file (%lld bytes)", d.id, d.expectedByteSize)
+
+        // Companion files (e.g. tokens.txt for sherpa-onnx).
+        for c in d.companions {
+            guard LocalModelManifest.isAllowed(c.url) else {
+                throw LocalModelError.disallowedHost(c.url.host ?? "unknown")
+            }
+            let cDest = dest.deletingLastPathComponent().appendingPathComponent(c.fileName)
+            try await downloadSmallFile(c.url, to: cDest,
+                                        expectedSize: c.expectedByteSize,
+                                        expectedSHA: c.checksumSHA256)
+            os_log(.info, log: modelLog, "installed %{public}@ companion %{public}@", d.id, c.fileName)
+        }
+    }
+
+    /// Simple (non-resumable) download for small companion files.
+    private func downloadSmallFile(_ url: URL, to dest: URL,
+                                   expectedSize: Int64, expectedSHA: String) async throws {
+        var req = URLRequest(url: url)
+        req.timeoutInterval = 60
+        let (data, resp) = try await URLSession.shared.data(for: req)
+        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
+            throw LocalModelError.httpStatus((resp as? HTTPURLResponse)?.statusCode ?? 0)
+        }
+        guard Int64(data.count) == expectedSize else {
+            throw LocalModelError.sizeMismatch(expected: expectedSize, got: Int64(data.count))
+        }
+        let tmp = dest.appendingPathExtension("part")
+        try data.write(to: tmp, options: .atomic)
+        let digest = try CryptoKitSHA256.hex(of: tmp)
+        guard digest.lowercased() == expectedSHA.lowercased() else {
+            try? fileManager.removeItem(at: tmp)
+            throw LocalModelError.checksumMismatch(expected: expectedSHA, got: digest)
+        }
+        if fileManager.fileExists(atPath: dest.path) { try fileManager.removeItem(at: dest) }
+        try fileManager.moveItem(at: tmp, to: dest)
     }
 }

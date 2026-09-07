@@ -29,11 +29,16 @@ struct LocalTranscriptionOutcome: Sendable {
 final class LocalTranscriptionService {
 
     private let engine: LocalWhisperEngine
+    private let indicEngine: LocalIndicEngine
     private let modelManager: LocalModelManager
     private let settings: LocalAISettings
 
-    init(engine: LocalWhisperEngine, modelManager: LocalModelManager, settings: LocalAISettings) {
+    init(engine: LocalWhisperEngine,
+         indicEngine: LocalIndicEngine,
+         modelManager: LocalModelManager,
+         settings: LocalAISettings) {
         self.engine = engine
+        self.indicEngine = indicEngine
         self.modelManager = modelManager
         self.settings = settings
     }
@@ -69,49 +74,72 @@ final class LocalTranscriptionService {
         guard let descriptor = resolvedModel(for: selection) else {
             throw LocalWhisperError.openFailed("no local speech model installed")
         }
-        guard let modelPath = modelManager.installedPath(descriptor)?.path else {
-            throw LocalWhisperError.modelMissing(descriptor.displayName)
-        }
-
-        await engine.setThreadCount(settings.performanceProfile.suggestedThreadCap)
 
         let samples = try LocalWhisperEngine.loadMono16kFloat(from: fileURL)
         guard !samples.isEmpty else { throw LocalWhisperError.emptyAudio }
-
         let processed = settings.whisperModeEnabled ? WhisperModeGain.apply(samples) : samples
-        let vadPath = vadModelPath()
 
-        let result = try await engine.transcribe(
-            samples: processed,
-            languageToken: selection.language.asrLanguageToken,
-            initialPrompt: initialPrompt,
-            modelPath: modelPath,
-            vadModelPath: vadPath,
-            keepWarmSeconds: settings.effectiveUnloadAfterSeconds,
-            onProgress: onProgress
-        )
+        let rawText: String
+        let detectedLang: String
+        let loadMs: Int
+        let txMs: Int
+        var usedVAD = false
 
+        if descriptor.kind == .asrIndicConformer && indicEngine.isAvailable {
+            guard let dir = modelManager.installedModelDir(descriptor)?.path else {
+                throw LocalIndicError.filesMissing(descriptor.displayName)
+            }
+            await indicEngine.setThreadCount(settings.performanceProfile.suggestedThreadCap)
+            let r = try await indicEngine.transcribe(
+                samples: processed, modelDir: dir,
+                keepWarmSeconds: settings.effectiveUnloadAfterSeconds)
+            rawText = r.text
+            detectedLang = selection.language.asrLanguageToken ?? ""
+            loadMs = r.loadMilliseconds
+            txMs = r.transcribeMilliseconds
+            onProgress?(100)
+        } else {
+            guard let modelPath = modelManager.installedPath(descriptor)?.path else {
+                throw LocalWhisperError.modelMissing(descriptor.displayName)
+            }
+            await engine.setThreadCount(settings.performanceProfile.suggestedThreadCap)
+            let vadPath = vadModelPath()
+            let r = try await engine.transcribe(
+                samples: processed,
+                languageToken: selection.language.asrLanguageToken,
+                initialPrompt: initialPrompt,
+                modelPath: modelPath,
+                vadModelPath: vadPath,
+                keepWarmSeconds: settings.effectiveUnloadAfterSeconds,
+                onProgress: onProgress)
+            rawText = r.text
+            detectedLang = r.detectedLanguage
+            loadMs = r.loadMilliseconds
+            txMs = r.transcribeMilliseconds
+            usedVAD = vadPath != nil
+        }
+
+        let whisperResult = LocalWhisperResult(
+            text: rawText, detectedLanguage: detectedLang,
+            loadMilliseconds: loadMs, transcribeMilliseconds: txMs,
+            segments: [], vadSpans: [])
         let analysis = SpeechAnalysisService.analyze(
-            rawText: result.text,
-            result: result,
-            level: settings.disfluencyLevel,
-            language: selection.language
-        )
+            rawText: rawText, result: whisperResult,
+            level: settings.disfluencyLevel, language: selection.language)
 
         os_log(.info, log: localTxLog,
-               "local ASR: model=%{public}@ load=%dms tx=%dms vad=%{public}d fillers=%d lang=%{public}@",
-               descriptor.id, result.loadMilliseconds, result.transcribeMilliseconds,
-               vadPath != nil ? 1 : 0, analysis.fillersRemoved.count, result.detectedLanguage)
+               "local ASR: model=%{public}@ load=%dms tx=%dms fillers=%d",
+               descriptor.id, loadMs, txMs, analysis.fillersRemoved.count)
 
         return LocalTranscriptionOutcome(
-            rawText: result.text,
-            cleanedText: analysis.cleanedText.isEmpty ? result.text : analysis.cleanedText,
-            detectedLanguage: result.detectedLanguage,
+            rawText: rawText,
+            cleanedText: analysis.cleanedText.isEmpty ? rawText : analysis.cleanedText,
+            detectedLanguage: detectedLang,
             modelID: descriptor.id,
-            loadMs: result.loadMilliseconds,
-            transcribeMs: result.transcribeMilliseconds,
+            loadMs: loadMs,
+            transcribeMs: txMs,
             analysis: analysis,
-            usedVAD: vadPath != nil
+            usedVAD: usedVAD
         )
     }
 

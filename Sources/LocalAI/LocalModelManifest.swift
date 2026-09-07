@@ -60,15 +60,31 @@ struct LocalModelDescriptor: Codable, Identifiable, Sendable {
     let languages: [String]
     let requirements: LocalModelRequirements
 
-    /// Relative path under the model store where the file lives.
-    var relativeStorePath: String {
+    /// Additional files that must be downloaded alongside the main one (e.g. a
+    /// tokens file for sherpa-onnx). Each is pinned the same way.
+    struct Companion: Codable, Sendable {
+        let fileName: String
+        let url: URL
+        let expectedByteSize: Int64
+        let checksumSHA256: String
+    }
+    var companions: [Companion] = []
+
+    /// Sub-directory under the model store for this model.
+    var storeSubdir: String {
         switch kind {
-        case .asrWhisper:        return "whisper/\(url.lastPathComponent)"
-        case .asrIndicConformer: return "indic/\(url.lastPathComponent)"
-        case .cleanupLLM:        return "llm/\(url.lastPathComponent)"
-        case .vad:               return "vad/\(url.lastPathComponent)"
+        case .asrWhisper:        return "whisper"
+        case .asrIndicConformer: return "indic/\(id)"
+        case .cleanupLLM:        return "llm"
+        case .vad:               return "vad"
         }
     }
+
+    /// Relative path under the model store where the main file lives.
+    var relativeStorePath: String { "\(storeSubdir)/\(url.lastPathComponent)" }
+
+    /// For multi-file models: the directory that holds all files.
+    var isMultiFile: Bool { !companions.isEmpty }
 
     var isActivatable: Bool { verified && checksumSHA256 != nil }
 }
@@ -130,18 +146,24 @@ enum LocalModelManifest {
 
         // ---- ASR: best for Hindi & Bengali (native script) ----
         LocalModelDescriptor(
-            id: "indic-conformer-600m-int8",
+            id: "indic-conformer-int8",
             displayName: "Best for Hindi & Bengali",
-            shortDescription: "AI4Bharat · native Devanagari / Bangla output",
+            shortDescription: "AI4Bharat IndicConformer · native Devanagari / Bangla",
             kind: .asrIndicConformer,
             engine: .sherpaOnnx,
-            url: URL(string: "https://huggingface.co/csukuangfj/sherpa-onnx-nemo-ai4bharat-indic-conformer-600m-multilingual-int8/resolve/main/model.int8.onnx")!,
-            expectedByteSize: 320_000_000,
-            checksumSHA256: nil,
-            assetVersion: "ai4bharat-indicconformer-600m",
-            verified: false,
-            languages: ["hi", "bn", "as", "gu", "kn", "ml", "mr", "or", "pa", "ta", "te", "ur"],
-            requirements: LocalModelRequirements(minRAMGB: 8, requiresAppleSilicon: false)
+            url: URL(string: "https://huggingface.co/meetsync/indic-conformer-onnx-sherpa/resolve/main/model.int8.onnx")!,
+            expectedByteSize: 196_977_855,
+            checksumSHA256: "b99a01834cd1a72cd9be682a0b9543df6b152ef7dfceba88d3dbf59fbb77075d",
+            assetVersion: "ai4bharat-indicconformer",
+            verified: true,
+            languages: ["hi", "bn", "as", "gu", "kn", "ks", "mr", "brx"],
+            requirements: LocalModelRequirements(minRAMGB: 8, requiresAppleSilicon: false),
+            companions: [
+                .init(fileName: "tokens.txt",
+                      url: URL(string: "https://huggingface.co/meetsync/indic-conformer-onnx-sherpa/resolve/main/tokens.txt")!,
+                      expectedByteSize: 73_238,
+                      checksumSHA256: "743aeb755c4489bc734a6705578552b072ffb45055aeeb5db19ae7761a424882")
+            ]
         ),
 
         // ---- Local cleanup LLM ----

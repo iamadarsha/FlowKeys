@@ -21,14 +21,24 @@ ARCH ?= universal
 
 # ---------------------------------------------------------------------------
 # Local AI native runtime.
-#   LOCAL_AI=1  (default) — whisper.cpp ASR + VAD, universal static libs.
-#   LOCAL_LLM=1 (default when LOCAL_AI=1) — llama.cpp for on-device text cleanup,
-#               bundled as a dylib in Contents/Frameworks/ (its ggml 0.23 must
-#               not statically collide with whisper.cpp's ggml 0.20).
-#   LOCAL_AI=0 → cloud-only build.
+#   LOCAL_AI=1    (default) — whisper.cpp ASR + VAD, universal static libs.
+#   LOCAL_LLM=1   (default) — llama.cpp for on-device text cleanup, bundled as a
+#                 dylib in Contents/Frameworks/ (its ggml 0.23 must not statically
+#                 collide with whisper.cpp's ggml 0.20).
+#   LOCAL_INDIC=1 (default) — sherpa-onnx + AI4Bharat IndicConformer for on-device
+#                 native-script Hindi/Bengali ASR. Statically links a universal
+#                 ONNX Runtime built for macOS 13.4 → raises the deploy target.
+#   LOCAL_AI=0 → cloud-only build (13.0 target).
 # ---------------------------------------------------------------------------
-LOCAL_AI  ?= 1
-LOCAL_LLM ?= $(LOCAL_AI)
+LOCAL_AI    ?= 1
+LOCAL_LLM   ?= $(LOCAL_AI)
+LOCAL_INDIC ?= $(LOCAL_AI)
+
+MACOS_MIN = 13.0
+ifeq ($(LOCAL_INDIC),1)
+  MACOS_MIN = 13.4
+endif
+
 WHISPER_SRC   = vendor/whisper.cpp
 WHISPER_BUILD = $(BUILD_DIR)/whisper
 WHISPER_LIBS  = $(WHISPER_BUILD)/src/libwhisper.a \
@@ -41,16 +51,24 @@ LLAMA_DYLIB   = $(LLAMA_BUILD)/bin/libllama.dylib
 FW_DIR        = $(BUILD_DIR)/Frameworks
 FW_DYLIBS     = $(FW_DIR)/libllama.dylib $(FW_DIR)/libggml.dylib \
                 $(FW_DIR)/libggml-base.dylib $(FW_DIR)/libggml-cpu.dylib
-BRIDGE_DIR    = Sources/LocalAI/CWhisper
+SHERPA_SRC     = vendor/sherpa-onnx
+SHERPA_BUILD   = $(BUILD_DIR)/sherpa
+SHERPA_INSTALL = $(SHERPA_BUILD)/install
+SHERPA_LIBS    = $(SHERPA_INSTALL)/lib/libsherpa-onnx-c-api.a $(SHERPA_INSTALL)/lib/libonnxruntime.a
+
+BRIDGE_DIR       = Sources/LocalAI/CWhisper
 LLAMA_BRIDGE_DIR = Sources/LocalAI/CLlama
-BRIDGE_OBJDIR = $(BUILD_DIR)/bridge
-BRIDGING_HEADER = Sources/LocalAI/flowkeys_bridging.h
+SHERPA_BRIDGE_DIR = Sources/LocalAI/CSherpa
+BRIDGE_OBJDIR    = $(BUILD_DIR)/bridge
+BRIDGING_HEADER  = Sources/LocalAI/flowkeys_bridging.h
 CXX          ?= clang++
-CXXFLAGS_BASE = -std=c++17 -O2 -mmacosx-version-min=13.0 \
+CXXFLAGS_BASE = -std=c++17 -O2 -mmacosx-version-min=$(MACOS_MIN) \
                 -isysroot $(SDK) -I $(BRIDGE_DIR) \
                 -I $(WHISPER_SRC)/include -I $(WHISPER_SRC)/ggml/include
-LLAMA_CXXFLAGS = -std=c++17 -O2 -mmacosx-version-min=13.0 -isysroot $(SDK) \
+LLAMA_CXXFLAGS = -std=c++17 -O2 -mmacosx-version-min=$(MACOS_MIN) -isysroot $(SDK) \
                 -I $(LLAMA_BRIDGE_DIR) -I $(LLAMA_SRC)/include -I $(LLAMA_SRC)/ggml/include
+SHERPA_CXXFLAGS = -std=c++17 -O2 -mmacosx-version-min=$(MACOS_MIN) -isysroot $(SDK) \
+                -I $(SHERPA_BRIDGE_DIR) -I $(SHERPA_INSTALL)/include
 
 ifeq ($(LOCAL_AI),1)
   LOCALAI_DEFINES = -D FLK_LOCAL_AI
@@ -68,17 +86,30 @@ else
   LLAMA_BRIDGE_OBJ_x86_64 =
   SWIFT_LLAMA_LINK =
 endif
+ifeq ($(LOCAL_INDIC),1)
+  LOCALAI_DEFINES += -D FLK_LOCAL_INDIC -Xcc -DFLK_LOCAL_INDIC
+  SHERPA_BRIDGE_OBJ_arm64  = $(BRIDGE_OBJDIR)/sherpa_bridge_arm64.o
+  SHERPA_BRIDGE_OBJ_x86_64 = $(BRIDGE_OBJDIR)/sherpa_bridge_x86_64.o
+  SWIFT_SHERPA_LINK = -L $(SHERPA_INSTALL)/lib -lsherpa-onnx-c-api -lonnxruntime \
+    -Xlinker -w
+else
+  SHERPA_BRIDGE_OBJ_arm64 =
+  SHERPA_BRIDGE_OBJ_x86_64 =
+  SWIFT_SHERPA_LINK =
+endif
   SWIFT_LOCALAI_FLAGS = $(LOCALAI_DEFINES) -import-objc-header $(BRIDGING_HEADER) \
-    $(SWIFT_WHISPER_LINK) $(SWIFT_LLAMA_LINK)
+    $(SWIFT_WHISPER_LINK) $(SWIFT_LLAMA_LINK) $(SWIFT_SHERPA_LINK)
 else
   SWIFT_LOCALAI_FLAGS =
   BRIDGE_OBJ_arm64  =
   BRIDGE_OBJ_x86_64 =
   LLAMA_BRIDGE_OBJ_arm64 =
   LLAMA_BRIDGE_OBJ_x86_64 =
+  SHERPA_BRIDGE_OBJ_arm64 =
+  SHERPA_BRIDGE_OBJ_x86_64 =
 endif
 
-.PHONY: all build dmg clean clean-all run release help dmg-hdiutil-internal whisper-libs test-local
+.PHONY: all build dmg clean clean-all run release help dmg-hdiutil-internal whisper-libs llama-libs sherpa-libs test-local
 
 all: build
 
@@ -95,30 +126,22 @@ TEST_LOCAL_SRCS = Tests/local_ai_tests.swift \
 
 help:
 	@echo "FlowKeys Build System"
-	@echo "Targets:"
-	@echo "  make build       Build the app bundle (LOCAL_AI=1 by default)"
-	@echo "  make build LOCAL_AI=0   Cloud-only build (no whisper.cpp)"
-	@echo "  make whisper-libs       Build only the vendored whisper.cpp static libs"
-	@echo "  make dmg         Create a distributable DMG"
-	@echo "  make clean       Remove app build artifacts (keeps whisper libs)"
-	@echo "  make clean-all   Remove everything including whisper libs"
-	@echo "  make run         Build and launch the app"
-	@echo "  make release     Prepare for GitHub release"
+	@echo "  make build                    universal app (LOCAL_AI/LLM/INDIC=1)"
+	@echo "  make build LOCAL_AI=0          cloud-only build"
+	@echo "  make build LOCAL_INDIC=0       skip IndicConformer (13.0 target, smaller)"
+	@echo "  make whisper-libs | llama-libs | sherpa-libs"
+	@echo "  make dmg | clean | clean-all | run | release"
 
 # --- whisper.cpp static libs (universal, CPU + Accelerate) -------------------
 
 $(WHISPER_BUILD)/CMakeCache.txt: $(WHISPER_SRC)/CMakeLists.txt
-	@echo "Configuring whisper.cpp ($(WHISPER_SRC))..."
-	@if [ ! -f "$(WHISPER_SRC)/CMakeLists.txt" ]; then \
-		echo "ERROR: vendor/whisper.cpp is missing. Run: git submodule update --init --recursive"; exit 1; \
-	fi
+	@echo "Configuring whisper.cpp..."
+	@[ -f "$(WHISPER_SRC)/CMakeLists.txt" ] || { echo "ERROR: vendor/whisper.cpp missing — git submodule update --init --recursive"; exit 1; }
 	cmake -S $(WHISPER_SRC) -B $(WHISPER_BUILD) \
-		-DCMAKE_BUILD_TYPE=Release \
-		-DBUILD_SHARED_LIBS=OFF \
+		-DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
 		-DWHISPER_BUILD_TESTS=OFF -DWHISPER_BUILD_EXAMPLES=OFF -DWHISPER_BUILD_SERVER=OFF \
 		-DGGML_METAL=OFF -DGGML_ACCELERATE=ON -DGGML_BLAS=OFF -DGGML_OPENMP=OFF \
-		-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
-		-DCMAKE_OSX_DEPLOYMENT_TARGET=13.0
+		-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0
 
 $(WHISPER_LIBS): $(WHISPER_BUILD)/CMakeCache.txt
 	@echo "Building whisper.cpp static libs (universal)..."
@@ -129,10 +152,8 @@ whisper-libs: $(WHISPER_LIBS)
 # --- llama.cpp dylib (universal) + Frameworks/ staging ----------------------
 
 $(LLAMA_BUILD)/CMakeCache.txt: $(LLAMA_SRC)/CMakeLists.txt
-	@echo "Configuring llama.cpp ($(LLAMA_SRC))..."
-	@if [ ! -f "$(LLAMA_SRC)/CMakeLists.txt" ]; then \
-		echo "ERROR: vendor/llama.cpp is missing. Run: git submodule update --init --recursive"; exit 1; \
-	fi
+	@echo "Configuring llama.cpp..."
+	@[ -f "$(LLAMA_SRC)/CMakeLists.txt" ] || { echo "ERROR: vendor/llama.cpp missing — git submodule update --init --recursive"; exit 1; }
 	cmake -S $(LLAMA_SRC) -B $(LLAMA_BUILD) \
 		-DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
 		-DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_TOOLS=OFF \
@@ -162,6 +183,45 @@ $(FW_DYLIBS): $(LLAMA_DYLIB)
 
 llama-libs: $(FW_DYLIBS)
 
+# --- sherpa-onnx static libs (universal, CPU; ASR only) ---------------------
+
+$(SHERPA_BUILD)/CMakeCache.txt: $(SHERPA_SRC)/CMakeLists.txt
+	@echo "Configuring sherpa-onnx..."
+	@[ -f "$(SHERPA_SRC)/CMakeLists.txt" ] || { echo "ERROR: vendor/sherpa-onnx missing — git submodule update --init --recursive"; exit 1; }
+	cmake -S $(SHERPA_SRC) -B $(SHERPA_BUILD) \
+		-DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF \
+		-DCMAKE_INSTALL_PREFIX=$(CURDIR)/$(SHERPA_INSTALL) \
+		-DSHERPA_ONNX_ENABLE_C_API=ON -DSHERPA_ONNX_ENABLE_BINARY=OFF \
+		-DSHERPA_ONNX_ENABLE_TESTS=OFF -DSHERPA_ONNX_ENABLE_CHECK=OFF \
+		-DSHERPA_ONNX_ENABLE_PYTHON=OFF -DSHERPA_ONNX_ENABLE_PORTAUDIO=OFF \
+		-DSHERPA_ONNX_ENABLE_JNI=OFF -DSHERPA_ONNX_ENABLE_WEBSOCKET=OFF \
+		-DSHERPA_ONNX_ENABLE_TTS=OFF -DSHERPA_ONNX_ENABLE_SPEAKER_DIARIZATION=OFF \
+		-DSHERPA_ONNX_BUILD_C_API_EXAMPLES=OFF \
+		-DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" -DCMAKE_OSX_DEPLOYMENT_TARGET=13.4
+
+$(SHERPA_INSTALL)/lib/libsherpa-onnx-c-api.a: $(SHERPA_BUILD)/CMakeCache.txt
+	@echo "Building sherpa-onnx (universal)..."
+	cmake --build $(SHERPA_BUILD) --config Release -j
+	cmake --install $(SHERPA_BUILD) --config Release
+	@rm -f $(SHERPA_INSTALL)/include/cargs.h
+	libtool -static -o $(SHERPA_INSTALL)/lib/_combined.a \
+		$(SHERPA_INSTALL)/lib/libsherpa-onnx-c-api.a \
+		$(SHERPA_INSTALL)/lib/libsherpa-onnx-core.a \
+		$(SHERPA_INSTALL)/lib/libkaldi-native-fbank-core.a \
+		$(SHERPA_INSTALL)/lib/libkissfft-float.a \
+		$(SHERPA_INSTALL)/lib/libsherpa-onnx-fstfar.a \
+		$(SHERPA_INSTALL)/lib/libsherpa-onnx-fst.a \
+		$(SHERPA_INSTALL)/lib/libsherpa-onnx-kaldifst-core.a \
+		$(SHERPA_INSTALL)/lib/libkaldi-decoder-core.a \
+		$(SHERPA_INSTALL)/lib/libucd.a \
+		$(SHERPA_INSTALL)/lib/libssentencepiece_core.a 2>/dev/null || \
+	libtool -static -o $(SHERPA_INSTALL)/lib/_combined.a $(SHERPA_INSTALL)/lib/libsherpa-onnx-c-api.a $(SHERPA_INSTALL)/lib/libsherpa-onnx-core.a $(SHERPA_INSTALL)/lib/libkaldi-native-fbank-core.a $(SHERPA_INSTALL)/lib/libkissfft-float.a $(SHERPA_INSTALL)/lib/libssentencepiece_core.a
+	mv $(SHERPA_INSTALL)/lib/_combined.a $(SHERPA_INSTALL)/lib/libsherpa-onnx-c-api.a
+
+$(SHERPA_INSTALL)/lib/libonnxruntime.a: $(SHERPA_INSTALL)/lib/libsherpa-onnx-c-api.a
+
+sherpa-libs: $(SHERPA_LIBS)
+
 # --- C++ bridge objects -----------------------------------------------------
 
 $(BRIDGE_OBJDIR)/whisper_bridge_%.o: $(BRIDGE_DIR)/whisper_bridge.cpp $(BRIDGE_DIR)/whisper_bridge.h $(WHISPER_LIBS)
@@ -172,6 +232,10 @@ $(BRIDGE_OBJDIR)/llama_bridge_%.o: $(LLAMA_BRIDGE_DIR)/llama_bridge.cpp $(LLAMA_
 	@mkdir -p $(BRIDGE_OBJDIR)
 	$(CXX) $(LLAMA_CXXFLAGS) -arch $* -c $(LLAMA_BRIDGE_DIR)/llama_bridge.cpp -o $@
 
+$(BRIDGE_OBJDIR)/sherpa_bridge_%.o: $(SHERPA_BRIDGE_DIR)/sherpa_bridge.cpp $(SHERPA_BRIDGE_DIR)/sherpa_bridge.h $(SHERPA_INSTALL)/lib/libsherpa-onnx-c-api.a
+	@mkdir -p $(BRIDGE_OBJDIR)
+	$(CXX) $(SHERPA_CXXFLAGS) -arch $* -c $(SHERPA_BRIDGE_DIR)/sherpa_bridge.cpp -o $@
+
 # --- app ------------------------------------------------------------------
 
 BUILD_PREREQS = $(SOURCES) Info.plist $(ICON_ICNS)
@@ -180,38 +244,32 @@ BUILD_PREREQS += $(BRIDGE_OBJ_arm64) $(BRIDGE_OBJ_x86_64)
 ifeq ($(LOCAL_LLM),1)
 BUILD_PREREQS += $(LLAMA_BRIDGE_OBJ_arm64) $(LLAMA_BRIDGE_OBJ_x86_64) $(FW_DYLIBS)
 endif
+ifeq ($(LOCAL_INDIC),1)
+BUILD_PREREQS += $(SHERPA_BRIDGE_OBJ_arm64) $(SHERPA_BRIDGE_OBJ_x86_64) $(SHERPA_LIBS)
+endif
 endif
 
 build: $(BUILD_PREREQS)
 	@mkdir -p "$(MACOS_DIR)" "$(RESOURCES)"
-	@echo "Building FlowKeys ($(ARCH), LOCAL_AI=$(LOCAL_AI) LOCAL_LLM=$(LOCAL_LLM))..."
+	@echo "Building FlowKeys ($(ARCH), LOCAL_AI=$(LOCAL_AI) LLM=$(LOCAL_LLM) INDIC=$(LOCAL_INDIC), min=$(MACOS_MIN))..."
 ifeq ($(ARCH),universal)
-	swiftc \
-		-parse-as-library \
-		-o "$(MACOS_DIR)/$(APP_NAME)-arm64" \
-		-sdk $(SDK) \
-		-target arm64-apple-macosx13.0 \
-		$(SWIFT_LOCALAI_FLAGS) $(BRIDGE_OBJ_arm64) $(LLAMA_BRIDGE_OBJ_arm64) \
+	swiftc -parse-as-library -o "$(MACOS_DIR)/$(APP_NAME)-arm64" -sdk $(SDK) \
+		-target arm64-apple-macosx$(MACOS_MIN) \
+		$(SWIFT_LOCALAI_FLAGS) $(BRIDGE_OBJ_arm64) $(LLAMA_BRIDGE_OBJ_arm64) $(SHERPA_BRIDGE_OBJ_arm64) \
 		$(SOURCES)
-	swiftc \
-		-parse-as-library \
-		-o "$(MACOS_DIR)/$(APP_NAME)-x86_64" \
-		-sdk $(SDK) \
-		-target x86_64-apple-macosx13.0 \
-		$(SWIFT_LOCALAI_FLAGS) $(BRIDGE_OBJ_x86_64) $(LLAMA_BRIDGE_OBJ_x86_64) \
+	swiftc -parse-as-library -o "$(MACOS_DIR)/$(APP_NAME)-x86_64" -sdk $(SDK) \
+		-target x86_64-apple-macosx$(MACOS_MIN) \
+		$(SWIFT_LOCALAI_FLAGS) $(BRIDGE_OBJ_x86_64) $(LLAMA_BRIDGE_OBJ_x86_64) $(SHERPA_BRIDGE_OBJ_x86_64) \
 		$(SOURCES)
 	lipo -create -output "$(MACOS_DIR)/$(APP_NAME)" \
-		"$(MACOS_DIR)/$(APP_NAME)-arm64" \
-		"$(MACOS_DIR)/$(APP_NAME)-x86_64"
+		"$(MACOS_DIR)/$(APP_NAME)-arm64" "$(MACOS_DIR)/$(APP_NAME)-x86_64"
 	@rm "$(MACOS_DIR)/$(APP_NAME)-arm64" "$(MACOS_DIR)/$(APP_NAME)-x86_64"
 else
-	swiftc \
-		-parse-as-library \
-		-o "$(MACOS_DIR)/$(APP_NAME)" \
-		-sdk $(SDK) \
-		-target $(ARCH)-apple-macosx13.0 \
+	swiftc -parse-as-library -o "$(MACOS_DIR)/$(APP_NAME)" -sdk $(SDK) \
+		-target $(ARCH)-apple-macosx$(MACOS_MIN) \
 		$(SWIFT_LOCALAI_FLAGS) $(BRIDGE_OBJDIR)/whisper_bridge_$(ARCH).o \
 		$(if $(filter 1,$(LOCAL_LLM)),$(BRIDGE_OBJDIR)/llama_bridge_$(ARCH).o) \
+		$(if $(filter 1,$(LOCAL_INDIC)),$(BRIDGE_OBJDIR)/sherpa_bridge_$(ARCH).o) \
 		$(SOURCES)
 endif
 	@cp Info.plist "$(CONTENTS)/"
@@ -219,12 +277,10 @@ endif
 	@plutil -replace CFBundleDisplayName -string "$(APP_NAME)" "$(CONTENTS)/Info.plist"
 	@plutil -replace CFBundleExecutable -string "$(APP_NAME)" "$(CONTENTS)/Info.plist"
 	@plutil -replace CFBundleIdentifier -string "$(BUNDLE_ID)" "$(CONTENTS)/Info.plist"
+	@plutil -replace LSMinimumSystemVersion -string "$(MACOS_MIN)" "$(CONTENTS)/Info.plist"
 	@cp $(ICON_ICNS) "$(RESOURCES)/"
 ifeq ($(LOCAL_LLM),1)
-	@if [ "$(LOCAL_AI)" = "1" ]; then \
-		mkdir -p "$(CONTENTS)/Frameworks"; \
-		cp $(FW_DIR)/*.dylib "$(CONTENTS)/Frameworks/"; \
-	fi
+	@mkdir -p "$(CONTENTS)/Frameworks" && cp $(FW_DIR)/*.dylib "$(CONTENTS)/Frameworks/"
 endif
 	@codesign --force --deep --options runtime \
 		--sign "$(CODESIGN_IDENTITY)" \
@@ -244,17 +300,12 @@ dmg: build
 	@rm -f "$(BUILD_DIR)/$(APP_NAME).dmg"
 	@if [ -x "$$(which create-dmg 2>/dev/null)" ]; then \
 		create-dmg \
-			--volname "$(APP_NAME)" \
-			--volicon "$(ICON_ICNS)" \
-			--window-pos 200 120 \
-			--window-size 660 400 \
-			--icon-size 128 \
-			--icon "$(APP_NAME).app" 180 170 \
-			--hide-extension "$(APP_NAME).app" \
-			--icon "Applications" 480 170 \
-			--no-internet-enable \
-			"$(BUILD_DIR)/$(APP_NAME).dmg" \
-			"$(BUILD_DIR)/dmg-staging" || (echo "create-dmg failed, falling back to hdiutil..." && $(MAKE) dmg-hdiutil-internal); \
+			--volname "$(APP_NAME)" --volicon "$(ICON_ICNS)" \
+			--window-pos 200 120 --window-size 660 400 --icon-size 128 \
+			--icon "$(APP_NAME).app" 180 170 --hide-extension "$(APP_NAME).app" \
+			--icon "Applications" 480 170 --no-internet-enable \
+			"$(BUILD_DIR)/$(APP_NAME).dmg" "$(BUILD_DIR)/dmg-staging" \
+			|| (echo "create-dmg failed, falling back to hdiutil..." && $(MAKE) dmg-hdiutil-internal); \
 	else \
 		$(MAKE) dmg-hdiutil-internal; \
 	fi

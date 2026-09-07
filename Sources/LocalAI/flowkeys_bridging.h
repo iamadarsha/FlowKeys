@@ -10,3 +10,7 @@
 #if defined(FLK_LOCAL_LLM)
 #import "CLlama/llama_bridge.h"
 #endif
+
+#if defined(FLK_LOCAL_INDIC)
+#import "CSherpa/sherpa_bridge.h"
+#endif
