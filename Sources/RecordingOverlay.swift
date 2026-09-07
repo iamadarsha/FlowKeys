@@ -507,7 +507,6 @@ struct PillOverlayView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             PillWaveformView(audioLevel: state.audioLevel, tint: dialectColor)
-                .frame(width: 48)
 
             KMLangBadge(mode: state.languageMode)
 
@@ -541,12 +540,11 @@ struct PillOverlayView: View {
                 case .transcribing, .initializing:
                     ProcessingDotsView().frame(width: 44)
                 case .cleaning:
-                    CleaningSweepView().frame(width: 54)
+                    CleaningSweepView().frame(width: 52)
                 case .paused:
-                    PausedLineView().frame(width: 54)
+                    PausedLineView().frame(width: 52)
                 default:
                     PillWaveformView(audioLevel: state.audioLevel, tint: state.languageMode == .hinglish ? nil : dialectColor)
-                        .frame(width: 62)
                 }
             }
 
@@ -560,11 +558,13 @@ struct PillOverlayView: View {
                 whisperGainChip
             }
 
-            if isLive && !state.activeModeName.isEmpty && state.interimText.isEmpty {
+            if isLive && !state.activeModeName.isEmpty && state.interimText.isEmpty
+                && !(state.whisperGainActive) {
                 modeTag
             }
 
-            if isLive {
+            // The stop button takes priority over the badge in the tight toggle layout.
+            if isLive && !(state.phase == .recording && state.recordingTriggerMode == .toggle) {
                 KMLangBadge(mode: state.languageMode)
             }
 
@@ -635,7 +635,7 @@ struct PillOverlayView: View {
     private var whisperGainChip: some View {
         HStack(spacing: 3) {
             Image(systemName: "waveform.badge.mic").font(.system(size: 8))
-            Text("Whisper Gain").font(.system(size: 9, weight: .medium))
+            Text("Gain").font(.system(size: 9, weight: .semibold))
         }
         .foregroundColor(greenColor)
         .padding(.horizontal, 6)
@@ -643,6 +643,7 @@ struct PillOverlayView: View {
         .background(greenColor.opacity(0.14))
         .clipShape(Capsule())
         .fixedSize()
+        .help("Whisper Mode — boosting quiet speech")
     }
 
     private var modeTag: some View {
@@ -760,11 +761,13 @@ struct PillWaveformView: View {
     /// Optional dialect tint. `nil` keeps the default accent→salmon thermal gradient.
     var tint: Color? = nil
 
-    static let barCount = 24
-    private let barWidth: CGFloat   = 2
-    private let barSpacing: CGFloat = 3
+    // 20 bars keeps the field readable at the compact 52pt HUD-inset width
+    // while preserving the a2 spec's ballistic feel.
+    static let barCount = 20
+    private let barWidth: CGFloat   = 1.6
+    private let barSpacing: CGFloat = 1.1
     private let minHeight: CGFloat  = 3
-    private let maxHeight: CGFloat  = 26
+    private let maxHeight: CGFloat  = 24
 
     private let accent = Color(red: 1.0, green: 0.42, blue: 0.21)   // #FF6B35
     private let salmon = Color(red: 1.0, green: 0.71, blue: 0.62)   // #FFB59D
@@ -825,7 +828,7 @@ struct PillWaveformView: View {
                 let topColor = tint ?? accent
                 let botColor = tint.map { $0.opacity(0.55) } ?? salmon
                 let totalW = CGFloat(Self.barCount) * barWidth + CGFloat(Self.barCount - 1) * barSpacing
-                var x = (size.width - totalW) / 2
+                var x = max(0, (size.width - totalW) / 2)
                 for i in 0..<Self.barCount {
                     let h = minHeight + (maxHeight - minHeight) * field.heights[i]
                     let rect = CGRect(x: x, y: (size.height - h) / 2, width: barWidth, height: h)
@@ -838,7 +841,9 @@ struct PillWaveformView: View {
                 }
             }
         }
-        .frame(width: CGFloat(Self.barCount) * (barWidth + barSpacing), height: maxHeight)
+        .frame(width: CGFloat(Self.barCount) * barWidth + CGFloat(Self.barCount - 1) * barSpacing,
+               height: maxHeight)
+        .clipped()
     }
 }
 
