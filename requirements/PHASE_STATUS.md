@@ -12,7 +12,7 @@ Each phase: own branch → CI green → manual `REGRESSION_CHECKLIST.md` → ver
 | **4b — offline local LLM** | `feature/local-ai-phase-4b` | 🟡 CI running | ⬜ manual pending | ⬜ v1.6.x | **llama.cpp v0.4.0** as a universal dylib in Contents/Frameworks/ (ggml 0.23 vs whisper's 0.20 — two-level namespace isolates); Qwen3-0.6B (unsloth GGUF, pinned+verified); `disable-library-validation` entitlement; `LocalLLMEngine` + `LocalTextProcessingService`; **opt-in, experimental** (0.6B quality is marginal — cloud cleanup stays default). |
 | **5a — progress + Command Mode** | `feature/local-ai-phase-5` | ✅ CI green | ⬜ manual pending | ⬜ v2.0.0 | whisper.cpp progress callback → "Transcribing 45%" in overlay; **Command Mode** (menu-bar "Rewrite selection by voice" → AX selection + spoken instruction → in-place rewrite). |
 | **4c — IndicConformer** | `feature/local-ai-phase-4c` | 🟡 CI running | ⬜ manual pending | ⬜ v2.0.0 | sherpa-onnx v1.13.7 vendored, universal static (+ static universal ONNX Runtime). `LocalIndicEngine`, multi-file model support (model.int8.onnx + tokens.txt), auto-routes HI/BN/Banglish. `LOCAL_INDIC=1` default → min macOS **13.4**. E2E: loads 332 ms, 10 s clip in 196 ms, native Devanagari. Binary 44 MB / app 54 MB. |
-| **5b — design refresh** | `feature/design-v2.1` | 🟡 in progress | ⬜ manual pending | ⬜ v2.1.0 | "Kinetic Precision" evolution of the KM system. See below. |
+| **5b — design refresh** | `feature/design-v2.1` (PR #2) | ✅ CI green | ⬜ manual pending | ⬜ v2.1.0 | "Kinetic Precision" evolution of the KM system. See below. Info.plist → 2.1.0. |
 
 ## v2.0.0 — shipped (2026-09-07)
 
