@@ -71,9 +71,11 @@ fi
 
 # ---------------------------------------------------------------------------
 say "7. Build"
-if ! xcode-select -p 2>/dev/null | grep -q 'Xcode.app'; then
-  printf '  \033[33m•\033[0m skipped — full Xcode not selected (Command Line Tools only)\n'
-  printf '     run: sudo xcode-select -s /Applications/Xcode.app\n'
+if ! xcodebuild -version >/dev/null 2>&1; then
+  printf '  \033[33m•\033[0m skipped — full Xcode not available (Command Line Tools only,\n'
+  printf '     or compiler/SDK mismatch). Install Xcode, then:\n'
+  printf '       sudo xcode-select -s /Applications/Xcode.app\n'
+  printf '     Build verification runs in GitHub Actions (.github/workflows/ci.yml).\n'
 else
   if [ "${FULL:-0}" = "1" ]; then
     make clean >/dev/null && make -j1 && ok "universal build" || bad "universal build failed"
