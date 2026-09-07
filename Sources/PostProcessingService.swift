@@ -202,12 +202,30 @@ Use these spellings exactly in the output when relevant:
             ? systemPromptBase
             : "\(systemPromptBase)\n\n\(vocabularyPrompt)"
 
-        // Append the Indian language/Hinglish post-processing rules when language mode
-        // indicates Hindi or Hinglish. This gives the LLM comprehensive rules for
-        // code-switching preservation, Indian vocabulary, and dialect awareness.
-        if languageMode != .pureEnglish {
+        // Append the language-specific post-processing rules. Bengali/Banglish get
+        // the Bengali addendum; Hindi/Hinglish get the Indian addendum.
+        switch languageMode {
+        case .pureEnglish:
+            break
+        case .hinglish, .pureHindi:
             fullSystemPrompt += INDIAN_POSTPROCESSING_PROMPT_ADDENDUM
+        case .pureBengali, .banglish:
+            fullSystemPrompt += BENGALI_POSTPROCESSING_PROMPT_ADDENDUM
         }
+
+        // Hard output-script contract (Phase 4). Not a soft hint — a rule.
+        let scriptRule: String
+        switch languageMode {
+        case .pureHindi:
+            scriptRule = "\nOUTPUT_SCRIPT: Devanagari. Convert Roman-script Hindi words to Devanagari. Keep English proper nouns and technical terms in Latin script.\n"
+        case .pureBengali:
+            scriptRule = "\nOUTPUT_SCRIPT: Bangla. Convert Roman-script Bengali words to Bangla script. Keep English proper nouns and technical terms in Latin script.\n"
+        case .hinglish, .banglish:
+            scriptRule = "\nOUTPUT_SCRIPT: mirror the speaker — keep Roman where spoken in Roman, native where spoken in native script. Never force a conversion.\n"
+        case .pureEnglish:
+            scriptRule = ""
+        }
+        if !scriptRule.isEmpty { fullSystemPrompt += scriptRule }
 
         let userMessage = """
 Instructions: Clean up RAW_TRANSCRIPTION and return only the cleaned transcript text without surrounding quotes. Return EMPTY if there should be no result.

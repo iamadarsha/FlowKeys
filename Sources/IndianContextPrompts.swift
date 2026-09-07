@@ -11,6 +11,8 @@ enum UserLanguageMode: String, CaseIterable, Codable, Identifiable {
     case hinglish = "hinglish"    // Default for Indian users
     case pureHindi = "hindi"
     case pureEnglish = "english"
+    case pureBengali = "bengali"  // Phase 4 — native Bangla script
+    case banglish = "banglish"    // Phase 4 — Bengali–English code-switch
 
     var id: String { rawValue }
 
@@ -19,6 +21,8 @@ enum UserLanguageMode: String, CaseIterable, Codable, Identifiable {
         case .hinglish: return "Hinglish (हिंग्लिश) 🇮🇳"
         case .pureHindi: return "हिंदी (Hindi)"
         case .pureEnglish: return "English"
+        case .pureBengali: return "বাংলা (Bengali)"
+        case .banglish: return "Banglish (বাংলিশ)"
         }
     }
 
@@ -30,6 +34,7 @@ enum UserLanguageMode: String, CaseIterable, Codable, Identifiable {
         case .hinglish: return "hi"   // <|hi|> outperforms <|en|> for Hinglish
         case .pureHindi: return "hi"
         case .pureEnglish: return "en"
+        case .pureBengali, .banglish: return "bn"
         }
     }
 
@@ -42,8 +47,13 @@ enum UserLanguageMode: String, CaseIterable, Codable, Identifiable {
             return ANTI_HALLUCINATION_PRIMER
         case .hinglish, .pureHindi:
             return ANTI_HALLUCINATION_PRIMER + " " + INDIAN_WHISPER_PRIMER
+        case .pureBengali, .banglish:
+            return ANTI_HALLUCINATION_PRIMER + " " + BENGALI_WHISPER_PRIMER
         }
     }
+
+    /// True for any Indic mode that needs the post-processing addendum.
+    var isIndic: Bool { self != .pureEnglish }
 }
 
 // MARK: - Anti-Hallucination Primer

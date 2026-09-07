@@ -153,6 +153,21 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
             let outcome = try await service.transcribe(fileURL: fileURL,
                                                        selection: selection,
                                                        initialPrompt: initialPrompt)
+
+            // Confidence-aware hybrid escalation: if the local result looks
+            // unreliable and a sanctioned cloud fallback exists, use it.
+            if let cloudFallback, Self.looksLowConfidence(outcome) {
+                os_log(.info, log: localAILog,
+                       "hybrid: local result low-confidence — escalating to cloud")
+                let text = try await cloudFallback()
+                return LocalTranscriptionReport(
+                    text: text, rawText: outcome.rawText, routeLabel: "Hybrid → cloud (low confidence)",
+                    modelID: outcome.modelID, detectedLanguage: nil,
+                    loadMs: outcome.loadMs, transcribeMs: outcome.transcribeMs,
+                    usedCloudFallback: true, fillersRemoved: [], correctionCount: 0,
+                    usedVAD: outcome.usedVAD, canSkipLLM: false)
+            }
+
             return LocalTranscriptionReport(
                 text: outcome.cleanedText,
                 rawText: outcome.rawText,
@@ -179,6 +194,21 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
             }
             throw error
         }
+    }
+
+    /// Heuristic (no per-token confidence from whisper.cpp without more plumbing):
+    /// treat a near-empty or degenerate transcript as unreliable.
+    static func looksLowConfidence(_ o: LocalTranscriptionOutcome) -> Bool {
+        let t = o.rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+        if t.isEmpty { return true }
+        let lower = t.lowercased()
+        if lower.contains("[blank_audio]") || lower.contains("[ silence ]") { return true }
+        // Very short output for non-trivial audio (> 2 s of speech).
+        if o.analysis.speechSeconds > 2.0 && t.split(separator: " ").count < 2 { return true }
+        // A single token repeated to fill the window.
+        let words = lower.split(separator: " ").map(String.init)
+        if words.count >= 6, Set(words).count == 1 { return true }
+        return false
     }
 
     // MARK: - Lifecycle

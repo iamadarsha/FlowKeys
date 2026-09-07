@@ -128,6 +128,9 @@ struct MenuBarView: View {
 
     // MARK: Language Mode
 
+    static let quickLanguageModes: [UserLanguageMode] =
+        [.pureEnglish, .pureHindi, .pureBengali, .hinglish]
+
     private var languageSection: some View {
         HStack(spacing: 8) {
             Image(systemName: "globe")
@@ -135,7 +138,9 @@ struct MenuBarView: View {
                 .foregroundColor(KM.muted)
 
             HStack(spacing: 2) {
-                ForEach(UserLanguageMode.allCases) { mode in
+                // Quick switch shows the four primary modes; Banglish is picked
+                // from Settings / a dictation mode.
+                ForEach(MenuBarView.quickLanguageModes) { mode in
                     languageSegment(mode)
                 }
             }
@@ -175,6 +180,8 @@ struct MenuBarView: View {
         case .hinglish: return "MIX"
         case .pureHindi: return "HI"
         case .pureEnglish: return "EN"
+        case .pureBengali: return "BN"
+        case .banglish: return "BN·EN"
         }
     }
 

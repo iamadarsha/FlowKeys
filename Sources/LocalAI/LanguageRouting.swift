@@ -93,6 +93,10 @@ struct LanguageSelection: Codable, Equatable, Sendable {
             self = LanguageSelection(language: .hindi, script: .native)
         case .hinglish:
             self = LanguageSelection(language: .hinglish, script: .roman)
+        case .pureBengali:
+            self = LanguageSelection(language: .bengali, script: .native)
+        case .banglish:
+            self = LanguageSelection(language: .banglish, script: .roman)
         }
     }
 
@@ -106,11 +110,12 @@ struct LanguageSelection: Codable, Equatable, Sendable {
     /// value so existing cloud paths keep working until Phase 4 teaches them Bengali.
     var closestLegacyMode: UserLanguageMode {
         switch language {
-        case .english:            return .pureEnglish
-        case .hindi:              return .pureHindi
-        case .hinglish, .banglish: return .hinglish
-        case .bengali:            return script == .roman ? .hinglish : .pureHindi
-        case .auto:               return .pureEnglish
+        case .english:  return .pureEnglish
+        case .hindi:    return .pureHindi
+        case .hinglish: return .hinglish
+        case .bengali:  return .pureBengali
+        case .banglish: return .banglish
+        case .auto:     return .pureEnglish
         }
     }
 }

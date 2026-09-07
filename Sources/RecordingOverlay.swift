@@ -30,11 +30,14 @@ struct OverlayTheme {
     static let green       = NSColor(red: 0.325, green: 0.882, blue: 0.435, alpha: 1.0) // #53E16F
     static let pillBg      = NSColor(red: 0.051, green: 0.051, blue: 0.059, alpha: 0.92)
 
+    static let bengaliGreen = NSColor(red: 0.043, green: 0.451, blue: 0.271, alpha: 1.0) // #0B7345
+
     static func borderColor(for mode: UserLanguageMode) -> NSColor {
         switch mode {
         case .hinglish:    return accent
         case .pureHindi:   return NSColor(red: 0.075, green: 0.533, blue: 0.031, alpha: 1.0)
         case .pureEnglish: return NSColor(red: 0.29,  green: 0.565, blue: 0.886, alpha: 1.0)
+        case .pureBengali, .banglish: return bengaliGreen
         }
     }
 
@@ -48,6 +51,8 @@ struct OverlayTheme {
         case .pureEnglish:
             return [Color(red: 0.29, green: 0.565, blue: 0.886),
                     Color(red: 0.29, green: 0.565, blue: 0.886).opacity(0.7)]
+        case .pureBengali, .banglish:
+            return [Color(bengaliGreen), Color(bengaliGreen).opacity(0.65)]
         }
     }
 }

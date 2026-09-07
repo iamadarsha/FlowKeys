@@ -338,6 +338,8 @@ final class TranscriptionService {
             languageContext = "\n\n" + ANTI_HALLUCINATION_PRIMER
         case .hinglish, .pureHindi:
             languageContext = "\n\nThe speaker is likely using Hindi, English, or Hinglish. Preserve all code-switching exactly as spoken. Use Roman script for Hinglish and Devanagari only if the speaker clearly uses Hindi throughout.\n\n" + languageMode.whisperPrompt()
+        case .pureBengali, .banglish:
+            languageContext = "\n\nThe speaker is likely using Bengali, English, or Banglish. Preserve all code-switching exactly as spoken. Use Roman script for Banglish and Bangla script only if the speaker clearly uses Bengali throughout.\n\n" + languageMode.whisperPrompt()
         }
         return base + languageContext
     }

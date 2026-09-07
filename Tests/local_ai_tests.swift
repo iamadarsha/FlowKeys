@@ -113,6 +113,18 @@ do {
     check(LanguageSelection.Language.bengali.asrLanguageToken == "bn", "Bengali ASR token = bn")
     check(LanguageSelection.Language.auto.asrLanguageToken == nil, "auto => no token")
 
+    // Phase 4: Bengali legacy modes
+    let bn = LanguageSelection(legacy: .pureBengali)
+    check(bn.language == .bengali && bn.script == .native, ".pureBengali -> Bengali/native")
+    check(bn.language.asrLanguageToken == "bn", "pureBengali ASR token = bn")
+    let banglish = LanguageSelection(legacy: .banglish)
+    check(banglish.language == .banglish && banglish.script == .roman, ".banglish -> Banglish/roman")
+    check(banglish.language.allowsCodeSwitching, "Banglish allows code-switching")
+    check(bn.closestLegacyMode == .pureBengali, "closestLegacyMode round-trips Bengali")
+    check(UserLanguageMode.pureBengali.whisperLanguageCode == "bn", "pureBengali whisper code = bn")
+    check(UserLanguageMode.pureBengali.isIndic, "Bengali is Indic (gets addendum)")
+    check(UserLanguageMode.pureBengali.whisperPrompt().contains("বাংলা"), "Bengali primer used")
+
     // Router defers to legacy when no override.
     let resolved = LanguageRouter.resolve(legacyMode: .pureHindi, override: nil)
     check(resolved.language == .hindi, "router uses legacy mode when no override")

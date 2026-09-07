@@ -63,6 +63,7 @@ TEST_LOCAL_SRCS = Tests/local_ai_tests.swift \
 	Sources/LocalAI/CryptoKitSHA256.swift \
 	Sources/LocalAI/SpeechAnalysis.swift \
 	Sources/IndianContextPrompts.swift \
+	Sources/BengaliContextPrompts.swift \
 	Sources/Notification+VoiceToText.swift
 
 help:
