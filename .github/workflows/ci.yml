@@ -21,7 +21,7 @@ concurrency:
 jobs:
   build:
     runs-on: macos-latest
-    timeout-minutes: 45
+    timeout-minutes: 90
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,26 +40,45 @@ jobs:
           brew list create-dmg >/dev/null 2>&1 || brew install create-dmg
           brew list fileicon    >/dev/null 2>&1 || brew install fileicon
 
-      # Cache the vendored native builds (whisper.cpp / llama.cpp / sherpa-onnx).
-      # Keyed by submodule commits + the Makefile so a bump busts the cache.
-      - name: Cache native builds
-        uses: actions/cache@v4
+      # Same key + restore/save split as release.yml, so a workflow_dispatch
+      # warm-up run (or any successful build) primes the cache for both.
+      - name: Native cache key
+        id: nativekey
+        run: echo "key=native-macos-${{ hashFiles('.gitmodules', 'Makefile', 'Sources/LocalAI/C*/**', 'vendor/**/CMakeLists.txt') }}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore native builds (whisper.cpp / llama.cpp / sherpa-onnx)
+        id: nativecache
+        uses: actions/cache/restore@v4
         with:
           path: |
             build/whisper
             build/llama
             build/sherpa
             build/Frameworks
-            vendor/sherpa-onnx/build-macos
-          key: native-${{ runner.os }}-${{ hashFiles('.gitmodules', 'Makefile', 'Sources/LocalAI/C*/**') }}-${{ hashFiles('vendor/**/CMakeLists.txt') }}
+          key: ${{ steps.nativekey.outputs.key }}
+
+      - name: Build native engines (if cache missed)
+        if: steps.nativecache.outputs.cache-hit != 'true'
+        run: ARCH=universal make whisper-libs llama-libs sherpa-libs
+
+      - name: Save native builds
+        if: always() && steps.nativecache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            build/whisper
+            build/llama
+            build/sherpa
+            build/Frameworks
+          key: ${{ steps.nativekey.outputs.key }}
 
       - name: Regression smoke (static checks + Local AI unit tests)
         run: ./Scripts/regression_smoke.sh
 
       - name: Build universal app + DMG
         run: |
-          make -j1 build
-          make dmg
+          ARCH=universal make build
+          ARCH=universal make dmg
 
       - name: Report DMG size
         run: |
