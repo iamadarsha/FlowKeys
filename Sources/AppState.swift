@@ -1545,6 +1545,8 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 await MainActor.run { [weak self] in
                     self?.debugStatusMessage = "Running post-processing"
                     if !rawTranscript.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        // stop the delayed "transcribing" indicator from racing us back
+                        self?.transcribingIndicatorTask?.cancel()
                         self?.overlayManager.showCleaning()
                     }
                 }

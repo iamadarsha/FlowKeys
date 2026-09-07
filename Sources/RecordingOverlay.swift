@@ -502,11 +502,14 @@ struct PillOverlayView: View {
                     .italic()
                     .foregroundColor(.white.opacity(0.7))
                     .lineLimit(1)
-                    .truncationMode(.tail)
+                    .truncationMode(.middle)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            // compact activity cue — the preview text is the priority here
             PillWaveformView(audioLevel: state.audioLevel, tint: dialectColor)
+                .frame(width: 30)
+                .clipped()
 
             KMLangBadge(mode: state.languageMode)
 
@@ -537,6 +540,8 @@ struct PillOverlayView: View {
             // Visualiser
             Group {
                 switch state.phase {
+                case .transcribing where state.transcribeProgress > 0 && state.transcribeProgress < 100:
+                    ProgressBarView(percent: state.transcribeProgress).frame(width: 52)
                 case .transcribing, .initializing:
                     ProcessingDotsView().frame(width: 44)
                 case .cleaning:
@@ -864,22 +869,42 @@ struct PausedLineView: View {
 // MARK: - Cleaning sweep (sparkle glint across a stream line)
 
 struct CleaningSweepView: View {
-    @State private var x: CGFloat = -1
+    @State private var x: CGFloat = 0
     private let timer = Timer.publish(every: 1.0 / 30.0, on: .main, in: .common).autoconnect()
+    var body: some View {
+        GeometryReader { geo in
+            let track = max(1, geo.size.width - 14)
+            ZStack(alignment: .leading) {
+                Capsule().fill(Color.white.opacity(0.14)).frame(height: 3)
+                Capsule()
+                    .fill(Color(red: 1.0, green: 0.42, blue: 0.21))
+                    .frame(width: 14, height: 3)
+                    .offset(x: min(max(0, x), 1) * track)
+            }
+            .frame(maxHeight: .infinity, alignment: .center)
+        }
+        .clipShape(Capsule())
+        .onReceive(timer) { _ in
+            x += 0.045
+            if x > 1 { x = 0 }
+        }
+    }
+}
+
+// MARK: - Progress bar (local transcription %)
+
+struct ProgressBarView: View {
+    let percent: Int
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
                 Capsule().fill(Color.white.opacity(0.14)).frame(height: 3)
                 Capsule()
                     .fill(Color(red: 1.0, green: 0.42, blue: 0.21))
-                    .frame(width: 14, height: 3)
-                    .offset(x: x * geo.size.width)
+                    .frame(width: geo.size.width * CGFloat(max(0, min(100, percent))) / 100, height: 3)
+                    .animation(.easeOut(duration: 0.25), value: percent)
             }
             .frame(maxHeight: .infinity, alignment: .center)
-        }
-        .onReceive(timer) { _ in
-            x += 0.04
-            if x > 1.1 { x = -0.2 }
         }
     }
 }

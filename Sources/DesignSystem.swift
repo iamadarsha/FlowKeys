@@ -86,8 +86,8 @@ extension View {
     /// L4 — active recording accent aura beneath the HUD. Deliberately subtle.
     func kmAudioGlow(_ active: Bool, color: Color = KM.accent) -> some View {
         self
-            .shadow(color: active ? color.opacity(0.28) : .clear, radius: 1, x: 0, y: 0)
-            .shadow(color: active ? color.opacity(0.14) : .clear, radius: 9, x: 0, y: 5)
+            .shadow(color: active ? color.opacity(0.25) : .clear, radius: 1, x: 0, y: 0)
+            .shadow(color: active ? color.opacity(0.11) : .clear, radius: 7, x: 0, y: 4)
     }
 }
 

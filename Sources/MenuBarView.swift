@@ -67,30 +67,14 @@ struct MenuBarView: View {
                 Text("FlowKeys")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundColor(KM.onSurface)
-                Text("v\(appVersion)")
-                    .font(.system(size: 8, weight: .semibold))
-                    .foregroundColor(KM.textMuted)
-                    .padding(.horizontal, 4)
-                    .padding(.vertical, 1.5)
-                    .background(KM.surfaceHi)
-                    .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
             }
 
-            Spacer()
-
-            // Engine status
-            HStack(spacing: 4) {
-                Circle().fill(routeStatus.color).frame(width: 5, height: 5)
-                Text(appState.isRecording ? "REC" : (appState.isTranscribing ? "BUSY" : "READY"))
-                    .font(.system(size: 8, weight: .bold))
-                    .tracking(0.6)
-                    .foregroundColor(KM.textMuted)
-            }
+            Spacer(minLength: 6)
 
             // Hotkey badge
             hotkeyBadge
 
-            // Provider badge
+            // Provider / route badge — carries a live status dot
             providerBadge
 
             // Settings icon
@@ -133,13 +117,15 @@ struct MenuBarView: View {
     }
 
     private var providerBadge: some View {
-        HStack(spacing: 3) {
-            Image(systemName: routeStatus.label == "On-device" ? "lock.fill" : "bolt.fill")
-                .font(.system(size: 7))
-                .foregroundColor(routeStatus.color)
+        HStack(spacing: 4) {
+            Circle()
+                .fill(appState.isRecording ? KM.error
+                      : (appState.isTranscribing ? KM.warning : routeStatus.color))
+                .frame(width: 5, height: 5)
             Text(routeStatus.label)
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundColor(routeStatus.color)
+                .lineLimit(1)
         }
         .padding(.horizontal, 7)
         .padding(.vertical, 3)
