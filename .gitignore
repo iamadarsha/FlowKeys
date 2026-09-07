@@ -2,5 +2,10 @@ build/
 .DS_Store
 *.swp
 .env
-build/
-.DS_Store
+
+# Local Claude Code config
+.claude/
+
+# Personal marketing assets (not part of the app)
+linkedin-*.html
+linkedin-*.png
