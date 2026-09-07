@@ -52,6 +52,9 @@ jobs:
           if gh release download "$tag" --pattern 'native-macos.tar.gz' --dir . 2>/dev/null; then
             tar xzf native-macos.tar.gz && rm native-macos.tar.gz
             find build/whisper build/llama build/sherpa build/Frameworks -exec touch {} +
+            sleep 1
+            find build/whisper build/llama build/sherpa build/Frameworks \
+              \( -name '*.a' -o -name '*.dylib' \) -exec touch {} +
             echo "ok=true" >> "$GITHUB_OUTPUT"
             echo "✅ restored prebuilt native libs from $tag"
           else
