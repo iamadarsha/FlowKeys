@@ -17,12 +17,8 @@ import os.log
 
 private let engineLog = OSLog(subsystem: "com.flowkeys.app", category: "LocalWhisper")
 
-struct LocalWhisperResult: Sendable {
-    let text: String
-    let detectedLanguage: String
-    let loadMilliseconds: Int
-    let transcribeMilliseconds: Int
-}
+// `WhisperSegment` and `LocalWhisperResult` are defined in SpeechAnalysis.swift
+// (plain data types shared with the deterministic analysis layer).
 
 enum LocalWhisperError: LocalizedError {
     case notBuiltWithLocalAI
@@ -72,6 +68,7 @@ actor LocalWhisperEngine {
     func transcribe(fileURL: URL,
                     languageToken: String?,
                     initialPrompt: String?,
+                    vadModelPath: String? = nil,
                     keepWarmSeconds: Int) async throws -> LocalWhisperResult {
         #if !FLK_LOCAL_AI
         throw LocalWhisperError.notBuiltWithLocalAI
@@ -81,6 +78,7 @@ actor LocalWhisperEngine {
         return try await transcribe(samples: samples,
                                     languageToken: languageToken,
                                     initialPrompt: initialPrompt,
+                                    vadModelPath: vadModelPath,
                                     keepWarmSeconds: keepWarmSeconds)
         #endif
     }
@@ -89,6 +87,7 @@ actor LocalWhisperEngine {
                     languageToken: String?,
                     initialPrompt: String?,
                     modelPath: String? = nil,
+                    vadModelPath: String? = nil,
                     keepWarmSeconds: Int = 0) async throws -> LocalWhisperResult {
         #if !FLK_LOCAL_AI
         throw LocalWhisperError.notBuiltWithLocalAI
@@ -120,13 +119,18 @@ actor LocalWhisperEngine {
 
         let lang = languageToken.flatMap { $0.isEmpty ? nil : $0 }
         let prompt = initialPrompt.flatMap { $0.isEmpty ? nil : $0 }
+        let vad = vadModelPath.flatMap {
+            (!$0.isEmpty && FileManager.default.fileExists(atPath: $0)) ? $0 : nil
+        }
 
         let t1 = DispatchTime.now()
         let raw: UnsafeMutablePointer<CChar>? = samples.withUnsafeBufferPointer { buf in
             Self.withOptionalCString(lang) { cLang in
                 Self.withOptionalCString(prompt) { cPrompt in
-                    flk_whisper_transcribe(handle, buf.baseAddress, Int32(buf.count),
-                                           cLang, cPrompt, 0)
+                    Self.withOptionalCString(vad) { cVad in
+                        flk_whisper_transcribe(handle, buf.baseAddress, Int32(buf.count),
+                                               cLang, cPrompt, 0, cVad)
+                    }
                 }
             }
         }
@@ -139,15 +143,51 @@ actor LocalWhisperEngine {
         flk_whisper_string_free(raw)
 
         let detected = String(cString: flk_whisper_detected_language(handle))
+        let segments = Self.readSegments(handle)
+        let vadSpans = Self.readVadSpans(handle)
 
         scheduleUnload(after: keepWarmSeconds)
 
         return LocalWhisperResult(text: text,
                                   detectedLanguage: detected,
                                   loadMilliseconds: loadMs,
-                                  transcribeMilliseconds: txMs)
+                                  transcribeMilliseconds: txMs,
+                                  segments: segments,
+                                  vadSpans: vadSpans)
         #endif
     }
+
+    #if FLK_LOCAL_AI
+    private static func readSegments(_ handle: OpaquePointer) -> [WhisperSegment] {
+        let n = Int(flk_whisper_segment_count(handle))
+        guard n > 0 else { return [] }
+        var out: [WhisperSegment] = []
+        out.reserveCapacity(n)
+        for i in 0..<n {
+            var t0: Int64 = 0, t1: Int64 = 0
+            var textPtr: UnsafePointer<CChar>?
+            guard flk_whisper_segment(handle, Int32(i), &t0, &t1, &textPtr) == 1 else { continue }
+            let text = textPtr.map { String(cString: $0) } ?? ""
+            out.append(WhisperSegment(text: text,
+                                      startSeconds: Double(t0) / 100.0,
+                                      endSeconds: Double(t1) / 100.0))
+        }
+        return out
+    }
+
+    private static func readVadSpans(_ handle: OpaquePointer) -> [ClosedRange<Double>] {
+        let n = Int(flk_whisper_vad_segment_count(handle))
+        guard n > 0 else { return [] }
+        var out: [ClosedRange<Double>] = []
+        for i in 0..<n {
+            var t0: Int64 = 0, t1: Int64 = 0
+            guard flk_whisper_vad_segment(handle, Int32(i), &t0, &t1) == 1 else { continue }
+            let a = Double(t0) / 100.0, b = Double(t1) / 100.0
+            if b >= a { out.append(a...b) }
+        }
+        return out
+    }
+    #endif
 
     /// Preload a model so the first real dictation is fast (optional, profile-gated).
     func preload(modelPath: String) async throws {

@@ -47,6 +47,7 @@ private struct LocalAISettingsContent: View {
                 if settings.isEnabled {
                     processingCard
                     speechModelCard
+                    speechIntelligenceCard
                     performanceCard
                 }
 
@@ -138,6 +139,59 @@ private struct LocalAISettingsContent: View {
                     if model.id != lastModelID { Divider().background(KM.outline) }
                 }
             }
+        }
+    }
+
+    private var speechIntelligenceCard: some View {
+        KMCard {
+            VStack(alignment: .leading, spacing: 12) {
+                KMSectionHeader(title: "Speech intelligence", icon: "wand.and.stars")
+
+                // VAD model row
+                if let vad = LocalModelManifest.models(of: .vad).first {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(vad.displayName).font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(KM.onSurface)
+                            Text(vad.shortDescription).font(.system(size: 10)).foregroundColor(KM.muted)
+                        }
+                        Spacer()
+                        modelAction(vad, models.status(vad.id))
+                    }
+                    Divider().background(KM.outline)
+                }
+
+                Text("Filler cleanup").font(.system(size: 12)).foregroundColor(KM.onSurface)
+                Picker("", selection: Binding(
+                    get: { settings.disfluencyLevel },
+                    set: { v in controller.update { $0.disfluencyLevel = v } }
+                )) {
+                    ForEach(DisfluencyAggressiveness.allCases, id: \.self) { l in
+                        Text(l.displayName).tag(l)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                Text(disfluencyHint).font(.system(size: 10)).foregroundColor(KM.muted)
+
+                Toggle(isOn: Binding(
+                    get: { settings.whisperModeEnabled },
+                    set: { v in controller.update { $0.whisperModeEnabled = v } }
+                )) {
+                    Text("Whisper Mode — boost very quiet speech")
+                        .font(.system(size: 11)).foregroundColor(KM.muted)
+                }
+                .toggleStyle(.checkbox)
+            }
+        }
+    }
+
+    private var disfluencyHint: String {
+        switch settings.disfluencyLevel {
+        case .literal:  return "Nothing removed — exact transcript."
+        case .light:    return "Removes only \"um\", \"uh\", \"hmm\"."
+        case .standard: return "Removes fillers and repeated false starts."
+        case .polished: return "Also tightens spacing around long pauses. Never rephrases."
         }
     }
 

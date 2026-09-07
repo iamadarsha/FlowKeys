@@ -100,6 +100,12 @@ struct LocalAISettings: Codable, Equatable, Sendable {
     /// Chosen local VAD model id. nil → VAD disabled.
     var vadModelID: String? = nil
 
+    /// How hard the deterministic pre-clean works on fillers / false starts.
+    var disfluencyLevel: DisfluencyAggressiveness = .standard
+
+    /// Boost gain when VAD reports sustained low-amplitude speech (whispering).
+    var whisperModeEnabled: Bool = true
+
     /// Developer diagnostics (timings, VAD segments, filler hits). Off by default.
     var showLocalDiagnostics: Bool = false
 

@@ -1,10 +1,13 @@
 // ============================================================
 // FILE: Sources/LocalAI/LocalTranscriptionService.swift
-// FlowKeys — Local AI (Phase 2)
+// FlowKeys — Local AI (Phase 2 + Phase 3)
 //
 // On-device transcription path. Mirrors the surface of the existing
 // `TranscriptionService.transcribe(fileURL:)` so `AppState` can route to it
 // without touching the cloud code.
+//
+// Phase 3 adds: VAD (silence-trim + speech spans) and a deterministic
+// speech-cleanup pass that runs before the LLM.
 // ============================================================
 
 import Foundation
@@ -13,11 +16,14 @@ import os.log
 private let localTxLog = OSLog(subsystem: "com.flowkeys.app", category: "LocalTranscription")
 
 struct LocalTranscriptionOutcome: Sendable {
-    let text: String
+    let rawText: String            // straight ASR output
+    let cleanedText: String        // after deterministic pre-clean (feed this to the LLM)
     let detectedLanguage: String
     let modelID: String
     let loadMs: Int
     let transcribeMs: Int
+    let analysis: SpeechAnalysis
+    let usedVAD: Bool
 }
 
 final class LocalTranscriptionService {
@@ -32,16 +38,12 @@ final class LocalTranscriptionService {
         self.settings = settings
     }
 
-    /// The ASR model FlowKeys should use for `selection`, honoring the user's
-    /// explicit choice, then falling back to any installed Whisper model.
     func resolvedModel(for selection: LanguageSelection) -> LocalModelDescriptor? {
-        // Explicit user choice first.
         if let id = settings.asrModelID,
            let d = LocalModelManifest.descriptor(id: id),
            modelManager.isInstalled(d) {
             return d
         }
-        // Indic languages prefer the IndicConformer model when installed (Phase 4).
         if selection.language == .hindi || selection.language == .bengali
             || selection.language == .banglish {
             if let indic = LocalModelManifest.models(of: .asrIndicConformer)
@@ -49,12 +51,16 @@ final class LocalTranscriptionService {
                 return indic
             }
         }
-        // Any installed Whisper model.
         return LocalModelManifest.models(of: .asrWhisper)
             .first { modelManager.isInstalled($0) }
     }
 
-    /// Transcribe a normalized WAV file produced by FlowKeys' AudioNormalization.
+    private func vadModelPath() -> String? {
+        guard let vad = LocalModelManifest.models(of: .vad)
+            .first(where: { modelManager.isInstalled($0) && $0.isActivatable }) else { return nil }
+        return modelManager.installedPath(vad)?.path
+    }
+
     func transcribe(fileURL: URL,
                     selection: LanguageSelection,
                     initialPrompt: String?) async throws -> LocalTranscriptionOutcome {
@@ -68,29 +74,43 @@ final class LocalTranscriptionService {
 
         await engine.setThreadCount(settings.performanceProfile.suggestedThreadCap)
 
-        // whisper.cpp path (Phase 2). IndicConformer via sherpa-onnx arrives in Phase 4.
         let samples = try LocalWhisperEngine.loadMono16kFloat(from: fileURL)
         guard !samples.isEmpty else { throw LocalWhisperError.emptyAudio }
 
+        let processed = settings.whisperModeEnabled ? WhisperModeGain.apply(samples) : samples
+        let vadPath = vadModelPath()
+
         let result = try await engine.transcribe(
-            samples: samples,
+            samples: processed,
             languageToken: selection.language.asrLanguageToken,
             initialPrompt: initialPrompt,
             modelPath: modelPath,
+            vadModelPath: vadPath,
             keepWarmSeconds: settings.effectiveUnloadAfterSeconds
         )
 
+        let analysis = SpeechAnalysisService.analyze(
+            rawText: result.text,
+            result: result,
+            level: settings.disfluencyLevel,
+            language: selection.language
+        )
+
         os_log(.info, log: localTxLog,
-               "local ASR: model=%{public}@ load=%dms tx=%dms lang=%{public}@",
+               "local ASR: model=%{public}@ load=%dms tx=%dms vad=%{public}d fillers=%d lang=%{public}@",
                descriptor.id, result.loadMilliseconds, result.transcribeMilliseconds,
-               result.detectedLanguage)
+               vadPath != nil ? 1 : 0, analysis.fillersRemoved.count, result.detectedLanguage)
 
         return LocalTranscriptionOutcome(
-            text: result.text,
+            rawText: result.text,
+            cleanedText: analysis.cleanedText.isEmpty ? result.text : analysis.cleanedText,
             detectedLanguage: result.detectedLanguage,
             modelID: descriptor.id,
             loadMs: result.loadMilliseconds,
-            transcribeMs: result.transcribeMilliseconds
+            transcribeMs: result.transcribeMilliseconds,
+            analysis: analysis,
+            usedVAD: vadPath != nil
         )
     }
+
 }

@@ -21,6 +21,7 @@ func section(_ s: String) { print("\n[\(s)]") }
 @main
 enum LocalAITests {
   static func main() {
+    setbuf(stdout, nil)
     run()
     print("")
     if failures == 0 { print("LOCAL AI TESTS: PASS"); exit(0) }
@@ -118,6 +119,64 @@ do {
     let overridden = LanguageRouter.resolve(legacyMode: .pureEnglish,
                                             override: LanguageSelection(language: .bengali, script: .native))
     check(overridden.language == .bengali, "router honors override")
+}
+
+// ---------------------------------------------------------------------------
+section("FillerDetector — removes noise, keeps meaning")
+do {
+    let (en, rmEn) = FillerDetector.strip(
+        "um so I I wanted to uh say that the report is done",
+        level: .standard, language: .english)
+    check(!en.lowercased().contains("um") && !en.contains(" uh "), "English um/uh removed")
+    check(en.contains("wanted to say") || en.contains("wanted to  say") || en.contains("to say"), "false-start 'I I' collapsed")
+    check(rmEn.contains("um") && rmEn.contains("uh"), "removed list reports um/uh")
+
+    let (lit, rmLit) = FillerDetector.strip("um so I wanted to say", level: .literal, language: .english)
+    check(lit == "um so I wanted to say" && rmLit.isEmpty, "literal level removes nothing")
+
+    let (hi, _) = FillerDetector.strip("matlab aaj meeting hai umm theek hai yaar",
+                                      level: .standard, language: .hinglish)
+    check(!hi.lowercased().contains("umm"), "Hinglish umm removed")
+    check(hi.contains("yaar"), "trailing 'yaar' (tone marker) kept")
+    check(hi.contains("theek hai"), "'theek hai' kept (carries meaning)")
+
+    // Never strip a meaningful mid-sentence word.
+    let (keep, _) = FillerDetector.strip("I actually finished the actually hard part",
+                                        level: .standard, language: .english)
+    check(keep.contains("hard part"), "mid-sentence 'actually' not blindly removed")
+}
+
+// ---------------------------------------------------------------------------
+section("SelfCorrectionDetector — events, not edits")
+do {
+    let e = SelfCorrectionDetector.detect("let's meet Thursday no actually Wednesday after lunch")
+    check(e.count == 1 && e[0].marker == "no actually", "detects 'no actually'")
+    check(e[0].keptText.hasPrefix("wednesday"), "kept span starts at correction")
+    check(SelfCorrectionDetector.detect("the meeting is on Friday").isEmpty, "no false positives")
+}
+
+// ---------------------------------------------------------------------------
+section("PauseAnalyzer — classifies gaps")
+do {
+    let spans: [ClosedRange<Double>] = [0.0...1.0, 1.15...2.0, 2.9...4.0, 6.0...7.0]
+    let p = PauseAnalyzer.pauses(from: spans)
+    check(p.count == 3, "three inter-span gaps above the 0.12s floor")
+    check(p.count == 3 && p[0].kind == .micro, "0.15s gap => micro")
+    check(p.count == 3 && p[1].kind == .hesitation, "0.9s gap => hesitation")
+    check(p.count == 3 && p[2].kind == .boundary, "2.0s gap => boundary")
+    check(PauseAnalyzer.pauses(from: [0.0...1.0, 1.05...2.0]).isEmpty, "sub-0.12s gap ignored")
+}
+
+// ---------------------------------------------------------------------------
+section("TextNormalizer + whisper-mode gain")
+do {
+    check(TextNormalizer.tidy("hello   world ,  ok .") == "hello world, ok.", "spacing/punct tidied")
+    let quiet = (0..<8000).map { Float(sin(Double($0) * 0.1)) * 0.02 }   // ~-34 dBFS
+    let boosted = WhisperModeGain.apply(quiet)
+    let peak = boosted.map { abs($0) }.max() ?? 0
+    check(peak > 0.05 && peak <= 1.0, "quiet speech boosted, no clipping")
+    let silent = [Float](repeating: 0, count: 8000)
+    check(WhisperModeGain.apply(silent) == silent, "pure silence untouched")
 }
 
 // ---------------------------------------------------------------------------

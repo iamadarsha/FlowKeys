@@ -6,8 +6,8 @@ Each phase: own branch → CI green → manual `REGRESSION_CHECKLIST.md` → ver
 | Phase | Branch | Build/CI | Regression | Released | Notes |
 |---|---|---|---|---|---|
 | **1 — scaffold (no-op)** | `feature/local-ai-phase-1` | ✅ CI green | ⬜ manual pending | ⬜ v1.3.0 | Inert `Sources/LocalAI/`, Makefile SDK fix, ci.yml, smoke script |
-| **2 — local Whisper ASR** | `feature/local-ai-phase-2` | 🟡 CI running | ⬜ manual pending | ⬜ v1.4.0 | whisper.cpp v1.9.3 vendored, C bridge, model manager, offline route, Local AI settings tab, 47 unit assertions. Verified E2E locally. |
-| **3 — VAD + disfluency** | — | — | — | ⬜ v1.5.0 | Silero VAD, deterministic filler/pause/self-correction, Whisper Mode |
+| **2 — local Whisper ASR** | `feature/local-ai-phase-2` | ✅ CI green | ⬜ manual pending | ⬜ v1.4.0 | whisper.cpp v1.9.3 vendored, C bridge, model manager, offline route, Local AI settings tab, onboarding card, file-transcription route. Verified E2E. |
+| **3 — VAD + disfluency** | `feature/local-ai-phase-3` | 🟡 CI running | ⬜ manual pending | ⬜ v1.5.0 | whisper.cpp built-in Silero VAD (silence trim + speech spans), deterministic FillerDetector / SelfCorrectionDetector / PauseAnalyzer / TextNormalizer, Whisper Mode gain, "Filler cleanup" slider (Literal/Light/Standard/Polished). 68 unit assertions. Verified E2E. |
 | **4 — Bengali + local LLM + hybrid** | — | — | — | ⬜ v1.6.0 | `LanguageSelection` live, Bengali prompts, IndicConformer, Qwen3-0.6B, confidence routing |
 | **5 — streaming + Command Mode + design** | — | — | — | ⬜ v2.0.0 | streaming overlay, Command Mode, Stitch design refresh, full test matrix |
 

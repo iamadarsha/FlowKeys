@@ -1209,14 +1209,26 @@ final class AppState: ObservableObject, @unchecked Sendable {
     /// Raw transcription with local/cloud routing.
     /// When Local AI is disabled (the default), this is exactly
     /// `cloudService.transcribe(fileURL:)` — no behavior change.
+    struct RoutedTranscription {
+        let raw: String
+        let routeLabel: String
+        let localModelID: String?
+        let localLoadMs: Int?
+        let localTxMs: Int?
+        let fillersRemoved: [String]
+        let usedVAD: Bool
+    }
+
     private func transcribeRawWithRoute(
         fileURL: URL,
         cloudService: TranscriptionService
-    ) async throws -> (raw: String, routeLabel: String, localModelID: String?, localLoadMs: Int?, localTxMs: Int?) {
+    ) async throws -> RoutedTranscription {
         switch localAI.routeDecision() {
         case .useExistingCloud:
             let raw = try await cloudService.transcribe(fileURL: fileURL)
-            return (raw, "Cloud", nil, nil, nil)
+            return RoutedTranscription(raw: raw, routeLabel: "Cloud", localModelID: nil,
+                                       localLoadMs: nil, localTxMs: nil,
+                                       fillersRemoved: [], usedVAD: false)
 
         case .useLocal, .useHybrid:
             let hybrid: (() async throws -> String)?
@@ -1232,7 +1244,10 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 initialPrompt: languageMode.whisperPrompt(),
                 cloudFallback: hybrid
             )
-            return (report.text, report.routeLabel, report.modelID, report.loadMs, report.transcribeMs)
+            return RoutedTranscription(raw: report.text, routeLabel: report.routeLabel,
+                                       localModelID: report.modelID,
+                                       localLoadMs: report.loadMs, localTxMs: report.transcribeMs,
+                                       fillersRemoved: report.fillersRemoved, usedVAD: report.usedVAD)
         }
     }
 
@@ -1363,8 +1378,12 @@ final class AppState: ObservableObject, @unchecked Sendable {
                     if routedResult.routeLabel != "Cloud" {
                         var detail = "Transcribed via \(routedResult.routeLabel)"
                         if let m = routedResult.localModelID { detail += " · \(m)" }
+                        if routedResult.usedVAD { detail += " · VAD" }
                         if let load = routedResult.localLoadMs, let tx = routedResult.localTxMs {
                             detail += " · load \(load)ms · asr \(tx)ms"
+                        }
+                        if !routedResult.fillersRemoved.isEmpty {
+                            detail += " · removed \(routedResult.fillersRemoved.count) filler(s)"
                         }
                         self?.debugStatusMessage = detail
                     }

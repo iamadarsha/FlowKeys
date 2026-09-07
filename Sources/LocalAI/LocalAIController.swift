@@ -30,13 +30,20 @@ enum LocalRouteDecision: Equatable, Sendable {
 }
 
 struct LocalTranscriptionReport: Sendable {
-    let text: String
+    let text: String              // deterministically pre-cleaned; feed to the LLM
+    let rawText: String           // straight ASR
     let routeLabel: String        // "Local" / "Hybrid → cloud"
     let modelID: String?
     let detectedLanguage: String?
     let loadMs: Int?
     let transcribeMs: Int?
     let usedCloudFallback: Bool
+    let fillersRemoved: [String]
+    let correctionCount: Int
+    let usedVAD: Bool
+    /// When true the deterministic pass produced a final answer and the LLM
+    /// cleanup can be skipped (short, clean utterance).
+    let canSkipLLM: Bool
 }
 
 final class LocalAIController: ObservableObject, @unchecked Sendable {
@@ -147,22 +154,28 @@ final class LocalAIController: ObservableObject, @unchecked Sendable {
                                                        selection: selection,
                                                        initialPrompt: initialPrompt)
             return LocalTranscriptionReport(
-                text: outcome.text,
+                text: outcome.cleanedText,
+                rawText: outcome.rawText,
                 routeLabel: "Local",
                 modelID: outcome.modelID,
                 detectedLanguage: outcome.detectedLanguage.isEmpty ? nil : outcome.detectedLanguage,
                 loadMs: outcome.loadMs,
                 transcribeMs: outcome.transcribeMs,
-                usedCloudFallback: false
+                usedCloudFallback: false,
+                fillersRemoved: outcome.analysis.fillersRemoved,
+                correctionCount: outcome.analysis.corrections.count,
+                usedVAD: outcome.usedVAD,
+                canSkipLLM: outcome.analysis.isTrivialResult
             )
         } catch {
             os_log(.error, log: localAILog, "local transcription failed: %{public}@", error.localizedDescription)
             if let cloudFallback {
                 let text = try await cloudFallback()
                 return LocalTranscriptionReport(
-                    text: text, routeLabel: "Hybrid → cloud",
+                    text: text, rawText: text, routeLabel: "Hybrid → cloud",
                     modelID: nil, detectedLanguage: nil, loadMs: nil, transcribeMs: nil,
-                    usedCloudFallback: true)
+                    usedCloudFallback: true, fillersRemoved: [], correctionCount: 0,
+                    usedVAD: false, canSkipLLM: false)
             }
             throw error
         }

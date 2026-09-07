@@ -160,18 +160,18 @@ enum LocalModelManifest {
             requirements: LocalModelRequirements(minRAMGB: 8, requiresAppleSilicon: false)
         ),
 
-        // ---- VAD ----
+        // ---- VAD (whisper.cpp built-in Silero, ggml format) ----
         LocalModelDescriptor(
-            id: "silero-vad-v5",
-            displayName: "Silero VAD",
-            shortDescription: "Voice activity detection · ~2 MB",
+            id: "whisper-vad-silero-v5",
+            displayName: "Voice detection",
+            shortDescription: "Trims silence, finds pauses · ~0.9 MB",
             kind: .vad,
-            engine: .onnxRuntime,
-            url: URL(string: "https://huggingface.co/onnx-community/silero-vad/resolve/main/onnx/model.onnx")!,
-            expectedByteSize: 2_243_022,
-            checksumSHA256: "a4a068cd6cf1ea8355b84327595838ca748ec29a25bc91fc82e6c299ccdc5808",
-            assetVersion: "silero-vad-v5",
-            verified: false, // Phase 3 wires the VAD engine
+            engine: .whisperCpp,
+            url: URL(string: "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v5.1.2.bin")!,
+            expectedByteSize: 885_098,
+            checksumSHA256: "29940d98d42b91fbd05ce489f3ecf7c72f0a42f027e4875919a28fb4c04ea2cf",
+            assetVersion: "silero-v5.1.2",
+            verified: true,
             languages: [],
             requirements: LocalModelRequirements(minRAMGB: 8, requiresAppleSilicon: false)
         ),
