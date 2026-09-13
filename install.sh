@@ -172,7 +172,16 @@ echo "🎙  Aapki awaaz, aapke words."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
-read -r -p "Open FlowKeys now? (y/n): " OPEN_NOW 2>/dev/null || OPEN_NOW="n"
+OPEN_NOW="n"
+# This script is meant to be run as `curl ... | bash`, in which case fd 0 (stdin)
+# is the script source itself — reading a prompt from plain stdin here would
+# consume part of the still-unread script and corrupt bash's parse of the
+# lines below (manifests as a trailing "syntax error near unexpected token").
+# Read from the controlling terminal directly instead; if there isn't one
+# (e.g. piped into a non-interactive shell, CI), fall back to "n" quietly.
+if [[ -r /dev/tty ]]; then
+  { read -r -t 15 -p "Open FlowKeys now? (y/n): " OPEN_NOW < /dev/tty; } 2>/dev/null || OPEN_NOW="n"
+fi
 if [[ "$OPEN_NOW" == "y" || "$OPEN_NOW" == "Y" ]]; then
   open "${INSTALL_DIR}/${APP_NAME}.app"
 fi
