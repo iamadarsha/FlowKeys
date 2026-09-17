@@ -14,7 +14,7 @@ struct MenuBarView: View {
         if appState.localAI.settings.isEnabled {
             switch appState.localAI.settings.route {
             case .local:         return ("On-device", KM.green)
-            case .hybrid:        return ("Hybrid", KM.accent)
+            case .hybrid:        return ("Hybrid", KM.hybrid)
             case .existingCloud: return (appState.activeTranscriptionProvider.shortName, KM.accent)
             }
         }
@@ -375,7 +375,7 @@ struct MenuBarView: View {
                 HStack(spacing: 8) {
                     Image(systemName: appState.isRecording ? "stop.fill" : "mic.fill")
                         .font(.system(size: 14, weight: .semibold))
-                        .transition(.opacity)
+                        .kmIconSwap()
                     Text(appState.isRecording ? "Stop Recording" : "Start Dictating")
                         .font(.system(size: 13, weight: .semibold))
                         .transition(.opacity)
@@ -384,13 +384,12 @@ struct MenuBarView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
                 .background(
-                    LinearGradient(
-                        colors: appState.isRecording
-                            ? [Color.red.opacity(0.85), Color.red.opacity(0.7)]
-                            : [KM.accent, KM.accent.opacity(0.8)],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
+                    appState.isRecording
+                        ? AnyShapeStyle(LinearGradient(
+                            colors: [Color.red.opacity(0.85), Color.red.opacity(0.7)],
+                            startPoint: .leading, endPoint: .trailing
+                          ))
+                        : AnyShapeStyle(KM.accentGradient)
                 )
                 .clipShape(Capsule())
                 .shadow(color: (appState.isRecording ? Color.red : KM.accent).opacity(0.4), radius: 8, x: 0, y: 4)

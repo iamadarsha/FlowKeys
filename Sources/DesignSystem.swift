@@ -2,8 +2,9 @@ import SwiftUI
 
 // MARK: - Kinetic Precision Design Tokens
 //
-// Evolution of the v1.2 "Kinetic Monolith" system. Same obsidian base + thermal
-// orange accent, refined per Design/stitch_five_phase_task_roadmap*/kinetic_precision.
+// Evolution of the v1.2 "Kinetic Monolith" system. Same obsidian base, now with an
+// indigo→steel gradient accent (v2.2), refined per
+// Design/stitch_five_phase_task_roadmap*/kinetic_precision.
 // All existing `KM.*` symbols are preserved for source compatibility.
 
 enum KM {
@@ -15,11 +16,19 @@ enum KM {
     static let outline     = Color.white.opacity(0.07) // structural hairline
 
     // Accent & feedback
-    static let accent      = Color(hex: "#FF6B35")   // active / record / primary trigger
-    static let salmon      = Color(hex: "#FFB59D")   // soft highlight, glow falloff
+    static let accent      = Color(hex: "#6C63FF")   // active / record / primary trigger (indigo)
+    static let steel       = Color(hex: "#4A6FA1")   // accent gradient's cool stop
+    static let salmon      = Color(hex: "#A9C4E8")   // soft highlight, glow falloff (light steel)
     static let green       = Color(hex: "#53E16F")   // signal confirmation, engine ready
     static let warning     = Color(hex: "#FFC24B")   // clipping, fallback, network jitter
     static let error       = Color(hex: "#FFB4AB")   // mic disconnect, permission lock
+    static let hybrid      = Color(hex: "#3DBFAE")   // indigo/green blend — Hybrid route badge
+
+    /// First-class gradient accent — indigo → steel. Use anywhere a flat `[accent, X]`
+    /// gradient was hand-rolled before v2.2 so every surface shares one consistent ramp.
+    static let accentGradient = LinearGradient(
+        colors: [accent, steel], startPoint: .topLeading, endPoint: .bottomTrailing
+    )
 
     // Typographic contrast
     static let textPrimary   = Color.white.opacity(0.90)
@@ -33,7 +42,7 @@ enum KM {
     static let langEN      = Color(hex: "#4A90E2")   // cerulean
     static let langHI      = Color(hex: "#138808")   // saffron/emerald flag node
     static let langBN      = Color(hex: "#0B7345")   // forest green
-    static let langMIX     = Color(hex: "#FF6B35")   // inherits primary warmth
+    static let langMIX     = accent                  // inherits primary accent
 
     // Corner radii (continuous squircle)
     static let rCard: CGFloat    = 12   // cards, inner sections, dialogs

@@ -344,3 +344,44 @@ No inference servers, no subscriptions. Compute is the user's Mac.
 - [primaprashant/awesome-voice-typing — GitHub](https://github.com/primaprashant/awesome-voice-typing)
 - [k2-fsa/sherpa-onnx — GitHub](https://github.com/k2-fsa/sherpa-onnx)
 - [ml-explore/mlx-swift-examples — GitHub](https://github.com/ml-explore/mlx-swift-examples)
+
+---
+
+## Addendum — 2026-09-17: Kinetic Precision v2.2 design pass, ASR/dictionary check-in
+
+Written during the v2.2 design refresh (indigo/steel gradient accent, native motion
+library, Settings redesign). Re-checked this doc's recommendations against what's
+actually shipped in phases 4a–4c before touching anything speech-related, per the
+"do not harm the existing codebase" constraint for that pass.
+
+**Parakeet — still correctly excluded.** Nothing has changed: NVIDIA Parakeet TDT
+still has **no Hindi/Bengali support** (§3A above), which is disqualifying for an
+app whose entire premise is Indic dictation. The shipped IndicConformer-via-
+sherpa-onnx + whisper.cpp + local-LLM-cleanup stack (phases 4a/4b/4c) is the
+correct architecture this doc originally pointed at — it should not be replaced
+with a Parakeet/WhisperKit/FluidAudio path.
+
+**Disfluency lexicon — one gap found, fixed.** G4 ("disfluency removal = LLM only")
+is largely resolved by the shipped deterministic `SpeechAnalysis.swift`
+(`FillerDetector`/`SelfCorrectionDetector`/`PauseAnalyzer`), which already lists
+`um/umm/uh/erm/hmm` (+ Hindi/Bengali hesitation sounds) as hard fillers and
+`basically/literally/actually/like/matlab/yaar` as context-gated soft fillers.
+One explicit ask from this pass — "catch um, uhm, **okay**, etc." — was not
+covered: `okay`/`ok`/`right`/`so`/`alright` (English backchannel openers) and
+`achha`/"theek hai"/"thik ache" (Hindi/Banglish equivalents) were missing from
+`FillerLexicon.softFillers`/`softPhrases`. Added them using the exact same
+sentence-initial-or-comma-fenced gate every other soft filler already uses, so
+"the plan is okay" is untouched but "Okay, let's start" strips the opener. This
+is a lexicon-only change — no model, no routing, no schema touched.
+
+**Qwen3-0.6B vs the originally-recommended 4B/1.7B — leave as shipped, for now.**
+This doc originally recommended Qwen3-4B-Instruct (~2.4 GB) or Qwen3-1.7B for
+local cleanup; phases 4b shipped Qwen3-0.6B instead, documented as "opt-in,
+experimental... quality is marginal." That tradeoff was almost certainly made for
+download size and RAM headroom on 8 GB Macs (`PHASE_STATUS.md` explicitly flags
+"8 GB / Intel latency + memory measurements" as still outstanding). Recommendation:
+**don't swap it in this pass.** If local cleanup quality keeps coming up, the
+right next step is adding Qwen3-1.7B as a *second, user-selectable* `cleanupModelID`
+option next to the existing 0.6B (the model-manager/manifest plumbing already
+supports multiple models per kind) rather than replacing the small model outright
+— some users are on 8 GB Macs where 0.6B is the only local option that fits.

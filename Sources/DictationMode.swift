@@ -37,7 +37,7 @@ extension DictationMode {
         id: UUID(uuidString: "00000001-0001-0001-0001-000000000001")!,
         name: "Casual",
         icon: "🗣️",
-        color: "#FF6B35",
+        color: "#6C63FF",
         systemPromptOverride: nil,
         appendToBasePrompt: """
 Keep the response conversational and casual. \

@@ -106,13 +106,19 @@ enum FillerLexicon {
     /// (sentence-initial or between commas), never mid-clause.
     static let softFillers: Set<String> = [
         "basically", "literally", "actually", "like",
-        "matlab", "yaar",  // only as trailing/standalone filler
+        // Backchannel/acknowledgment fillers — "okay," / "right," / "so," as a
+        // sentence-opening verbal tic, distinct from their meaningful use
+        // mid-sentence (only stripped when sentence-initial or comma-fenced,
+        // same gate as every other entry here — see FillerDetector.strip).
+        "okay", "ok", "alright", "right", "so",
+        "matlab", "yaar", "achha",  // only as trailing/standalone filler
         "মানে", "আসলে",
     ]
 
     /// Multi-word soft fillers.
     static let softPhrases: [String] = [
         "you know", "i mean", "sort of", "kind of", "kinda", "sorta",
+        "theek hai", "thik ache",  // Hindi/Banglish "okay" as a filler phrase
     ]
 }
 

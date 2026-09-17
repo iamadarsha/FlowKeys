@@ -49,6 +49,16 @@ private let iso8601DayFormatter: DateFormatter = {
 
 struct SettingsView: View {
     @EnvironmentObject var appState: AppState
+    @State private var searchText: String = ""
+
+    private var filteredTabs: [SettingsTab] {
+        guard !searchText.trimmingCharacters(in: .whitespaces).isEmpty else {
+            return SettingsTab.allCases
+        }
+        return SettingsTab.allCases.filter {
+            $0.title.localizedCaseInsensitiveContains(searchText)
+        }
+    }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -57,7 +67,7 @@ struct SettingsView: View {
                 // Logo block
                 HStack(spacing: 8) {
                     ZStack {
-                        LinearGradient(colors: [KM.accent, KM.salmon], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        KM.accentGradient
                             .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                         Image(systemName: "waveform")
                             .font(.system(size: 14, weight: .bold))
@@ -78,30 +88,63 @@ struct SettingsView: View {
                 .padding(.top, 16)
                 .padding(.bottom, 12)
 
+                // Search — Grammarly/Wispr-style quick filter over the nav list.
+                HStack(spacing: 6) {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 11))
+                        .foregroundColor(KM.textMuted)
+                    TextField("Search settings", text: $searchText)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 11.5))
+                        .foregroundColor(KM.textPrimary)
+                    if !searchText.isEmpty {
+                        Button {
+                            searchText = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.system(size: 11))
+                                .foregroundColor(KM.textMuted)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(
+                    RoundedRectangle(cornerRadius: KM.rControl, style: .continuous)
+                        .fill(KM.surfaceHi)
+                )
+                .padding(.horizontal, 8)
+                .padding(.bottom, 8)
+
                 Divider().background(KM.outline)
 
                 // Nav items
-                ForEach(SettingsTab.allCases) { tab in
+                ForEach(filteredTabs) { tab in
                     let isActive = appState.selectedSettingsTab == tab
                     Button {
                         withAnimation(.spring(response: 0.28, dampingFraction: 0.8)) {
                             appState.selectedSettingsTab = tab
                         }
                     } label: {
-                        HStack(spacing: 8) {
-                            Image(systemName: tab.icon)
-                                .font(.system(size: 13))
-                                .foregroundColor(isActive ? KM.accent : KM.muted)
-                                .frame(width: 18)
+                        HStack(spacing: 9) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                    .fill(isActive ? AnyShapeStyle(KM.accentGradient.opacity(0.18)) : AnyShapeStyle(Color.clear))
+                                Image(systemName: tab.icon)
+                                    .font(.system(size: 12.5))
+                                    .foregroundStyle(isActive ? AnyShapeStyle(KM.accentGradient) : AnyShapeStyle(KM.muted))
+                            }
+                            .frame(width: 22, height: 22)
                             Text(tab.title)
                                 .font(.system(size: 12, weight: isActive ? .semibold : .regular))
                                 .foregroundColor(isActive ? KM.textPrimary : KM.textSecondary)
                             Spacer()
                             if isActive {
-                                Circle().fill(KM.accent).frame(width: 5, height: 5)
+                                Circle().fill(KM.accentGradient).frame(width: 5, height: 5)
                             }
                         }
-                        .padding(.vertical, 7)
+                        .padding(.vertical, 8)
                         .padding(.horizontal, 10)
                         .background(
                             RoundedRectangle(cornerRadius: KM.rControl, style: .continuous)
@@ -111,6 +154,14 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.plain)
                     .padding(.horizontal, 8)
+                }
+
+                if filteredTabs.isEmpty {
+                    Text("No matching settings")
+                        .font(.system(size: 11))
+                        .foregroundColor(KM.textMuted)
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
                 }
 
                 Spacer()
@@ -224,16 +275,11 @@ struct GeneralSettingsView: View {
                     // GitHub card
                     VStack(spacing: 10) {
                         HStack(spacing: 8) {
-                            AsyncImage(url: URL(string: "https://avatars.githubusercontent.com/u/992248")) { phase in
-                                switch phase {
-                                case .success(let image):
-                                    image.resizable().aspectRatio(contentMode: .fill)
-                                default:
-                                    Color.gray.opacity(0.2)
-                                }
-                            }
-                            .frame(width: 22, height: 22)
-                            .clipShape(Circle())
+                            Image(nsImage: NSApp.applicationIconImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(width: 22, height: 22)
+                                .clipShape(Circle())
 
                             Button {
                                 openURL(flowKeysRepoURL)
@@ -253,9 +299,12 @@ struct GeneralSettingsView: View {
                                 if githubCache.isLoading {
                                     ProgressView().scaleEffect(0.5)
                                 } else if let count = githubCache.starCount {
-                                    Text("\(count.formatted()) \(count == 1 ? "star" : "stars")")
-                                        .font(.caption2.weight(.semibold))
-                                        .foregroundColor(.secondary)
+                                    HStack(spacing: 3) {
+                                        KMSpinningCounter(value: count, font: .caption2.weight(.semibold), color: .secondary)
+                                        Text(count == 1 ? "star" : "stars")
+                                            .font(.caption2.weight(.semibold))
+                                            .foregroundColor(.secondary)
+                                    }
                                 }
                             }
                             .padding(.horizontal, 8)
@@ -314,11 +363,8 @@ struct GeneralSettingsView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(.ultraThinMaterial)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .stroke(Color.primary.opacity(0.08), lineWidth: 1)
-                            )
                     )
+                    .kmBorderBeam(cornerRadius: 12)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.top, 4)
