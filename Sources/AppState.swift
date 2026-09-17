@@ -311,6 +311,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
     private var transcribingIndicatorTask: Task<Void, Never>?
     private var contextService: AppContextService
     private var contextCaptureTask: Task<AppContext?, Never>?
+    private var contextCaptureGeneration = 0
     private var capturedContext: AppContext?
     private var hasShownScreenshotPermissionAlert = false
     private var audioDeviceListenerBlock: AudioObjectPropertyListenerBlock?
@@ -439,6 +440,14 @@ final class AppState: ObservableObject, @unchecked Sendable {
             DispatchQueue.main.async {
                 self?.retryAfterOverlayError()
             }
+        }
+        // AudioRecorder's watchdog/config-change recovery can fail well after
+        // startRecording() already returned successfully — without this, AppState
+        // never learns and is left believing a dead recording is still active.
+        // `onRecordingFailure` is already delivered on the main queue (and
+        // pre-filtered against a stale/superseded session), so no extra hop here.
+        audioRecorder.onRecordingFailure = { [weak self] error in
+            self?.handleRecorderFailure(error)
         }
 
         localProgressCancellable = localAI.$transcriptionProgress
@@ -1091,6 +1100,23 @@ final class AppState: ObservableObject, @unchecked Sendable {
         stopAndTranscribe()
     }
 
+    /// Single terminal path for a recorder-owned failure discovered asynchronously
+    /// (exhausted rebuild attempts, a failed transparent restart) — the only way
+    /// AppState's `isRecording` can otherwise drift out of sync with the recorder's
+    /// own internal state after a video-call-style audio disruption.
+    private func handleRecorderFailure(_ error: Error) {
+        guard isRecording || isTranscribing else { return }
+        transcribingIndicatorTask?.cancel()
+        transcribingIndicatorTask = nil
+        shortcutSessionController.reset()
+        activeRecordingTriggerMode = nil
+        isRecording = false
+        isTranscribing = false
+        errorMessage = formattedRecordingStartError(error)
+        statusText = "Error"
+        overlayManager.showError(message: errorMessage ?? "Recording stopped unexpectedly.")
+    }
+
     private func scheduleShortcutStart(mode: RecordingTriggerMode) {
         cancelPendingShortcutStart(resetMode: false)
         pendingShortcutStartMode = mode
@@ -1537,7 +1563,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 let appContext: AppContext
                 if let sessionContext {
                     appContext = sessionContext
-                } else if let inFlightContext = await inFlightContextTask?.value {
+                } else if let inFlightContext = await awaitInFlightContext(inFlightContextTask) {
                     appContext = inFlightContext
                 } else {
                     appContext = fallbackContextAtStop()
@@ -1612,7 +1638,7 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 let resolvedContext: AppContext
                 if let sessionContext {
                     resolvedContext = sessionContext
-                } else if let inFlightContext = await inFlightContextTask?.value {
+                } else if let inFlightContext = await awaitInFlightContext(inFlightContextTask) {
                     resolvedContext = inFlightContext
                 } else {
                     resolvedContext = fallbackContextAtStop()
@@ -1688,10 +1714,18 @@ final class AppState: ObservableObject, @unchecked Sendable {
         lastContextScreenshotDataURL = nil
         lastContextScreenshotStatus = "Collecting screenshot..."
 
+        // A capture abandoned by `awaitInFlightContext`'s timeout can still be
+        // running (cancellation is cooperative) when a NEWER capture starts.
+        // Tag this run so its completion handler can tell it's stale and skip
+        // writing over the newer session's fields.
+        contextCaptureGeneration += 1
+        let myGeneration = contextCaptureGeneration
+
         contextCaptureTask = Task { [weak self] in
             guard let self else { return nil }
             let context = await self.contextService.collectContext()
             await MainActor.run {
+                guard self.contextCaptureGeneration == myGeneration else { return }
                 self.capturedContext = context
                 self.lastContextSummary = context.contextSummary
                 self.lastContextScreenshotDataURL = context.screenshotDataURL
@@ -1701,6 +1735,42 @@ final class AppState: ObservableObject, @unchecked Sendable {
                 self.handleScreenshotCaptureIssue(context.screenshotError)
             }
             return context
+        }
+    }
+
+    /// Context (AX + screenshot + cloud vision) is an enhancement, never a
+    /// prerequisite for delivering the transcript — `AppContextService`'s network
+    /// calls have no per-request timeout, so awaiting the in-flight task
+    /// unconditionally can hang the entire completion pipeline indefinitely even
+    /// after transcription has already succeeded. Bound the wait and fall back.
+    ///
+    /// This budget is only actually honored because `AppContextService`'s LLM
+    /// calls go through `URLSession.shared.data(for:)`, whose async variant
+    /// propagates cancellation to the underlying `URLSessionDataTask` promptly.
+    /// If a future provider path there ever used a completion-handler API or a
+    /// long CPU-bound step instead, `task.cancel()` below would stop being
+    /// enough to keep this bounded — re-verify that if `AppContextService`'s
+    /// network layer changes.
+    private static let contextAwaitBudgetSeconds: Double = 1.0
+
+    private func awaitInFlightContext(_ task: Task<AppContext?, Never>?) async -> AppContext? {
+        guard let task else { return nil }
+        return await withTaskGroup(of: AppContext?.self) { group in
+            group.addTask { await task.value }
+            group.addTask {
+                try? await Task.sleep(nanoseconds: UInt64(Self.contextAwaitBudgetSeconds * 1_000_000_000))
+                return nil
+            }
+            let result = await group.next() ?? nil
+            // `group.cancelAll()` only cancels this group's own child tasks (the
+            // sleep and the wrapper awaiting `task.value`) — it does NOT propagate
+            // to `task` itself, an unstructured Task created earlier in
+            // `startContextCapture()`. Cancel it explicitly so a slow/hung
+            // AppContextService call doesn't keep running in the background after
+            // we've already moved on with a fallback context.
+            task.cancel()
+            group.cancelAll()
+            return result
         }
     }
 

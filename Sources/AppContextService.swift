@@ -84,6 +84,32 @@ Return only two sentences, no labels, no markdown, no extra commentary.
         )
         let currentActivity: String
         let contextPrompt: String?
+        // The vision/LLM call below has no per-request timeout and can run for
+        // seconds; `awaitInFlightContext` in AppState gives this whole capture
+        // only a ~1s budget before moving on with a fallback, so check here to
+        // avoid starting an expensive network call this task's result may never
+        // even be used for (the AppState-side generation guard also protects
+        // against a stale result landing late, but skipping the call entirely
+        // is strictly better when we already know we've been abandoned).
+        if Task.isCancelled {
+            return AppContext(
+                appName: appName,
+                bundleIdentifier: bundleIdentifier,
+                windowTitle: windowTitle,
+                selectedText: selectedText,
+                currentActivity: fallbackCurrentActivity(
+                    appName: appName,
+                    bundleIdentifier: bundleIdentifier,
+                    selectedText: selectedText,
+                    windowTitle: windowTitle,
+                    screenshotAvailable: screenshot.dataURL != nil
+                ),
+                contextPrompt: nil,
+                screenshotDataURL: screenshot.dataURL,
+                screenshotMimeType: screenshot.mimeType,
+                screenshotError: screenshot.error
+            )
+        }
         if let apiKey = keyStore.getKey(for: provider), !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             if let result = await inferActivityWithLLM(
                 appName: appName,

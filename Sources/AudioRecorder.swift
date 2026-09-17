@@ -109,6 +109,7 @@ struct AudioDevice: Identifiable {
 enum AudioRecorderError: LocalizedError {
     case invalidInputFormat(String)
     case missingInputDevice
+    case recoveryExhausted
 
     var errorDescription: String? {
         switch self {
@@ -116,6 +117,8 @@ enum AudioRecorderError: LocalizedError {
             return "Invalid input format: \(details)"
         case .missingInputDevice:
             return "No audio input device available."
+        case .recoveryExhausted:
+            return "Lost the microphone connection and couldn't recover it automatically."
         }
     }
 }
@@ -137,6 +140,12 @@ class AudioRecorder: NSObject, ObservableObject {
     private static let maxRebuildAttempts = 2
     private static let watchdogTimeout: TimeInterval = 2.0
 
+    /// Owns every mutation of `audioEngine`/`storedInputFormat`/`currentDeviceUID`/
+    /// `rebuildAttempt`/`watchdogTimer` — config-change recovery and watchdog-triggered
+    /// rebuilds both hop onto this queue instead of racing each other or the caller
+    /// of `startRecording`/`stopRecording` directly.
+    private let engineLifecycleQueue = DispatchQueue(label: "com.flowkeys.app.enginelifecycle")
+
     @Published var isRecording = false
     /// Thread-safe flag read from the audio tap callback.
     private let _recording = OSAllocatedUnfairLock(initialState: false)
@@ -146,6 +155,28 @@ class AudioRecorder: NSObject, ObservableObject {
     /// Called on the audio thread when the first non-silent buffer arrives.
     var onRecordingReady: (() -> Void)?
     private var readyFired = false
+
+    /// Fired at most once per recording session when recovery is exhausted or a
+    /// rebuild attempt fails outright — lets `AppState` learn about a failure the
+    /// watchdog/config-change path discovers well after `startRecording()` returned.
+    /// Bumped once per `startRecording()` call and re-checked at delivery time (on
+    /// main, after the `DispatchQueue.main.async` hop) so a failure from an old
+    /// session that the caller has already retried/superseded can never reach
+    /// `AppState` and tear down a live, newer session.
+    var onRecordingFailure: ((Error) -> Void)?
+    private var failureReported = false
+    private let _generation = OSAllocatedUnfairLock(initialState: 0)
+
+    private func reportFailureOnce(_ error: Error, generation: Int) {
+        guard !failureReported else { return }
+        failureReported = true
+        let callback = onRecordingFailure
+        let generationLock = _generation
+        DispatchQueue.main.async {
+            guard generationLock.withLock({ $0 }) == generation else { return }
+            callback?(error)
+        }
+    }
 
     override init() {
         super.init()
@@ -269,25 +300,34 @@ class AudioRecorder: NSObject, ObservableObject {
 
     // MARK: - Configuration change handling
 
+    /// `AVAudioEngineConfigurationChange` is delivered on an internal AVAudioEngine
+    /// dispatch queue; Apple's docs warn that synchronous engine teardown/rebuild
+    /// inside this callback can deadlock. Return immediately and hand recovery off
+    /// to `engineLifecycleQueue`, which also serializes it against watchdog-triggered
+    /// rebuilds and `startRecording`/`stopRecording` so they can never race.
     private func handleEngineConfigChange(_ notification: Notification) {
-        guard let engine = notification.object as? AVAudioEngine,
-              engine === self.audioEngine else { return }
+        guard let engine = notification.object as? AVAudioEngine else { return }
+        engineLifecycleQueue.async { [weak self] in
+            guard let self, engine === self.audioEngine else { return }
+            os_log(.info, log: recordingLog, "AVAudioEngineConfigurationChange — invalidating engine")
+            self.invalidateEngine()
 
-        os_log(.info, log: recordingLog, "AVAudioEngineConfigurationChange — invalidating engine")
-        invalidateEngine()
-
-        if _recording.withLock({ $0 }) {
-            os_log(.info, log: recordingLog, "was recording — attempting transparent restart")
-            restartRecording()
+            if self._recording.withLock({ $0 }) {
+                os_log(.info, log: recordingLog, "was recording — attempting transparent restart")
+                self.restartRecordingLocked()
+            }
         }
     }
 
-    private func restartRecording() {
+    /// Must only be called while already running on `engineLifecycleQueue`.
+    private func restartRecordingLocked() {
+        let myGeneration = _generation.withLock { $0 }
         rebuildAttempt += 1
         if rebuildAttempt > Self.maxRebuildAttempts {
             os_log(.error, log: recordingLog, "exceeded max rebuild attempts (%d) — giving up", Self.maxRebuildAttempts)
             _recording.withLock { $0 = false }
             DispatchQueue.main.async { self.isRecording = false }
+            reportFailureOnce(AudioRecorderError.recoveryExhausted, generation: myGeneration)
             return
         }
 
@@ -302,34 +342,40 @@ class AudioRecorder: NSObject, ObservableObject {
 
         do {
             try buildAndStartEngine(deviceUID: deviceToUse)
-            startBufferWatchdog()
+            startBufferWatchdogLocked()
             os_log(.info, log: recordingLog, "transparent restart succeeded (attempt %d)", rebuildAttempt)
         } catch {
             os_log(.error, log: recordingLog, "transparent restart failed: %{public}@", error.localizedDescription)
             _recording.withLock { $0 = false }
             DispatchQueue.main.async { self.isRecording = false }
+            reportFailureOnce(error, generation: myGeneration)
         }
     }
 
     // MARK: - Buffer watchdog
 
-    private func startBufferWatchdog() {
+    /// Must only be called while already running on `engineLifecycleQueue`.
+    private func startBufferWatchdogLocked() {
         cancelWatchdog()
         let timer = DispatchSource.makeTimerSource(queue: .global(qos: .userInitiated))
         timer.schedule(deadline: .now() + Self.watchdogTimeout)
         timer.setEventHandler { [weak self] in
             guard let self else { return }
-            guard self._recording.withLock({ $0 }) else { return }
+            // Hand the actual rebuild decision to the lifecycle queue — this timer
+            // fires on a plain global queue and must not touch engine state directly.
+            self.engineLifecycleQueue.async {
+                guard self._recording.withLock({ $0 }) else { return }
 
-            let count = self._bufferCount.withLock { $0 }
-            if count == 0 {
-                os_log(.error, log: recordingLog,
-                       "watchdog: 0 buffers after %.1fs (attempt %d) — rebuilding engine",
-                       Self.watchdogTimeout, self.rebuildAttempt)
-                self.restartRecording()
-            } else {
-                os_log(.info, log: recordingLog, "watchdog: %d buffers after %.1fs — healthy, resetting rebuild counter", count, Self.watchdogTimeout)
-                self.rebuildAttempt = 0
+                let count = self._bufferCount.withLock { $0 }
+                if count == 0 {
+                    os_log(.error, log: recordingLog,
+                           "watchdog: 0 buffers after %.1fs (attempt %d) — rebuilding engine",
+                           Self.watchdogTimeout, self.rebuildAttempt)
+                    self.restartRecordingLocked()
+                } else {
+                    os_log(.info, log: recordingLog, "watchdog: %d buffers after %.1fs — healthy, resetting rebuild counter", count, Self.watchdogTimeout)
+                    self.rebuildAttempt = 0
+                }
             }
         }
         timer.resume()
@@ -349,7 +395,7 @@ class AudioRecorder: NSObject, ObservableObject {
         firstBufferLogged = false
         _bufferCount.withLock { $0 = 0 }
         readyFired = false
-        rebuildAttempt = 0
+        _generation.withLock { $0 += 1 }
 
         os_log(.info, log: recordingLog, "startRecording() entered")
 
@@ -358,14 +404,33 @@ class AudioRecorder: NSObject, ObservableObject {
         }
         os_log(.info, log: recordingLog, "AVCaptureDevice check: %.3fms", (CFAbsoluteTimeGetCurrent() - t0) * 1000)
 
-        let engineNeedsRebuild = audioEngine == nil || currentDeviceUID != deviceUID || !(audioEngine?.isRunning ?? false)
+        // Engine build, marking ourselves as recording, and starting the watchdog
+        // all happen in ONE atomic block — otherwise a config-change notification
+        // landing between "engine built" and "_recording = true" would see
+        // `_recording == false`, invalidate the engine, and skip the restart path
+        // entirely (since nothing looks like it's recording yet), leaving the tap
+        // torn down until the watchdog eventually notices and burns a rebuild
+        // attempt to fix it.
+        try engineLifecycleQueue.sync {
+            // `rebuildAttempt`/`failureReported` are only ever otherwise touched
+            // from this queue (`restartRecordingLocked`/`reportFailureOnce`) —
+            // reset them here too instead of on the caller's thread so there's no
+            // unsynchronized cross-queue access to either.
+            rebuildAttempt = 0
+            failureReported = false
 
-        if engineNeedsRebuild {
-            try buildAndStartEngine(deviceUID: deviceUID)
-        } else if let engine = audioEngine, !engine.isRunning {
-            try engine.start()
-            os_log(.info, log: recordingLog, "engine restarted: %.3fms", (CFAbsoluteTimeGetCurrent() - t0) * 1000)
+            let engineNeedsRebuild = audioEngine == nil || currentDeviceUID != deviceUID || !(audioEngine?.isRunning ?? false)
+
+            if engineNeedsRebuild {
+                try buildAndStartEngine(deviceUID: deviceUID)
+            } else if let engine = audioEngine, !engine.isRunning {
+                try engine.start()
+                os_log(.info, log: recordingLog, "engine restarted: %.3fms", (CFAbsoluteTimeGetCurrent() - t0) * 1000)
+            }
+            _recording.withLock { $0 = true }
+            startBufferWatchdogLocked()
         }
+        DispatchQueue.main.async { self.isRecording = true }
 
         guard let inputFormat = storedInputFormat else {
             throw AudioRecorderError.invalidInputFormat("No stored input format")
@@ -400,10 +465,6 @@ class AudioRecorder: NSObject, ObservableObject {
         os_log(.info, log: recordingLog, "audio file created: %.3fms", (CFAbsoluteTimeGetCurrent() - t0) * 1000)
 
         audioFileQueue.sync { self.audioFile = newAudioFile }
-        _recording.withLock { $0 = true }
-        self.isRecording = true
-
-        startBufferWatchdog()
 
         os_log(.info, log: recordingLog, "startRecording() complete: %.3fms total", (CFAbsoluteTimeGetCurrent() - t0) * 1000)
     }
@@ -413,15 +474,23 @@ class AudioRecorder: NSObject, ObservableObject {
         let elapsed = (CFAbsoluteTimeGetCurrent() - recordingStartTime) * 1000
         os_log(.info, log: recordingLog, "stopRecording() called: %.3fms after start, %d buffers received", elapsed, count)
 
-        cancelWatchdog()
-        _recording.withLock { $0 = false }
         audioFileQueue.sync { audioFile = nil }
         isRecording = false
         smoothedLevel = 0.0
         DispatchQueue.main.async { self.audioLevel = 0.0 }
 
-        // Stop engine so mic indicator goes away — keep engine object for fast restart
-        audioEngine?.stop()
+        // `_recording = false` happens INSIDE the same lifecycle-queue turn as
+        // cancelling the watchdog and stopping the engine — otherwise a watchdog
+        // check already in flight on this queue could read a stale `_recording ==
+        // true` (set moments before this queue turn runs) and restart the engine
+        // right after the user pressed stop. Stop the engine (not tear it down) so
+        // the mic indicator goes away while keeping the engine object for a fast
+        // restart.
+        engineLifecycleQueue.sync {
+            _recording.withLock { $0 = false }
+            cancelWatchdog()
+            audioEngine?.stop()
+        }
         os_log(.info, log: recordingLog, "engine stopped (mic indicator off)")
 
         return tempFileURL

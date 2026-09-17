@@ -41,8 +41,8 @@ enum OverlayPhase {
 // MARK: - Theme Colors
 
 struct OverlayTheme {
-    static let accent      = NSColor(red: 1.0,   green: 0.42,  blue: 0.21,  alpha: 1.0) // #FF6B35
-    static let salmon      = NSColor(red: 1.0,   green: 0.71,  blue: 0.62,  alpha: 1.0) // #FFB59D
+    static let accent      = NSColor(red: 0.424, green: 0.388, blue: 1.0,   alpha: 1.0) // #6C63FF
+    static let salmon      = NSColor(red: 0.29,  green: 0.435, blue: 0.631, alpha: 1.0) // #4A6FA1 (steel)
     static let green       = NSColor(red: 0.325, green: 0.882, blue: 0.435, alpha: 1.0) // #53E16F
     static let pillBg      = NSColor(red: 0.051, green: 0.051, blue: 0.059, alpha: 0.92)
 
@@ -90,6 +90,25 @@ final class RecordingOverlayManager {
     var onRetryButtonPressed: (() -> Void)?
     var onEnableMicPressed: (() -> Void)?
 
+    /// Transient failures (recording/transcription/command-mode errors) must not
+    /// stick around forever — only dedicated permission phases (`.micPermission`)
+    /// are meant to stay actionable indefinitely.
+    private static let transientErrorAutoDismissDelay: TimeInterval = 2.2
+    private var errorAutoDismissTask: DispatchWorkItem?
+
+    /// Bumped by every phase-transition method (via `cancelErrorAutoDismiss`).
+    /// The auto-dismiss task captures the generation active when ITS error was
+    /// shown and re-checks it at fire time — so correctness doesn't depend on
+    /// every future call site remembering to cancel the task explicitly; any
+    /// transition at all invalidates a pending stale dismiss.
+    private var stateGeneration = 0
+
+    private func cancelErrorAutoDismiss() {
+        stateGeneration += 1
+        errorAutoDismissTask?.cancel()
+        errorAutoDismissTask = nil
+    }
+
     private var currentPillWidth: CGFloat {
         switch overlayState.phase {
         case .error, .micPermission: return wideWidth
@@ -108,6 +127,7 @@ final class RecordingOverlayManager {
 
     func showInitializing(mode: RecordingTriggerMode = .hold) {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.recordingTriggerMode = mode
             self.overlayState.phase = .initializing
             self.overlayState.audioLevel = 0
@@ -120,6 +140,7 @@ final class RecordingOverlayManager {
     /// Command Mode listening — capturing a spoken edit for the given selection.
     func showCommandListening(selection: String, mode: RecordingTriggerMode = .toggle) {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.commandModeActive = true
             self.overlayState.commandSelectionPreview = String(selection.prefix(120))
             self.overlayState.recordingTriggerMode = mode
@@ -134,6 +155,7 @@ final class RecordingOverlayManager {
 
     func showRecording(mode: RecordingTriggerMode = .hold) {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.recordingTriggerMode = mode
             self.overlayState.phase = .recording
             self.overlayState.audioLevel = 0
@@ -146,6 +168,7 @@ final class RecordingOverlayManager {
 
     func transitionToRecording(mode: RecordingTriggerMode = .hold) {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.recordingTriggerMode = mode
             self.overlayState.phase = .recording
             if self.overlayState.recordingStartDate == nil {
@@ -203,6 +226,7 @@ final class RecordingOverlayManager {
 
     func showTranscribing() {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.phase = .transcribing
             self.overlayState.recordingStartDate = nil
             self.updatePillInteractivity()
@@ -212,6 +236,7 @@ final class RecordingOverlayManager {
     /// Post-process / LLM cleanup sweep.
     func showCleaning() {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.phase = .cleaning
             self.overlayState.recordingStartDate = nil
             self.updatePillInteractivity()
@@ -221,6 +246,7 @@ final class RecordingOverlayManager {
     /// Offline model provisioning progress (0–100). Pass percent < 0 to leave.
     func showModelDownload(name: String, percent: Int) {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             if percent < 0 {
                 if self.overlayState.phase == .downloadingModel { self.dismissPill() }
                 return
@@ -234,6 +260,7 @@ final class RecordingOverlayManager {
 
     func showMicPermission() {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.phase = .micPermission
             self.overlayState.recordingStartDate = nil
             self.showPill(animated: true)
@@ -255,6 +282,7 @@ final class RecordingOverlayManager {
 
     func showDone() {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.phase = .done
             self.flashDone()
         }
@@ -262,15 +290,32 @@ final class RecordingOverlayManager {
 
     func showError(message: String) {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
+            let myGeneration = self.stateGeneration
             self.overlayState.errorMessage = message
             self.overlayState.phase = .error
             self.overlayState.recordingStartDate = nil
             self.showPill(animated: true)
+
+            // Auto-dismiss after a brief grace period. Double-guarded at fire
+            // time — both the phase and the generation captured when THIS error
+            // was shown — so a stale task from an earlier error can never dismiss
+            // a pill that has since moved on to a new recording run, regardless
+            // of whether some future call site remembers to cancel explicitly.
+            let task = DispatchWorkItem { [weak self] in
+                guard let self,
+                      self.stateGeneration == myGeneration,
+                      self.overlayState.phase == .error else { return }
+                self.dismiss()
+            }
+            self.errorAutoDismissTask = task
+            DispatchQueue.main.asyncAfter(deadline: .now() + Self.transientErrorAutoDismissDelay, execute: task)
         }
     }
 
     func dismiss() {
         DispatchQueue.main.async {
+            self.cancelErrorAutoDismiss()
             self.overlayState.interimText = ""
             self.overlayState.whisperGainActive = false
             self.overlayState.downloadModelName = ""
@@ -405,9 +450,11 @@ struct PillOverlayView: View {
     let onRetryButtonPressed: () -> Void
     var onEnableMicPressed: () -> Void = {}
 
-    private let accentColor  = Color(red: 1.0,   green: 0.42,  blue: 0.21)   // #FF6B35
+    private let accentColor  = KM.accent
     private let greenColor   = Color(red: 0.325, green: 0.882, blue: 0.435)  // #53E16F
     private let bgColor      = Color(red: 0.051, green: 0.051, blue: 0.059)
+
+    @State private var shakeTrigger = 0
 
     private var dialectColor: Color { state.languageMode.accentColor }
 
@@ -436,6 +483,9 @@ struct PillOverlayView: View {
         }
         .kmHUDShadow()
         .kmAudioGlow(state.phase == .recording, color: state.languageMode == .hinglish ? accentColor : dialectColor)
+        .onChange(of: state.phase) { newPhase in
+            if newPhase == .error { shakeTrigger += 1 }
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
     }
@@ -475,7 +525,7 @@ struct PillOverlayView: View {
     private var contentView: some View {
         switch state.phase {
         case .done:             doneContent
-        case .error:            errorContent
+        case .error:            errorContent.kmShake(trigger: shakeTrigger)
         case .micPermission:    micPermissionContent
         case .downloadingModel: downloadContent
         case .recording where state.commandModeActive: commandListeningContent
@@ -489,7 +539,7 @@ struct PillOverlayView: View {
         HStack(spacing: 10) {
             Image(systemName: "wand.and.stars")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(LinearGradient(colors: [accentColor, Color(red: 1, green: 0.71, blue: 0.62)],
+                .foregroundStyle(LinearGradient(colors: [accentColor, KM.steel],
                                                 startPoint: .topLeading, endPoint: .bottomTrailing))
 
             VStack(alignment: .leading, spacing: 1) {
@@ -532,7 +582,7 @@ struct PillOverlayView: View {
             Image(systemName: leadingGlyph)
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundStyle(
-                    LinearGradient(colors: [accentColor, Color(red: 1, green: 0.71, blue: 0.62)],
+                    LinearGradient(colors: [accentColor, KM.steel],
                                    startPoint: .topLeading, endPoint: .bottomTrailing)
                 )
                 .symbolEffectPulseIfAvailable(active: state.phase == .initializing)
@@ -672,14 +722,7 @@ struct PillOverlayView: View {
 
     private var doneContent: some View {
         HStack(spacing: 8) {
-            Circle()
-                .fill(greenColor)
-                .frame(width: 22, height: 22)
-                .overlay(
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.black)
-                )
+            KMSuccessCheck(size: 22, color: greenColor)
             Text("Pasted to cursor")
                 .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundColor(.white)
@@ -774,8 +817,8 @@ struct PillWaveformView: View {
     private let minHeight: CGFloat  = 3
     private let maxHeight: CGFloat  = 24
 
-    private let accent = Color(red: 1.0, green: 0.42, blue: 0.21)   // #FF6B35
-    private let salmon = Color(red: 1.0, green: 0.71, blue: 0.62)   // #FFB59D
+    private let accent = KM.accent
+    private let salmon = KM.steel
 
     // Centre-weighted envelope — middle bars reach higher.
     private static let envelope: [CGFloat] = (0..<barCount).map { i in
@@ -869,25 +912,10 @@ struct PausedLineView: View {
 // MARK: - Cleaning sweep (sparkle glint across a stream line)
 
 struct CleaningSweepView: View {
-    @State private var x: CGFloat = 0
-    private let timer = Timer.publish(every: 1.0 / 30.0, on: .main, in: .common).autoconnect()
     var body: some View {
-        GeometryReader { geo in
-            let track = max(1, geo.size.width - 14)
-            ZStack(alignment: .leading) {
-                Capsule().fill(Color.white.opacity(0.14)).frame(height: 3)
-                Capsule()
-                    .fill(Color(red: 1.0, green: 0.42, blue: 0.21))
-                    .frame(width: 14, height: 3)
-                    .offset(x: min(max(0, x), 1) * track)
-            }
-            .frame(maxHeight: .infinity, alignment: .center)
-        }
-        .clipShape(Capsule())
-        .onReceive(timer) { _ in
-            x += 0.045
-            if x > 1 { x = 0 }
-        }
+        // "Cleaning" == the LLM polish pass — reads naturally as the orb's
+        // `.solving` state (bands scramble then click back solved).
+        KMOrb(state: .solving)
     }
 }
 
@@ -900,7 +928,7 @@ struct ProgressBarView: View {
             ZStack(alignment: .leading) {
                 Capsule().fill(Color.white.opacity(0.14)).frame(height: 3)
                 Capsule()
-                    .fill(Color(red: 1.0, green: 0.42, blue: 0.21))
+                    .fill(KM.accent)
                     .frame(width: geo.size.width * CGFloat(max(0, min(100, percent))) / 100, height: 3)
                     .animation(.easeOut(duration: 0.25), value: percent)
             }
@@ -918,7 +946,7 @@ struct DownloadRingView: View {
             Circle().stroke(Color.white.opacity(0.15), lineWidth: 2.5)
             Circle()
                 .trim(from: 0, to: CGFloat(max(0, min(100, percent))) / 100)
-                .stroke(Color(red: 1.0, green: 0.42, blue: 0.21),
+                .stroke(KM.accent,
                         style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(.easeOut(duration: 0.3), value: percent)
@@ -929,29 +957,9 @@ struct DownloadRingView: View {
 // MARK: - Processing Dots
 
 struct ProcessingDotsView: View {
-    @State private var activeDot = 0
-    @State private var timer: Timer?
-
     var body: some View {
-        HStack(spacing: 5) {
-            ForEach(0..<3, id: \.self) { i in
-                Circle()
-                    .fill(Color(red: 1.0, green: 0.42, blue: 0.21).opacity(activeDot == i ? 1.0 : 0.25))
-                    .frame(width: 5, height: 5)
-                    .scaleEffect(activeDot == i ? 1.3 : 1.0)
-                    .animation(.easeInOut(duration: 0.4), value: activeDot)
-            }
-        }
-        .onAppear {
-            timer?.invalidate()
-            timer = Timer.scheduledTimer(withTimeInterval: 0.45, repeats: true) { _ in
-                DispatchQueue.main.async { activeDot = (activeDot + 1) % 3 }
-            }
-        }
-        .onDisappear {
-            timer?.invalidate()
-            timer = nil
-        }
+        // The primary "AI is working" cue — the thinking orb, not a dot grid.
+        KMOrb(state: .working)
     }
 }
 
