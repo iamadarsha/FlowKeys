@@ -69,23 +69,22 @@ code-switches naturally, writes in the correct native script when you want
 it to, adapts its formatting to the app you're in, and — if you'd rather it
 never touch the network — can run the entire pipeline on-device.
 
+<div align="center">
+<img src="https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/Resources/showcase.png" width="720" alt="FlowKeys UI — listening, thinking, done, and the Settings card, all real renders of the shipped app" />
+</div>
+
 ---
 
 ## ✨ Features
 
-| | |
-|---|---|
-| 🎙 **Hold-to-talk** | Hold `Fn` to record, release to paste — or `⌘+Fn` to toggle |
-| 🇮🇳 **Four languages** | Hindi, Bengali, English, Hinglish — understands code-switching, writes native script (Devanagari / Bangla) on request |
-| 🧠 **Context-aware** | Reads the active app and adapts tone (formal email vs. casual WhatsApp) |
-| 🪄 **Command Mode** | Select existing text, speak an edit — "make this shorter," "translate to Bengali" — it rewrites in place |
-| 💻 **On-device AI (optional)** | Whisper + AI4Bharat IndicConformer + a local cleanup LLM — fully offline, no API key, nothing leaves your Mac |
-| ⚡ **7 dictation modes** | Casual · Email · Code · Meeting · Social · Literal · Hindi-only |
-| 🔤 **Personal dictionary** | Learns your names, brands, and vocabulary after a few repeats |
-| 📋 **Snippet engine** | Say *"mera address"* → expands to your full address |
-| 📁 **File transcription** | Drag any audio/video file to transcribe it |
-| 🔑 **5 cloud providers** | Groq (free) · OpenAI · Gemini · Grok · Claude — bring your own key |
-| 🔒 **Private by default** | Keys in macOS Keychain only. No FlowKeys server, no analytics, no telemetry |
+<div align="center">
+<img src="https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/Resources/features.svg" width="800" alt="FlowKeys features: hold-to-talk, 4 languages, Command Mode, on-device AI, personal dictionary, snippet engine, file transcription, 5 cloud providers, private by default" />
+</div>
+
+Also: context-aware formatting (reads the active app and adapts tone —
+formal email vs. casual WhatsApp), and 7 dictation modes (Casual · Email ·
+Code · Meeting · Social · Literal · Hindi-only) layered on top of the four
+languages above.
 
 ---
 
@@ -137,18 +136,12 @@ Every hotkey is rebindable in Settings.
 
 ### The pipeline
 
-```
-🎙  You hold Fn
-     ↓
-🎤  Audio captured at 16kHz mono
-     ↓
-🌐  Transcribed — your chosen cloud provider, or fully on-device
-     ↓
-🧠  Context-aware cleanup (Email? Code? Casual?) and native-script formatting
-     ↓
-⌨️  Pasted into the active app — cloud transcription typically returns in
-     under a second; total time depends on how much cleanup the text needs
-```
+<div align="center">
+<img src="https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/Resources/pipeline.svg" width="800" alt="Pipeline: Hotkey, Capture, Transcribe, Clean up, Paste" />
+</div>
+
+Cloud transcription typically returns in under a second; total time end to
+end depends on how much cleanup the text needs.
 
 ---
 

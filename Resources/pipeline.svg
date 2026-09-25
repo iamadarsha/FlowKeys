@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 260" width="1200" height="260">
+  <defs><linearGradient id="nodeGrad0" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6C63FF"/><stop offset="100%" stop-color="#4A6FA1"/></linearGradient>
+<linearGradient id="nodeGrad1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6C63FF"/><stop offset="100%" stop-color="#4A6FA1"/></linearGradient>
+<linearGradient id="nodeGrad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6C63FF"/><stop offset="100%" stop-color="#4A6FA1"/></linearGradient>
+<linearGradient id="nodeGrad3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6C63FF"/><stop offset="100%" stop-color="#4A6FA1"/></linearGradient>
+<linearGradient id="nodeGrad4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6C63FF"/><stop offset="100%" stop-color="#4A6FA1"/></linearGradient></defs>
+  <rect width="1200" height="260" fill="#0F0F11"/>
+  <line x1="158.0" y1="100" x2="307.0" y2="100" stroke="#2A2A2E" stroke-width="2"/><path d="M 299.0 95 L 307.0 100 L 299.0 105" stroke="#8A8A92" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="403.0" y1="100" x2="552.0" y2="100" stroke="#2A2A2E" stroke-width="2"/><path d="M 544.0 95 L 552.0 100 L 544.0 105" stroke="#8A8A92" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="648.0" y1="100" x2="797.0" y2="100" stroke="#2A2A2E" stroke-width="2"/><path d="M 789.0 95 L 797.0 100 L 789.0 105" stroke="#8A8A92" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="893.0" y1="100" x2="1042.0" y2="100" stroke="#2A2A2E" stroke-width="2"/><path d="M 1034.0 95 L 1042.0 100 L 1034.0 105" stroke="#8A8A92" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+    <circle cx="110.0" cy="100" r="42" fill="#161618" stroke="url(#nodeGrad0)" stroke-width="2.5"/>
+    
+        <rect x="101.0" y="82" width="18" height="26" rx="9" fill="#6C63FF"/>
+        <path d="M 94.0 98 a16 16 0 0 0 32 0" stroke="#6C63FF" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <line x1="110.0" y1="114" x2="110.0" y2="122" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/>
+        
+    
+    <circle cx="355.0" cy="100" r="42" fill="#161618" stroke="url(#nodeGrad1)" stroke-width="2.5"/>
+    <rect x="330.0" y="93.6" width="5" height="12.8" rx="2.5" fill="#4A6FA1"/>
+<rect x="339.0" y="88.8" width="5" height="22.4" rx="2.5" fill="#4A6FA1"/>
+<rect x="348.0" y="84.0" width="5" height="32.0" rx="2.5" fill="#4A6FA1"/>
+<rect x="357.0" y="90.4" width="5" height="19.2" rx="2.5" fill="#4A6FA1"/>
+<rect x="366.0" y="86.4" width="5" height="27.2" rx="2.5" fill="#4A6FA1"/>
+<rect x="375.0" y="92.0" width="5" height="16.0" rx="2.5" fill="#4A6FA1"/>
+    
+    <circle cx="600.0" cy="100" r="42" fill="#161618" stroke="url(#nodeGrad2)" stroke-width="2.5"/>
+    
+        <rect x="584.0" y="84" width="32" height="32" rx="7" fill="none" stroke="#6C63FF" stroke-width="3"/>
+        <circle cx="600.0" cy="100" r="6" fill="#6C63FF"/>
+        <line x1="600.0" y1="76" x2="600.0" y2="84" stroke="#6C63FF" stroke-width="3"/>
+        <line x1="600.0" y1="116" x2="600.0" y2="124" stroke="#6C63FF" stroke-width="3"/>
+        <line x1="576.0" y1="100" x2="584.0" y2="100" stroke="#6C63FF" stroke-width="3"/>
+        <line x1="616.0" y1="100" x2="624.0" y2="100" stroke="#6C63FF" stroke-width="3"/>
+        
+    
+    <circle cx="845.0" cy="100" r="42" fill="#161618" stroke="url(#nodeGrad3)" stroke-width="2.5"/>
+    
+        <path d="M 845.0 80 L 851.0 94 L 865.0 100 L 851.0 106 L 845.0 120 L 839.0 106 L 825.0 100 L 839.0 94 Z" fill="#4A6FA1"/>
+        
+    
+    <circle cx="1090.0" cy="100" r="42" fill="#161618" stroke="url(#nodeGrad4)" stroke-width="2.5"/>
+    
+        <path d="M 1078.0 84 L 1104.0 100 L 1092.0 103 L 1098.0 116 L 1092.0 119 L 1086.0 106 L 1078.0 112 Z" fill="#6C63FF"/>
+        
+    
+  
+    <text x="110.0" y="174" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="18" font-weight="600" fill="#E8E8EA">Hotkey</text>
+    <text x="110.0" y="196" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13" fill="#8A8A92">Hold Fn anywhere</text>
+    
+    <text x="355.0" y="174" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="18" font-weight="600" fill="#E8E8EA">Capture</text>
+    <text x="355.0" y="196" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13" fill="#8A8A92">16kHz mono audio</text>
+    
+    <text x="600.0" y="174" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="18" font-weight="600" fill="#E8E8EA">Transcribe</text>
+    <text x="600.0" y="196" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13" fill="#8A8A92">Cloud or on-device</text>
+    
+    <text x="845.0" y="174" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="18" font-weight="600" fill="#E8E8EA">Clean up</text>
+    <text x="845.0" y="196" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13" fill="#8A8A92">Fillers, tone, script</text>
+    
+    <text x="1090.0" y="174" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="18" font-weight="600" fill="#E8E8EA">Paste</text>
+    <text x="1090.0" y="196" text-anchor="middle" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13" fill="#8A8A92">Right at your cursor</text>
+    
+</svg>

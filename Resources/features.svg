@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1228 538" width="1228" height="538">
+  <rect width="1228" height="538" fill="#0F0F11"/>
+  
+    <rect x="22" y="22" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="68" cy="97.0" r="28" fill="none" stroke="#6C63FF" stroke-width="1.4" opacity="0.35"/>
+    <rect x="60" y="81.0" width="16" height="23" rx="8" fill="#6C63FF"/>
+        <path d="M 54 95.0 a14 14 0 0 0 28 0" stroke="#6C63FF" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+        <line x1="68" y1="109.0" x2="68" y2="116.0" stroke="#6C63FF" stroke-width="2.6" stroke-linecap="round"/>
+    <text x="112" y="93.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">Hold-to-talk</text>
+    <text x="112" y="117.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Fn to record, release to paste</text>
+    
+    <rect x="424" y="22" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="470" cy="97.0" r="28" fill="none" stroke="#4A6FA1" stroke-width="1.4" opacity="0.35"/>
+    <circle cx="470" cy="97.0" r="17" fill="none" stroke="#4A6FA1" stroke-width="2.4"/>
+        <ellipse cx="470" cy="97.0" rx="7" ry="17" fill="none" stroke="#4A6FA1" stroke-width="2"/>
+        <line x1="453" y1="97.0" x2="487" y2="97.0" stroke="#4A6FA1" stroke-width="2"/>
+        <line x1="456" y1="88.0" x2="484" y2="88.0" stroke="#4A6FA1" stroke-width="1.6"/>
+        <line x1="456" y1="106.0" x2="484" y2="106.0" stroke="#4A6FA1" stroke-width="1.6"/>
+    <text x="514" y="93.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">4 languages</text>
+    <text x="514" y="117.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Hindi, Bengali, English, Hinglish</text>
+    
+    <rect x="826" y="22" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="872" cy="97.0" r="28" fill="none" stroke="#6C63FF" stroke-width="1.4" opacity="0.35"/>
+    <line x1="858" y1="111.0" x2="880" y2="89.0" stroke="#6C63FF" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M 883 78.0 L 886 86.0 L 894 89.0 L 886 92.0 L 883 100.0 L 880 92.0 L 872 89.0 L 880 86.0 Z" fill="#6C63FF"/>
+    <text x="916" y="93.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">Command Mode</text>
+    <text x="916" y="117.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Select text, speak an edit</text>
+    
+    <rect x="22" y="194" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="68" cy="269.0" r="28" fill="none" stroke="#4A6FA1" stroke-width="1.4" opacity="0.35"/>
+    <rect x="54" y="255.0" width="28" height="28" rx="6" fill="none" stroke="#4A6FA1" stroke-width="2.6"/>
+        <circle cx="68" cy="269.0" r="5" fill="#4A6FA1"/>
+        <line x1="68" y1="248.0" x2="68" y2="255.0" stroke="#4A6FA1" stroke-width="2.6"/>
+        <line x1="68" y1="283.0" x2="68" y2="290.0" stroke="#4A6FA1" stroke-width="2.6"/>
+        <line x1="47" y1="269.0" x2="54" y2="269.0" stroke="#4A6FA1" stroke-width="2.6"/>
+        <line x1="82" y1="269.0" x2="89" y2="269.0" stroke="#4A6FA1" stroke-width="2.6"/>
+    <text x="112" y="265.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">On-device AI</text>
+    <text x="112" y="289.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Fully offline, no API key</text>
+    
+    <rect x="424" y="194" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="470" cy="269.0" r="28" fill="none" stroke="#6C63FF" stroke-width="1.4" opacity="0.35"/>
+    <path d="M 454 256.0 Q 454 253.0 457 253.0 L 468 253.0 Q 470 253.0 470 256.0 L 470 284.0 Q 470 281.0 468 281.0 L 457 281.0 Q 454 281.0 454 284.0 Z" fill="none" stroke="#6C63FF" stroke-width="2.2"/>
+        <path d="M 486 256.0 Q 486 253.0 483 253.0 L 472 253.0 Q 470 253.0 470 256.0 L 470 284.0 Q 470 281.0 472 281.0 L 483 281.0 Q 486 281.0 486 284.0 Z" fill="none" stroke="#6C63FF" stroke-width="2.2"/>
+    <text x="514" y="265.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">Personal dictionary</text>
+    <text x="514" y="289.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Learns names &amp; vocabulary</text>
+    
+    <rect x="826" y="194" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="872" cy="269.0" r="28" fill="none" stroke="#4A6FA1" stroke-width="1.4" opacity="0.35"/>
+    <path d="M 866 253.0 Q 856 253.0 856 263.0 Q 856 269.0 852 269.0 Q 856 269.0 856 275.0 Q 856 285.0 866 285.0" fill="none" stroke="#4A6FA1" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M 878 253.0 Q 888 253.0 888 263.0 Q 888 269.0 892 269.0 Q 888 269.0 888 275.0 Q 888 285.0 878 285.0" fill="none" stroke="#4A6FA1" stroke-width="2.4" stroke-linecap="round"/>
+    <text x="916" y="265.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">Snippet engine</text>
+    <text x="916" y="289.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Spoken triggers, instant expansion</text>
+    
+    <rect x="22" y="366" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="68" cy="441.0" r="28" fill="none" stroke="#6C63FF" stroke-width="1.4" opacity="0.35"/>
+    <path d="M 56 423.0 L 73 423.0 L 81 431.0 L 81 459.0 L 56 459.0 Z" fill="none" stroke="#6C63FF" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M 73 423.0 L 73 431.0 L 81 431.0" fill="none" stroke="#6C63FF" stroke-width="2.2" stroke-linejoin="round"/>
+        <line x1="62" y1="441.0" x2="75" y2="441.0" stroke="#6C63FF" stroke-width="2"/>
+        <line x1="62" y1="448.0" x2="75" y2="448.0" stroke="#6C63FF" stroke-width="2"/>
+    <text x="112" y="437.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">File transcription</text>
+    <text x="112" y="461.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Drag in any audio or video</text>
+    
+    <rect x="424" y="366" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="470" cy="441.0" r="28" fill="none" stroke="#4A6FA1" stroke-width="1.4" opacity="0.35"/>
+    <circle cx="462" cy="441.0" r="9" fill="none" stroke="#4A6FA1" stroke-width="2.6"/>
+        <line x1="469" y1="441.0" x2="488" y2="441.0" stroke="#4A6FA1" stroke-width="2.6" stroke-linecap="round"/>
+        <line x1="481" y1="441.0" x2="481" y2="448.0" stroke="#4A6FA1" stroke-width="2.6" stroke-linecap="round"/>
+        <line x1="487" y1="441.0" x2="487" y2="448.0" stroke="#4A6FA1" stroke-width="2.6" stroke-linecap="round"/>
+    <text x="514" y="437.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">5 cloud providers</text>
+    <text x="514" y="461.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Groq, OpenAI, Gemini, Grok, Claude</text>
+    
+    <rect x="826" y="366" width="380" height="150" rx="16" fill="#161618" stroke="#232326" stroke-width="1.5"/>
+    <circle cx="872" cy="441.0" r="28" fill="none" stroke="#6C63FF" stroke-width="1.4" opacity="0.35"/>
+    <path d="M 872 423.0 L 887 429.0 L 887 443.0 Q 887 456.0 872 461.0 Q 857 456.0 857 443.0 L 857 429.0 Z" fill="none" stroke="#6C63FF" stroke-width="2.4" stroke-linejoin="round"/>
+        <path d="M 866 440.0 L 871 447.0 L 880 433.0" fill="none" stroke="#6C63FF" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="916" y="437.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="19" font-weight="700" fill="#E8E8EA">Private by default</text>
+    <text x="916" y="461.0" font-family="-apple-system,Helvetica,Arial,sans-serif" font-size="13.5" fill="#8A8A92">Keychain only. No server. Ever.</text>
+    
+</svg>
