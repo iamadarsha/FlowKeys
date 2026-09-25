@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="240" height="240">
+  <defs>
+    <radialGradient id="sweep" gradientUnits="userSpaceOnUse" cx="120.0" cy="120.0" r="110.4">
+      <stop offset="0%" stop-color="#6C63FF"/>
+      <stop offset="55%" stop-color="#6C63FF"/>
+      <stop offset="100%" stop-color="#4A6FA1"/>
+      <animateTransform attributeName="gradientTransform" type="rotate"
+        from="0 120.0 120.0" to="360 120.0 120.0"
+        dur="6s" repeatCount="indefinite"/>
+    </radialGradient>
+  </defs>
+  <rect width="240" height="240" fill="#0F0F11"/>
+  <g opacity="0.95">
+    <line x1="120.00" y1="32.40" x2="120.00" y2="9.60" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="128.59" y1="32.82" x2="130.82" y2="10.13" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="137.09" y1="34.08" x2="141.54" y2="11.72" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="145.43" y1="36.17" x2="152.05" y2="14.35" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="153.52" y1="39.07" x2="162.25" y2="18.00" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="161.29" y1="42.74" x2="172.04" y2="22.64" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="168.67" y1="47.16" x2="181.33" y2="28.21" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="175.57" y1="52.28" x2="190.04" y2="34.66" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="181.94" y1="58.06" x2="198.06" y2="41.94" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="187.72" y1="64.43" x2="205.34" y2="49.96" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="192.84" y1="71.33" x2="211.79" y2="58.67" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="197.26" y1="78.71" x2="217.36" y2="67.96" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="200.93" y1="86.48" x2="222.00" y2="77.75" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="203.83" y1="94.57" x2="225.65" y2="87.95" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="205.92" y1="102.91" x2="228.28" y2="98.46" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="207.18" y1="111.41" x2="229.87" y2="109.18" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="207.60" y1="120.00" x2="230.40" y2="120.00" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="207.18" y1="128.59" x2="229.87" y2="130.82" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="205.92" y1="137.09" x2="228.28" y2="141.54" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="203.83" y1="145.43" x2="225.65" y2="152.05" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="200.93" y1="153.52" x2="222.00" y2="162.25" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="197.26" y1="161.29" x2="217.36" y2="172.04" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="192.84" y1="168.67" x2="211.79" y2="181.33" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="187.72" y1="175.57" x2="205.34" y2="190.04" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="181.94" y1="181.94" x2="198.06" y2="198.06" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="175.57" y1="187.72" x2="190.04" y2="205.34" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="168.67" y1="192.84" x2="181.33" y2="211.79" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="161.29" y1="197.26" x2="172.04" y2="217.36" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="153.52" y1="200.93" x2="162.25" y2="222.00" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="145.43" y1="203.83" x2="152.05" y2="225.65" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="137.09" y1="205.92" x2="141.54" y2="228.28" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="128.59" y1="207.18" x2="130.82" y2="229.87" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="120.00" y1="207.60" x2="120.00" y2="230.40" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="111.41" y1="207.18" x2="109.18" y2="229.87" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="102.91" y1="205.92" x2="98.46" y2="228.28" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="94.57" y1="203.83" x2="87.95" y2="225.65" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="86.48" y1="200.93" x2="77.75" y2="222.00" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="78.71" y1="197.26" x2="67.96" y2="217.36" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="71.33" y1="192.84" x2="58.67" y2="211.79" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="64.43" y1="187.72" x2="49.96" y2="205.34" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="58.06" y1="181.94" x2="41.94" y2="198.06" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="52.28" y1="175.57" x2="34.66" y2="190.04" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="47.16" y1="168.67" x2="28.21" y2="181.33" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="42.74" y1="161.29" x2="22.64" y2="172.04" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="39.07" y1="153.52" x2="18.00" y2="162.25" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="36.17" y1="145.43" x2="14.35" y2="152.05" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="34.08" y1="137.09" x2="11.72" y2="141.54" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="32.82" y1="128.59" x2="10.13" y2="130.82" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="32.40" y1="120.00" x2="9.60" y2="120.00" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="32.82" y1="111.41" x2="10.13" y2="109.18" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="34.08" y1="102.91" x2="11.72" y2="98.46" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="36.17" y1="94.57" x2="14.35" y2="87.95" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="39.07" y1="86.48" x2="18.00" y2="77.75" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="42.74" y1="78.71" x2="22.64" y2="67.96" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="47.16" y1="71.33" x2="28.21" y2="58.67" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="52.28" y1="64.43" x2="34.66" y2="49.96" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="58.06" y1="58.06" x2="41.94" y2="41.94" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="64.43" y1="52.28" x2="49.96" y2="34.66" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="71.33" y1="47.16" x2="58.67" y2="28.21" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="78.71" y1="42.74" x2="67.96" y2="22.64" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="86.48" y1="39.07" x2="77.75" y2="18.00" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="94.57" y1="36.17" x2="87.95" y2="14.35" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="102.91" y1="34.08" x2="98.46" y2="11.72" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+<line x1="111.41" y1="32.82" x2="109.18" y2="10.13" stroke="url(#sweep)" stroke-width="4.08" stroke-linecap="round"/>
+  </g>
+  <g fill="#6C63FF">
+    <rect x="99.6" y="80.4" width="20.4" height="79.2" />
+    <rect x="99.6" y="80.4" width="48" height="20.4" />
+    <rect x="99.6" y="113.3" width="37.2" height="20.4" />
+  </g>
+</svg>

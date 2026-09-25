@@ -1,30 +1,31 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/Resources/AppIcon-Source.png" width="120" alt="FlowKeys" />
+<img src="https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/Resources/logo-animated.svg" width="120" height="120" alt="FlowKeys" />
 
 # FlowKeys
 
 ### *Aapki awaaz, aapke words.* 🇮🇳
-**A forever-free, intelligent dictation app for macOS — built for India.**
+**A forever-free dictation app for macOS — built for Hindi, Bengali, and Hinglish.**
 
-[![Platform](https://img.shields.io/badge/macOS-13%2B-000?style=for-the-badge&logo=apple&logoColor=white)](#-system-requirements)
-[![Apple Silicon](https://img.shields.io/badge/Apple_Silicon-Ready-555?style=for-the-badge)](#-system-requirements)
-[![Languages](https://img.shields.io/badge/Hindi_·_English_·_Hinglish-FF9933?style=for-the-badge)](#-features)
+[![Platform](https://img.shields.io/badge/macOS-13.4%2B-000?style=for-the-badge&logo=apple&logoColor=white)](#-system-requirements)
+[![Universal Binary](https://img.shields.io/badge/Apple_Silicon_%26_Intel-Universal-555?style=for-the-badge)](#-system-requirements)
+[![Languages](https://img.shields.io/badge/Hindi_·_Bengali_·_English_·_Hinglish-6C63FF?style=for-the-badge)](#-features)
 [![Free Forever](https://img.shields.io/badge/Free_Forever-22c55e?style=for-the-badge)](#-license)
-[![License](https://img.shields.io/badge/License-MIT-3b82f6?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-4A6FA1?style=for-the-badge)](LICENSE)
 
-[**Install**](#-install-one-command) · [**Features**](#-features) · [**How It Works**](#-how-it-works) · [**Build From Source**](#-build-from-source) · [**FAQ**](#-faq)
+[**Install**](#-one-line-install) · [**Features**](#-features) · [**On-Device AI**](#-on-device-ai-optional) · [**How It Works**](#-how-it-works) · [**Build From Source**](#-build-from-source) · [**FAQ**](#-faq)
 
 </div>
 
 ---
 
-> **New in 2.0 —** on-device AI. Speech recognition, voice detection, filler
-> cleanup and (optionally) the whole pipeline now run **entirely on your Mac** —
-> private, offline, free, no API key. Plus **Bengali & Banglish**, native-script
-> output (Devanagari / Bangla / Roman), and **Command Mode** (select text, speak
-> an edit). Cloud providers work exactly as before; local AI is opt-in and off by
-> default. → [release notes](requirements/RELEASE_NOTES_2.0.0.md)
+> **v2.2 —** every surface refreshed to a new indigo/steel design system, a
+> from-scratch app icon, and a real reliability pass: fixed a mic-loss race
+> during video calls and a floating-pill state bug that could get stuck. See
+> [release notes](requirements/RELEASE_NOTES_2.2.0.md). On-device AI (fully
+> offline speech recognition, no API key, no audio ever leaving your Mac) has
+> shipped since v2.0 and remains **opt-in, off by default** — cloud providers
+> work exactly as they always have.
 
 ---
 
@@ -32,10 +33,10 @@
 
 | Signal | Details |
 |---|---|
-| Product | Native macOS dictation app for Hindi, English, and Hinglish |
-| What it demonstrates | Swift/macOS engineering, product UX, audio capture, AI provider orchestration, privacy-aware credential handling |
-| Differentiator | India-aware dictation layer with snippets, personal vocabulary, context prompts, and multi-provider BYO-key support |
-| Stack | Swift, SwiftUI, AppKit, AVFoundation, Keychain, Groq, OpenAI, Gemini, Claude, Grok |
+| Product | Native macOS dictation app for Hindi, Bengali, English, and Hinglish |
+| What it demonstrates | Swift/AppKit/SwiftUI engineering, real-time audio capture, concurrent systems design, on-device ML inference (whisper.cpp / sherpa-onnx / llama.cpp), multi-provider API orchestration, Keychain-backed credential handling |
+| Differentiator | An India-aware dictation layer — code-switching, native-script output, snippets, personal vocabulary, context prompts — with an optional fully-offline pipeline |
+| Stack | Swift, SwiftUI, AppKit, AVFoundation, Combine, Keychain, whisper.cpp, llama.cpp, sherpa-onnx, Groq / OpenAI / Gemini / Claude / Grok |
 
 ---
 
@@ -47,35 +48,26 @@ Open **Terminal** on your Mac and paste:
 curl -fsSL https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/install.sh | bash
 ```
 
-No App Store. No account. No warnings. **Takes ~30 seconds.**
+No App Store. No account. **Takes under a minute.** Universal binary — works
+on Apple Silicon and Intel Macs alike.
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/Resources/demo.gif" width="720" alt="FlowKeys demo" />
+<img src="https://raw.githubusercontent.com/iamadarsha/FlowKeys/main/Resources/demo.gif" width="560" alt="FlowKeys recording, thinking, and pasting to the cursor" />
 </div>
 
 ---
 
 ## 🎙 What is FlowKeys?
 
-FlowKeys lets you dictate in **Hindi, English, or Hinglish** into any app on your Mac. Hold a hotkey → talk → text appears wherever your cursor is. It works in Gmail, WhatsApp Web, Notion, Slack, VS Code, Notes — literally everywhere a keyboard works.
+FlowKeys lets you dictate in **Hindi, Bengali, English, or Hinglish** into
+any app on your Mac. Hold a hotkey → talk → text appears wherever your
+cursor is. Gmail, WhatsApp Web, Notion, Slack, VS Code, Notes — anywhere a
+keyboard works.
 
-It's the dictation app Apple should have shipped for India: code-switches naturally, formats text for the app you're in, and stays out of your way.
-
----
-
-## 🧩 Product Snapshot
-
-| Product surface | What it does | Why it matters |
-|---|---|---|
-| **Menubar-first UX** | Lives quietly in macOS with a compact popover, recording pill, settings, and provider controls. | Feels native instead of like another browser tab to babysit. |
-| **Smart dictation pipeline** | Captures audio, normalizes it, transcribes through your selected provider, then post-processes for the active app. | Turns raw speech into usable writing instead of dumping messy transcripts. |
-| **India-aware language layer** | Ships Hindi, English, Hinglish, personal vocabulary, snippets, and Indian context prompts. | Handles the code-switching and proper nouns that generic dictation often mangles. |
-
-## 🏗️ Build Highlights
-
-- Native Swift/macOS app with AppKit, SwiftUI, global hotkeys, menubar state, and permission-aware onboarding.
-- BYO-key architecture across Groq, OpenAI, Gemini, Grok, and Claude, with API keys stored in macOS Keychain.
-- File transcription, personal dictionary, snippet expansion, debug history, and smart mode settings built as first-class workflows.
+It's the dictation layer Apple never shipped for Indian languages: it
+code-switches naturally, writes in the correct native script when you want
+it to, adapts its formatting to the app you're in, and — if you'd rather it
+never touch the network — can run the entire pipeline on-device.
 
 ---
 
@@ -84,26 +76,51 @@ It's the dictation app Apple should have shipped for India: code-switches natura
 | | |
 |---|---|
 | 🎙 **Hold-to-talk** | Hold `Fn` to record, release to paste — or `⌘+Fn` to toggle |
-| 🇮🇳 **Trilingual** | Hindi + English + Hinglish — understands code-switching naturally |
-| 🧠 **Context-aware** | Reads the active app and adapts tone (formal email vs casual WhatsApp) |
-| ⚡ **7 Modes** | Casual · Email · Code · Meeting · Social · Literal · Hindi |
-| 🔤 **Personal Dictionary** | Learns your names, brands, and custom vocabulary |
-| 📋 **Snippet Engine** | Say *"mera address"* → expands to your full address |
-| 📁 **File Transcription** | Drag any audio/video file to transcribe it |
-| 🔑 **5 AI Providers** | Groq (free) · OpenAI · Gemini · Grok · Claude |
-| 🔒 **Private by default** | API keys stored in macOS Keychain. No FlowKeys server. Ever. |
+| 🇮🇳 **Four languages** | Hindi, Bengali, English, Hinglish — understands code-switching, writes native script (Devanagari / Bangla) on request |
+| 🧠 **Context-aware** | Reads the active app and adapts tone (formal email vs. casual WhatsApp) |
+| 🪄 **Command Mode** | Select existing text, speak an edit — "make this shorter," "translate to Bengali" — it rewrites in place |
+| 💻 **On-device AI (optional)** | Whisper + AI4Bharat IndicConformer + a local cleanup LLM — fully offline, no API key, nothing leaves your Mac |
+| ⚡ **7 dictation modes** | Casual · Email · Code · Meeting · Social · Literal · Hindi-only |
+| 🔤 **Personal dictionary** | Learns your names, brands, and vocabulary after a few repeats |
+| 📋 **Snippet engine** | Say *"mera address"* → expands to your full address |
+| 📁 **File transcription** | Drag any audio/video file to transcribe it |
+| 🔑 **5 cloud providers** | Groq (free) · OpenAI · Gemini · Grok · Claude — bring your own key |
+| 🔒 **Private by default** | Keys in macOS Keychain only. No FlowKeys server, no analytics, no telemetry |
 
 ---
 
-## 🔑 Get a Free API Key (2 minutes)
+## 🔑 Get a free API key (2 minutes)
 
-FlowKeys needs one AI API key. **Groq is free, fastest, and best for Indian languages** — start there.
+The cloud path needs one AI API key. **Groq is free, fastest, and the best
+starting point for Hindi and Hinglish.**
 
 1. Go to **[console.groq.com](https://console.groq.com)** → sign up free
 2. Click **Create API Key** → copy the key
 3. Paste it into FlowKeys when prompted on first launch
 
-Other providers supported: OpenAI · Google Gemini · xAI Grok · Anthropic Claude
+Other providers supported: OpenAI · Google Gemini · xAI Grok · Anthropic Claude.
+
+Prefer not to use a cloud key at all? Skip straight to [on-device AI](#-on-device-ai-optional) below.
+
+---
+
+## 💻 On-device AI (optional)
+
+Since v2.0, FlowKeys can run the entire pipeline locally — no network call,
+no API key, no audio or text ever leaving your Mac. It's **off by default**;
+turning it on doesn't change anything else about how the app behaves.
+
+| Stage | Local engine |
+|---|---|
+| Speech recognition (English) | [whisper.cpp](https://github.com/ggml-org/whisper.cpp) |
+| Speech recognition (Hindi / Bengali) | [AI4Bharat IndicConformer](https://huggingface.co/ai4bharat/indic-conformer-600m-multilingual) via [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx) |
+| Cleanup / filler removal | Deterministic pass, or an optional local LLM ([Qwen3-0.6B](https://huggingface.co/unsloth/Qwen3-0.6B-GGUF) via [llama.cpp](https://github.com/ggml-org/llama.cpp)) |
+| Voice activity detection | Silero VAD |
+
+Models download on demand (a few hundred MB each, not bundled in the DMG),
+are SHA-256 verified before use, and can be deleted any time from Settings →
+Local AI. A **Hybrid** route is also available: local-first, escalating to
+your cloud provider only when local confidence is low.
 
 ---
 
@@ -114,7 +131,9 @@ Other providers supported: OpenAI · Google Gemini · xAI Grok · Anthropic Clau
 | **Hold to dictate** | Hold `Fn` |
 | **Toggle dictate on/off** | `⌘ + Fn` |
 | **Open settings** | Click menubar icon → ⚙️ |
-| **Switch language mode** | Click menubar icon → `HI` / `EN` / `MIX` |
+| **Switch language mode** | Click menubar icon → `HI` / `BN` / `EN` / `MIX` |
+
+Every hotkey is rebindable in Settings.
 
 ### The pipeline
 
@@ -123,44 +142,43 @@ Other providers supported: OpenAI · Google Gemini · xAI Grok · Anthropic Clau
      ↓
 🎤  Audio captured at 16kHz mono
      ↓
-🌐  Sent to your chosen provider (default: Groq Whisper)
+🌐  Transcribed — your chosen cloud provider, or fully on-device
      ↓
-🧠  Context-aware reformatting (Email? Code? Casual?)
+🧠  Context-aware cleanup (Email? Code? Casual?) and native-script formatting
      ↓
-⌨️  Pasted into the active app — under 1 second end-to-end
+⌨️  Pasted into the active app — cloud transcription typically returns in
+     under a second; total time depends on how much cleanup the text needs
 ```
 
 ---
 
 ## 💻 System Requirements
 
-- macOS **13.0 (Ventura)** or later
-- Apple Silicon (M1/M2/M3/M4) or Intel Mac
+- macOS **13.4 (Ventura)** or later
+- Apple Silicon (M1–M4) **or** Intel Mac — universal binary
 - Microphone
-- Internet (for the AI transcription call)
+- Internet for cloud transcription — **not required** if you use on-device AI
 
 ---
 
 ## 🛠 Build From Source
-
-If you'd rather build yourself:
 
 ```bash
 # Clone
 git clone https://github.com/iamadarsha/FlowKeys.git
 cd FlowKeys
 
-# Install build tools
-brew install create-dmg fileicon
-
-# Build universal DMG
+# Universal build + DMG (compiles whisper.cpp / llama.cpp / sherpa-onnx —
+# first build takes a while, subsequent ones reuse the cache)
 ARCH=universal make dmg
 
 # Install
 open build/FlowKeys.dmg
 ```
 
-The repo ships clean Swift sources, no binary blobs, fully reproducible builds.
+The repo ships clean Swift sources with no binary blobs — fully reproducible
+builds. See [`requirements/`](requirements) for architecture notes and the
+regression checklist run before every release.
 
 ---
 
@@ -168,17 +186,17 @@ The repo ships clean Swift sources, no binary blobs, fully reproducible builds.
 
 <details>
 <summary><strong>Does it work offline?</strong></summary><br>
-No — transcription needs an API call. Groq's free tier is very generous (rarely a limit you'll hit in normal use).
+Yes, if you turn on <strong>on-device AI</strong> in Settings — the whole pipeline (speech recognition, cleanup) runs locally with no network call. It's opt-in and off by default; without it, transcription uses your chosen cloud provider's API, and Groq's free tier is generous enough that most people rarely hit a limit.
 </details>
 
 <details>
 <summary><strong>Is my voice data stored anywhere?</strong></summary><br>
-Only your chosen AI provider receives the audio (for transcription). FlowKeys itself has no server, no analytics, no logging. Audio is discarded the moment text comes back.
+With on-device AI, no — audio never leaves your Mac. With a cloud provider, only that provider receives the audio (for transcription). FlowKeys itself has no server, no analytics, no logging. Audio is discarded the moment text comes back.
 </details>
 
 <details>
 <summary><strong>Why does macOS show a warning on first install?</strong></summary><br>
-FlowKeys is not from the App Store. The install script handles this automatically. If you downloaded the DMG manually, run:
+FlowKeys isn't notarized by Apple — that requires a $99/year developer account, and passing that cost on to users would break the "forever free" promise. The install script clears the quarantine flag automatically. If you downloaded the DMG manually instead, run:
 
 ```bash
 xattr -dr com.apple.quarantine /Applications/FlowKeys.app
@@ -187,23 +205,22 @@ xattr -dr com.apple.quarantine /Applications/FlowKeys.app
 
 <details>
 <summary><strong>Which provider should I use?</strong></summary><br>
-Start with <strong>Groq</strong> — it's free, fastest (&lt;1 second), and the most reliable for Hindi and Hinglish. If you have an OpenAI/Gemini/Claude/Grok key already, those all work too.
+Start with <strong>Groq</strong> — it's free, fast, and reliable for Hindi and Hinglish. If you already have an OpenAI/Gemini/Claude/Grok key, those work too. Or skip cloud entirely and use on-device AI.
 </details>
 
 <details>
 <summary><strong>Will FlowKeys ever be paid?</strong></summary><br>
-No. The app is MIT-licensed and forever free. You bring your own API key — that's the entire business model.
+No. MIT-licensed, forever free. Bring your own API key (or use on-device AI and skip keys entirely) — that's the whole model.
 </details>
 
 ---
 
 ## 🗺️ Roadmap
 
-- [ ] 🎯 Custom hotkey bindings
-- [ ] 📜 Local-first transcription (whisper.cpp on-device)
-- [ ] 🌏 Bengali, Tamil, Telugu, Marathi support
-- [ ] 🪟 Per-app default mode memory
-- [ ] 🧩 Snippet packs (shareable JSON bundles)
+- [ ] Apple Developer ID signing + notarization (removes the Gatekeeper warning — cost-dependent)
+- [ ] Tamil, Telugu, Marathi language support
+- [ ] Per-app default mode memory
+- [ ] Snippet packs (shareable JSON bundles)
 
 ---
 
